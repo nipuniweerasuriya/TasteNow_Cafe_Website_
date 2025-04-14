@@ -168,6 +168,7 @@ body, html {
     font-size: 1rem;
     color: white;
     font-weight: 600;
+    margin-bottom: 1rem;
     transition: background-color 0.3s ease;
 }
 
@@ -175,6 +176,100 @@ body, html {
     background-color: #d68910;
     color: white;
 }
+
+.custom-hr {
+    height: 2px;
+    background-color: #d68910;
+    border: none;
+    margin: 5px auto;
+
+}
+
+/* About Us */
+.about-us {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem;
+}
+
+
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 260px);
+    grid-template-rows: repeat(2, 260px);
+    gap: 15px;
+}
+
+.image-box {
+    width: 260px;
+    height: 260px;
+    overflow: hidden;
+    animation: fadeIn 1s ease-in-out;
+
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.image-box img:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+.about-text {
+    max-width: 500px;
+    margin-left: 5rem;
+    margin-top: 1rem;
+
+}
+
+.section-title {
+    color: #fd9f02;
+    font-size: x-large;
+    font-family: 'Playfair Display',ui-sans-serif ;
+}
+
+.section-title {
+    font-style: italic;
+}
+
+.read-more {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+}
+
+/* Menu */
+.category-item {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    color: black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.category-item:hover {
+    color: #fd9f02;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    background-color: #f8f9fa;
+}
+
+
 
 
 
@@ -186,6 +281,7 @@ body, html {
         background-position: top;
         padding: 20px;
     }
+
 
     .top-bar {
         flex-direction: column;
@@ -204,6 +300,70 @@ body, html {
         align-items: flex-start;
         gap: 10px;
         padding-top: 10px;
+    }
+
+
+    .h1-container {
+        margin-left: 0.1rem;
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .h1-heading {
+        font-size: 2.2rem;
+        text-align: center;
+    }
+
+    .p-0 {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .h1-container .button {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+
+    .btn-menu, .btn-booking {
+        width: 60%;
+        text-align: center;
+
+    }
+
+    .about-us {
+        flex-direction: column-reverse; /*Text appears first on mobile */
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .images-grid {
+        grid-template-columns: repeat(1, 100%); /* Stacks images vertically */
+        grid-template-rows: auto; /* Adjust row height to auto */
+        width: 100%; /* images take full width */
+    }
+
+    .image-box {
+        width: 100%; /* Make each image box take full width */
+        height: auto; /* Let height adjust based on image aspect ratio */
+    }
+
+    .about-text {
+        margin-left: 0;
+        max-width: 100%;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem; /* Adjust title size for smaller screens */
+    }
+
+    .read-more {
+        text-align: center;
     }
 
 }
