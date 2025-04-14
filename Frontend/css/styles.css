@@ -1,80 +1,209 @@
-/* styles.css */
-
-/* Reset & Base Styles */
-body {
+* {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #fff;
-    color: #333;
+    box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
 }
 
-/* Top Bar Styling */
+.container-fluid {
+    position: relative;
+    background-image: url("../assets/images/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    z-index: 1;
+}
+
+.container-fluid::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+
 .top-bar {
-    background-color: #333333;
-    font-size: 0.9rem;
-    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #f9f9f9;
+    font-style: italic;
+    font-size: small;
+    box-sizing: border-box;
 }
 
-/* Responsive alignment */
-@media (max-width: 768px) {
-    .top-bar {
-        text-align: center;
-    }
-
-    .top-bar .container-fluid {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
+.icon-mail, .icon-call, .icon-time {
+    font-size: small;
+    vertical-align: middle;
+    margin-right: 2px; /* Added gap between icon and text */
+    margin-left: 5px;
+    color: rgb(253, 159, 2);
 }
 
-/* Navbar Styling */
+.top-bar-left,
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.top-bar-left span,
+.top-bar-right span {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* navbar */
 .navbar {
-    background-color: #fd9f02 !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    z-index: 1000
+
+}
+
+.navbar-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 15px;
+
 }
 
 .navbar-brand {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #ff6347 !important; /* Tomato color */
+    font-size: 1.8rem;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    color: white;
 }
 
-.nav-link {
+.navbar-brand:hover {
+    color: #fd9f02;
+    text-decoration: none;
+}
+
+
+.navbar-nav .nav-link {
+    color: white;
     font-weight: 500;
-    color: #333 !important;
+    margin-left: 20px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fd9f02;
+}
+
+
+.navbar-nav .nav-link.active {
+    color: #fd9f02;
+    font-weight: bold;
+}
+
+.material-symbols-outlined icon-account {
+    color: white;
+}
+
+.icon-account, .icon-cart {
+    color: #fd9f02;
     margin-left: 1rem;
-    transition: color 0.3s;
 }
 
-.nav-link:hover {
-    color: #ff6347 !important;
+
+.icon-account:hover, .icon-cart:hover {
+    color: white;
 }
 
-.navbar-toggler {
-    border: none;
+/* Welcome massage */
+.h1-container {
+    margin-left: 2rem;
+    margin-top: 3rem;
+    padding: 4rem 1rem;
+    max-width: 900px;
+
 }
 
-/* Responsive Utilities */
-@media (max-width: 768px) {
+.h1-heading {
+    font-size: 3rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.h1-heading span {
+    color: #f39c12;
+}
+
+.p-0 {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.h1-container .button {
+    justify-content: left;
+    flex-wrap: wrap;
+}
+
+.btn-menu, .btn-booking {
+    border-radius: 50px;
+    border: 3px solid #d68910;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-menu:hover, .btn-booking:hover {
+    background-color: #d68910;
+    color: white;
+}
+
+
+
+
+/* Responsive design for small screens */
+@media (max-width: 770px) {
+    .container-fluid {
+        height: auto;
+        background-position: top;
+        padding: 20px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .top-bar-left,
+    .top-bar-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
     .navbar-nav {
-        text-align: center;
-        padding-top: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-top: 10px;
     }
 
-    .nav-link {
-        margin: 0.5rem 0;
-    }
-}
-
-/* Optional: Add some spacing if you expand the page */
-.container-fluid {
-    max-width: 1200px;
-    margin: 0 auto;
 }

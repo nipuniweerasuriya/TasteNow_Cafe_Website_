@@ -11,6 +11,11 @@
 
     <!-- Load Poppins & Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <!--icons-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
+
 
     <!--Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,54 +25,57 @@
 </head>
 
 <body>
-
-<!-- Top Info Bar -->
-<div class="top-bar text-white px-3 py-2">
-    <div class="container-fluid d-flex flex-column flex-md-row justify-content-between align-items-center">
-        <div>
-            📧 info@tastenow.com | ☎️ +94 77 123 4567
-        </div>
-        <div>
-            🕒 Mon - Sun: 10:00 AM - 10:00 PM
-        </div>
-    </div>
-</div>
-
-
-
-    <!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <!--top bar-->
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                </li>
-            </ul>
-        </div>
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <span class="material-symbols-outlined icon-mail">mail</span><span>infotastenow@gmail.com</span>
+                    <span class="material-symbols-outlined icon-call">call</span><span>+94 245 341 9006</span>
+                </div>
+                <div class="top-bar-right">
+                    <span class="material-symbols-outlined icon-time">schedule</span><span>Mon-Sun 8.00am to 9.00pm</span>
+                </div>
+            </div>
+
+        <!-- navbar -->
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container navbar-container">
+                <!-- Logo at the start -->
+                <a class="navbar-brand" href="#">TASTENOW</a>
+
+                <!-- Toggler for mobile view (optional but recommended) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Nav links aligned to the right -->
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav ms-auto align-items-lg-center d-flex gap-2">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" href="#">Menu</a>
+                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="#">Feedback</a>
+                    </div>
+                    <div>
+                        <span class="material-symbols-outlined icon-account">account_circle</span>
+                        <span class="material-symbols-outlined icon-cart">shopping_cart</span>
+                    </div>
+                    </div>
+            </div>
+        </nav>
+            <div class="container h1-container">
+                <h1 class="h1-heading">Welcome to <span>TasteNow</span> Restaurent</h1>
+                <p class="p-0">Serving delicious moments for over 18 years!</p>
+                <button type="button" class="btn btn-menu">OUR MENU</button>
+                <button type="button" class="btn btn-booking">BOOK A TABLE</button>
+            </div>
+
     </div>
-</nav>
 
+    <!--js link-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
 
-
-
-
-
-
-<!--js link-->
-<script src="js/script.js"></script>
 </body>
 </html>
