@@ -30,7 +30,7 @@ body, html {
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: -1;
 }
 
@@ -55,7 +55,7 @@ body, html {
     vertical-align: middle;
     margin-right: 2px; /* Added gap between icon and text */
     margin-left: 5px;
-    color: #f39c12;
+    color: #fac003;
 }
 
 .top-bar-left,
@@ -82,7 +82,6 @@ body, html {
     max-width: 1140px;
     margin: 0 auto;
     padding: 0 15px;
-
 }
 
 .navbar-brand {
@@ -93,7 +92,7 @@ body, html {
 }
 
 .navbar-brand:hover {
-    color: #f39c12;
+    color: #fac003;
     text-decoration: none;
 }
 
@@ -106,12 +105,12 @@ body, html {
 }
 
 .navbar-nav .nav-link:hover {
-    color: #f39c12;
+    color: #fac003;
 }
 
 
 .navbar-nav .nav-link.active {
-    color: #f39c12;
+    color: #fac003;
     font-weight: bold;
 }
 
@@ -120,7 +119,7 @@ body, html {
 }
 
 .icon-account, .icon-cart {
-    color: #f39c12;
+    color: #fac003;
     margin-left: 1rem;
 }
 
@@ -147,7 +146,7 @@ body, html {
 }
 
 .h1-heading span {
-    color: #f39c12;
+    color: #fac003;
 }
 
 .p-0 {
@@ -163,7 +162,7 @@ body, html {
 
 .btn-menu, .btn-booking {
     border-radius: 50px;
-    border: 3px solid #f39c12;
+    border: 3px solid #fac003;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     color: white;
@@ -173,13 +172,13 @@ body, html {
 }
 
 .btn-menu:hover, .btn-booking:hover {
-    background-color: #f39c12;
+    background-color: #fac003;
     color: white;
 }
 
 .custom-hr {
     height: 2px;
-    background-color: #f39c12;
+    background-color: #fac003;
     border: none;
     margin: 5px auto;
 
@@ -191,6 +190,7 @@ body, html {
     gap: 2rem;
     align-items: center;
     padding: 2rem;
+    background-color: #f1cc52;
 }
 
 
@@ -226,11 +226,12 @@ body, html {
     max-width: 500px;
     margin-left: 5rem;
     margin-top: 1rem;
+    color: white;
 
 }
 
 .section-title {
-    color: #f39c12;
+    color: Black;
     font-size: x-large;
     font-style: italic;
     font-family: 'Playfair Display',ui-sans-serif ;
@@ -241,12 +242,12 @@ body, html {
     margin-top: 1rem;
     font-weight: bold;
     text-decoration: none;
-    color: #000;
+    color: White;
 }
 
 /* Menu */
 .menu-heading {
-    color: #f39c12;
+    color: #fac003;
     font-size: x-large;
     font-style: italic;
     font-family: 'Playfair Display',ui-sans-serif ;
@@ -271,7 +272,7 @@ body, html {
 }
 
 .category-button:hover {
-    color: #f39c12;
+    color: #fac003;
 }
 
 #menu-container {
@@ -314,22 +315,26 @@ body, html {
 }
 
 .add-to-cart-btn {
-    background-color: #f39c12;
+    background-color: White;
     border-radius: 50px;
-    border: 3px solid #f39c12;
-    color: white;
+    border: 3px solid #fac003;
+    color: #fac003;
     padding: 8px 16px;
     margin-top: 10px;
     cursor: pointer;
 }
 
 .add-to-cart-btn:hover {
-    background-color: White;
-    color: #f39c12;
+    background-color: #fac003;
+    color: White;
 }
 
 .see-more-btn {
-    margin: 20px;
+    width: 90%;
+    margin: 20px auto 0;
+    display: block;
+    font-size: 1rem;
+    text-align: center;
     padding: 20px;
     color: black;
     font-weight: bold;
@@ -369,7 +374,7 @@ body, html {
 }
 
 .close:hover {
-    color: #f39c12;
+    color: #fac003;
 }
 
 /* Quantity */
@@ -418,9 +423,9 @@ body, html {
 }
 
 .modal-content button {
-    background-color: #f39c12;
+    background-color: #fac003;
     border-radius: 50px;
-    border: 3px solid #f39c12;
+    border: 3px solid #fac003;
     color: white;
     padding: 10px 16px;
     margin-top: 10px;
@@ -430,7 +435,83 @@ body, html {
 
 .modal-content button:hover {
     background-color: White;
-    color: #f39c12;
+    color: #fac003;
+}
+
+
+/* Table Booking Section */
+.booking-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    width: 100%;
+    background-color: #f1cc52;
+    padding: 10px;
+}
+
+/* Form styling */
+.booking-form {
+    padding: 30px 40px;
+    width: 100rem;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+/* Heading */
+.booking-form h2 {
+    color: black;
+    font-size: x-large;
+    font-style: italic;
+    font-family: 'Playfair Display',ui-sans-serif ;
+    text-align: center;
+    margin: 30px 0;
+}
+
+/* Form rows */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.form-row label {
+    flex: 1 1 30%; /* Three items per row */
+}
+
+.form-row input,
+.form-row textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid white;
+    color: white;
+    background-color: #f1cc52;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Make text area a bit taller */
+.form-row textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* Submit button */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #e64a19;
 }
 
 
@@ -447,7 +528,7 @@ body, html {
     }
 
 
-
+    /* Top Bar */
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
@@ -460,6 +541,8 @@ body, html {
         gap: 5px;
     }
 
+
+    /*Nav Bar */
     .navbar-nav {
         flex-direction: column;
         align-items: flex-start;
@@ -468,7 +551,7 @@ body, html {
     }
 
 
-
+    /* Main Heading */
     .h1-container {
         margin-left: 0.1rem;
         padding: 2rem 1rem;
@@ -501,7 +584,7 @@ body, html {
     }
 
 
-
+    /* About Us */
     .about-us {
         flex-direction: column-reverse; /*Text appears first on mobile */
         gap: 0.5rem;
@@ -535,20 +618,19 @@ body, html {
     }
 
 
+    /* Menu*/
     .menu-heading {
-        font-size: large;
+
         padding: 10px;
         margin: 20px 0;
     }
 
-    /* Stack category buttons vertically on smaller screens */
     #category-container {
         flex-direction: column;
         align-items: center;
         gap: 10px;
     }
 
-    /* Menu items become more flexible */
     .menu-item {
         width: 90%;
         height: auto;
@@ -560,7 +642,6 @@ body, html {
         height: auto;
     }
 
-    /* Modal box responsiveness */
     .modal-box,
     .modal-content {
         width: 90%;
@@ -569,36 +650,32 @@ body, html {
         margin-top: 20%;
     }
 
-    /* Input box full width */
     #quantity-input {
         width: 100%;
         font-size: 1rem;
     }
 
-    /* Make buttons touch-friendly and full width */
     .add-to-cart-btn,
     .modal-content button {
-        width: 100%;
+        width: 50%;
         font-size: 1rem;
         padding: 12px;
     }
 
     .see-more-btn {
         width: 90%;
-        margin: 10px auto;
+        margin-top: 5px;
         display: block;
         font-size: 1rem;
+        text-align: center;
     }
 
-    /* Label and options more readable */
     #item-options label {
         font-size: 1rem;
     }
 
     #item-options input[type="radio"],
     #item-options input[type="checkbox"] {
-        transform: scale(1);
+        transform: scale(0.8);
     }
-
-
 }

@@ -2,19 +2,31 @@
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Drinks', 'Desserts'];
 
 const menuItems = [
-    { name: "Rice And Curry", description: "Sri Lankan Food", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-1.jpg", variants: ["White Rice", "Fried Rice", "Naan"],addons: ["Dhal Curry", "Chicken Curry", "Beetroot", "Potato Fry", "Fish Curry"] },
-    { name: "Milk Rice", description: "Sri Lankan Food", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-2.jpg" },
-    { name: "Hoppers", description: "Sri Lankan Food", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-3.jpg" },
-    { name: "String Hoppers", description: "Sri Lankan Food", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-4.jpeg" },
-    { name: "Avocado Toast", description: "Creamy & Fresh", price: 4.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-5.jpg" },
-    { name: "Pancake", description: "Fluffy & Sweet", price: 3.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-6.jpeg" },
-    { name: "Bugger With French Fries", description: "Cheesy beef burger", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-1.jpeg" },
-    { name: "Naan", description: "Soft & Warm", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-2.jpeg" },
-    { name: "Rice And Curry", description: "Sri Lankan Food", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-3.jpeg" },
-    { name: "Biryani", description: "Chicken Biryani", price: 8.49, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-4.jpg" },
-    { name: "Kottu", description: "Tasty & Hearty", price: 7.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-5.jpeg" },
-    { name: "pastry", description: "Flaky & Buttery", price: 10.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-6.jpeg" },
-    // Add more items for other categories
+    { name: "Rice And Curry", description: "", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-1.jpg", variants: ["White Rice", "Fried Rice", "Naan"],addons: ["Dhal Curry", "Chicken Curry", "Beetroot", "Potato Fry", "Fish Curry"] },
+    { name: "Milk Rice", description: "", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-2.jpg" },
+    { name: "Hoppers", description: "", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-3.jpg" },
+    { name: "String Hoppers", description: "", price: 5.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-4.jpeg" },
+    { name: "Avocado Toast", description: "", price: 4.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-5.jpg" },
+    { name: "Pancake", description: "", price: 3.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-6.jpeg" },
+    { name: "Yogurt parfait", description: "", price: 3.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-7.jpeg" },
+    { name: "Boiled EgG With Avocado Toast", description: "", price: 3.99, category: "Breakfast", imageUrl: "../assets/images/Menu/Breakfast-8.jpeg" },
+    { name: "Bugger With French Fries", description: "", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-1.jpeg" },
+    { name: "Naan", description: "", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-2.jpeg" },
+    { name: "Rice And Curry", description: "", price: 9.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-3.jpeg" },
+    { name: "Biryani", description: "", price: 8.49, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-4.jpg" },
+    { name: "Kottu", description: "", price: 7.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-5.jpeg" },
+    { name: "pastry", description: "", price: 10.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-6.jpeg" },
+    { name: "Kottu", description: "", price: 7.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-7.jpg" },
+    { name: "Dumplings", description: "", price: 7.99, category: "Lunch", imageUrl: "../assets/images/Menu/Lunch-8.jpeg" },
+    { name: "Kottu", description: "", price: 7.99, category: "Dinner", imageUrl: "../assets/images/Menu/Dinner-1.jpg" },
+    { name: "Beef With Fry Vegetables", description: "", price: 7.99, category: "Dinner", imageUrl: "../assets/images/Menu/Dinner-2.jpeg" },
+    { name: "Lawa Cake", description: "", price: 7.99, category: "Desserts", imageUrl: "../assets/images/Menu/Dessert-7.jpeg" },
+    { name: "Yogurt", description: "", price: 7.99, category: "Desserts", imageUrl: "../assets/images/Menu/Dessert-5.webp" },
+    { name: "Milk", description: "", price: 7.99, category: "Drinks", imageUrl: "../assets/images/Menu/Drinks-2.webp" },
+    { name: "Bubble Tea", description: "", price: 7.99, category: "Drinks", imageUrl: "../assets/images/Menu/Drinks-1.webp" },
+    { name: "Pizza", description: "", price: 7.99, category: "Fast Foods", imageUrl: "../assets/images/Menu/Fast food-4.jpeg" },
+    { name: "Bugger", description: "", price: 7.99, category: "Fast Foods", imageUrl: "../assets/images/Menu/Fast food-4.jpeg" },
+
 ];
 
 let currentCategory = null;
@@ -43,20 +55,16 @@ function createCategoryButtons() {
 }
 
 function showInitialMixedItems() {
-    const mixedItems = [];
-    categories.forEach(cat => {
-        const itemsInCategory = menuItems.filter(item => item.category === cat);
-        if (itemsInCategory.length > 0) {
-            mixedItems.push(itemsInCategory[0]);
-        }
-    });
+    const allItems = [...menuItems];
+    const shuffledItems = allItems.sort(() => 0.5 - Math.random());
+    const mixedItems = shuffledItems.slice(0, 6);
     displayMenuItems(mixedItems, false);
 }
 
 function filterByCategory(category) {
     const filtered = menuItems.filter(item => item.category === category);
-    const toDisplay = showAll ? filtered : filtered.slice(0, 4);
-    displayMenuItems(toDisplay, filtered.length > 4 && !showAll);
+    const toDisplay = showAll ? filtered : filtered.slice(0, 6);
+    displayMenuItems(toDisplay, filtered.length > 6 && !showAll);
 }
 
 function displayMenuItems(items, showMoreButton) {
