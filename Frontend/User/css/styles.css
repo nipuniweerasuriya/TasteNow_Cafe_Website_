@@ -176,18 +176,11 @@ body, html {
     color: white;
 }
 
-.custom-hr {
-    height: 2px;
-    background-color: #fac003;
-    border: none;
-    margin: 5px auto;
-
-}
-
 /* About Us */
 .about-us {
     display: flex;
     gap: 2rem;
+    margin-top: 0.1rem;
     align-items: center;
     padding: 2rem;
     background-color: #f1cc52;
@@ -246,20 +239,21 @@ body, html {
 }
 
 /* Menu */
-.menu-heading {
+.menu-heading-container {
     color: #fac003;
+    padding-top: 1rem;
+    text-align: center;
+    background-size: cover;
+    margin-top: 0.1rem;
     font-size: x-large;
     font-style: italic;
     font-family: 'Playfair Display',ui-sans-serif ;
-    text-align: center;
-    margin: 30px 0;
-    padding-bottom: 10px;
 }
 
 #category-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 0.1rem;
     gap: 20px;
 }
 
@@ -279,17 +273,9 @@ body, html {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 0.1rem;
     font-family: sans-serif;
     font-size: small;
-}
-
-.category-section {
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f1f1f1;
-    border-radius: 8px;
 }
 
 .menu-item {
@@ -300,6 +286,7 @@ body, html {
     margin: 10px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: white;
 }
 
 .menu-image {
@@ -440,79 +427,73 @@ body, html {
 
 
 /* Table Booking Section */
-.booking-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50%;
-    width: 100%;
+.booking-container {
     background-color: #f1cc52;
-    padding: 10px;
+    padding: 30px;
+    width: 100%;
 }
 
-/* Form styling */
-.booking-form {
-    padding: 30px 40px;
-    width: 100rem;
-    max-width: 600px;
-    box-sizing: border-box;
-}
-
-/* Heading */
-.booking-form h2 {
-    color: black;
-    font-size: x-large;
-    font-style: italic;
-    font-family: 'Playfair Display',ui-sans-serif ;
+.form-heading {
     text-align: center;
-    margin: 30px 0;
+    font-size: x-large;
+    margin-bottom: 20px;
+    color: black;
+    font-family: 'Playfair Display', ui-sans-serif;
+    font-style: italic;
 }
 
-/* Form rows */
-.form-row {
+.booking-form .form-row {
     display: flex;
     gap: 15px;
     margin-bottom: 15px;
-    flex-wrap: wrap;
 }
 
-.form-row label {
-    flex: 1 1 30%; /* Three items per row */
+.booking-form .form-row.single-column {
+    flex-direction: column;
 }
 
-.form-row input,
-.form-row textarea {
+.booking-form input,
+.booking-form textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid white;
-    color: white;
+    border-radius: 8px;
+    font-size: 16px;
     background-color: #f1cc52;
-    font-size: 16px;
-    box-sizing: border-box;
 }
 
-/* Make text area a bit taller */
-.form-row textarea {
-    height: 100px;
-    resize: vertical;
+.booking-form input::placeholder,
+.booking-form textarea::placeholder {
+    color: white; /* light gray - you can change it */
+    opacity: 0.8;  /* makes sure it's not faded out */
 }
 
-/* Submit button */
-.submit-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    background-color: #ff5722;
+input[type="date"],
+input[type="time"] {
     color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    opacity: 0.8;
 }
 
-.submit-btn:hover {
-    background-color: #e64a19;
+.booking-form button {
+    border-radius: 50px;
+    border: 3px solid white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    background-color: #f1cc52;
+    cursor: pointer;
+    width: 100%;
 }
+
+.booking-form button:hover {
+    background-color: white;
+    color: #f1cc52;
+}
+
 
 
 
