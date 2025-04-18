@@ -63,28 +63,27 @@
                         <!-- Account & Cart Icons -->
                         <div class="d-flex align-items-center ms-3">
                             <span class="material-symbols-outlined icon-account me-3">account_circle</span>
-
-                            <!-- Cart Toggle -->
-                            <div class="cart-wrapper position-relative">
-                                <!-- Cart Icon -->
-                                <input type="checkbox" id="cart-toggle" hidden />
-                                <label for="cart-toggle" class="material-symbols-outlined icon-cart" id="cart-icon">
-                                    shopping_cart
-                                </label>
-
-                                <!-- Cart Dropdown (Populated Dynamically) -->
-                                <div class="cart-dropdown position-absolute shadow-lg p-3 bg-white rounded" id="cart-dropdown">
-                                    <h5>Your Cart</h5>
-                                    <div class="cart-items"></div> <!-- Items will be added here via JS -->
-
-                                    <p class="mt-2 cart-total fw-bold">Total: $0.00</p>
-                                    <button class="btn btn-primary w-100 btn-checkout">Checkout</button>
-                                </div>
-                            </div>
+                            <span class="material-symbols-outlined icon-cart me-3" onclick="toggleCart()">shopping_cart</span>
                         </div>
                     </div>
                 </div>
             </nav>
+
+            <!-- Cart Section (initially hidden) -->
+            <div id="cart-section" style="display:none;">
+                <div class="cart-header">
+                    <h3>Cart Summary</h3>
+                    <button onclick="toggleCart()">Close</button>
+                </div>
+                <div id="cart-items">
+                    <!-- Cart items will be displayed here -->
+                </div>
+                <div class="cart-footer">
+                    <p>Total: Rs.0</p>
+                    <button>Checkout</button>
+                </div>
+            </div>
+
                 <div class="container h1-container">
                     <h1 class="h1-heading">Welcome to <span>TasteNow</span></h1>
                     <p class="p-0">Serving delicious moments for over 18 years!</p>
@@ -97,16 +96,16 @@
         <div class="about-us">
             <div class="images-grid">
                 <div class="image-box">
-                    <img src="../assets/images/gallery/gallery-9.jpg" alt="Image 1">
+                    <img src="../assets/images/gallery/shop-1.webp" alt="Image 1">
                 </div>
                 <div class="image-box">
-                    <img src="../assets/images/gallery/gallery-3.jpg" alt="Image 2">
+                    <img src="../assets/images/gallery/events-1.webp" alt="Image 2">
                 </div>
                 <div class="image-box">
-                    <img src="../assets/images/gallery/gallery-5.jpg" alt="Image 3">
+                    <img src="../assets/images/gallery/shop-2.webp" alt="Image 3">
                 </div>
                 <div class="image-box">
-                    <img src="../assets/images/gallery/gallery-10.jpg" alt="Image 4">
+                    <img src="../assets/images/gallery/events-2.webp" alt="Image 4">
                 </div>
             </div>
             <div class="about-text">
@@ -126,32 +125,122 @@
         </div>
 
     <!-- Menu -->
-    <Div class="menu">
-        <div class="menu-heading-container">
-            <h2 id="menu-heading">----- Our Menu -----</h2>
+    <div class="menu-heading-container">
+        <h2>-----Our Menu-----</h2>
+    </div>
+
+    <!-- Category Buttons -->
+    <div id="category-container">
+        <button class="category-button">All</button>
+        <button class="category-button">Coffee</button>
+        <button class="category-button">Tea</button>
+        <button class="category-button">Smoothies</button>
+        <button class="category-button">Snacks & Pastries</button>
+        <button class="category-button">Desserts</button>
+        <button class="category-button">Drinks</button>
+    </div>
+
+    <!-- Menu Items -->
+    <div id="menu-container">
+        <!-- Example Menu Item -->
+        <div class="menu-item">
+            <img src="../assets/images/Menu/banana-smoothie.jpg" alt="Food Item" class="menu-image" />
+            <h6>Grilled Chicken</h6>
+            <p>Rs.480.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
         </div>
-        <div id="category-container"></div>
-        <div id="menu-container"></div>
-
-        <!-- Modal -->
-        <div id="modal" class="modal">
-            <div class="modal-box" id="modal-content"></div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/black-coffee.webp" alt="Food Item" class="menu-image" />
+            <h6>Veggie Pizza</h6>
+            <p>Rs.300.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
         </div>
-
-            <div id="quantity-modal" class="modal-quantity">
-                <div class="modal-content">
-                    <span class="close" onclick="closeQuantityModal()">&times;</span>
-                    <h2>Add to Cart</h2>
-                    <label for="quantity-input">Quantity:</label>
-                    <input type="number" id="quantity-input" min="1" />
-                    <div id="item-options"></div>
-                    <button onclick="confirmAddToCart()">Confirm</button>
-                </div>
-            </div>
-
+        <div class="menu-item">
+            <img src="../assets/images/Menu/Burger.webp" alt="Food Item" class="menu-image" />
+            <h6>Bugger</h6>
+            <p>Rs.480.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
         </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/ice-cream.webp" alt="Food Item" class="menu-image" />
+            <h6>Ice Cream</h6>
+            <p>Rs.250.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/latte.webp" alt="Food Item" class="menu-image" />
+            <h6>Latte</h6>
+            <p>Rs.250.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/milk-tea.webp" alt="Food Item" class="menu-image" />
+            <h6>Milk Tea</h6>
+            <p>Rs.200.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/mix-berry-smoothie.webp" alt="Food Item" class="menu-image" />
+            <h6>Mix Berry Smoothie</h6>
+            <p>Rs.350.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/Chicken-wrap.webp" alt="Food Item" class="menu-image" />
+            <h6>Chicken Wrap</h6>
+            <p>Rs.350.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/masala-chai.webp" alt="Food Item" class="menu-image" />
+            <h6>Masala Chai</h6>
+            <p>Rs.350.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/iced-coffee.webp" alt="Food Item" class="menu-image" />
+            <h6>Iced Coffee</h6>
+            <p>Rs.350.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="../assets/images/Menu/chocolate-muffin.webp" alt="Food Item" class="menu-image" />
+            <h6>Chocolate Muffin</h6>
+            <p>Rs.350.00</p>
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+    </div>
+    <!-- See More Button -->
+    <button class="see-more-btn" id="see-more-btn">See More</button>
 
-    <!-- Cart -->
+
+    <!-- ✅ CUSTOMIZATION MODAL -->
+    <div id="customization-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3 id="modal-item-name">Customize Item</h3>
+            <input type="hidden" id="modal-item-price" />
+
+            <label>Variant:</label>
+            <select id="modal-variant">
+                <option value="Regular" data-extra="0">Regular</option>
+                <option value="Spicy" data-extra="20">Spicy (+Rs.20)</option>
+                <option value="Cheese" data-extra="30">Cheese (+Rs.30)</option>
+            </select>
+
+            <label>Add-ons:</label><br/>
+            <input type="checkbox" value="Extra Cheese" data-price="50"> Extra Cheese (+Rs.50)<br/>
+            <input type="checkbox" value="Bacon" data-price="70"> Bacon (+Rs.70)<br/>
+
+            <label>Special Request:</label><br/>
+            <textarea id="modal-request" placeholder="e.g., No onions"></textarea><br/>
+
+            <label>Quantity:</label>
+            <input type="number" id="modal-qty" min="1" value="1"><br/><br/>
+
+            <button onclick="addToCart()">Add to Cart</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
 
 
     <!-- Table Booking Section -->
