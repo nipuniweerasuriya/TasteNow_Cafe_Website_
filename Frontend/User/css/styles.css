@@ -9,6 +9,7 @@ body, html {
     padding: 0;
     width: 100%;
     overflow-x: hidden;
+
 }
 
 .container-fluid {
@@ -74,9 +75,27 @@ body, html {
 /* navbar */
 .navbar {
     background-color: rgba(0, 0, 0, 0.6) !important;
-    z-index: 1000
+    z-index: 1000;
+    position: relative;
+    width: 100%;
 
 }
+
+.navbar.fixed-top {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #fac003;
+}
+
+.navbar-scrolled {
+    background-color: black !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
 
 .navbar-container {
     max-width: 1140px;
@@ -127,6 +146,68 @@ body, html {
 .icon-account:hover, .icon-cart:hover {
     color: white;
 }
+
+/* Cart Dropdown */
+.cart-wrapper {
+    position: relative;
+}
+
+.icon-cart {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+#cart-dropdown {
+    display: none;
+    width: 250px;
+    top: 40px;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#cart-toggle:checked ~ #cart-dropdown {
+    display: block;
+}
+
+.cart-dropdown ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-dropdown li {
+    margin-bottom: 10px;
+}
+
+.cart-dropdown hr {
+    margin: 8px 0;
+}
+
+.cart-dropdown .btn {
+    font-size: 14px;
+    padding: 5px 10px;
+    margin: 0 5px;
+}
+
+/* Checkout Button at the bottom */
+.cart-dropdown .btn-block {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.cart-dropdown .btn-outline-secondary {
+    margin: 0 5px;
+    padding: 0 8px;
+}
+
+.cart-dropdown span {
+    margin: 0 5px;
+    font-weight: bold;
+}
+
+
 
 /* Welcome massage */
 .h1-container {
@@ -479,7 +560,6 @@ input[type="time"] {
     border: 3px solid white;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-
     color: white;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -494,7 +574,100 @@ input[type="time"] {
     color: #f1cc52;
 }
 
+/* footer */
+.footer {
+    background-color: black;
+    margin-top: 0.1rem;
+}
 
+.footer-brand {
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    color: white;
+}
+
+.footer-brand:hover {
+    color: #fac003;
+}
+
+.footer-sub-headings {
+    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
+    margin-top: 10px;
+}
+
+.footer p {
+    color: darkgrey;
+    font-size: small;
+}
+
+.footer ul li a{
+    color: darkgrey;
+    text-decoration: none;
+    font-size: small;
+}
+
+footer ul li a:hover {
+    color: #fac003;
+}
+
+.payment-icon {
+    width: 30px;
+    height: auto;
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+ul.list-payment-icon {
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+ul.list-payment-icon li {
+    margin-right: 20px;
+}
+
+.social-icon {
+    color: #fac003;
+}
+.social-icon:hover {
+    color: white;
+}
+
+.form-control {
+    border-radius: 8px;
+    font-size: 16px;
+    color: black;
+}
+
+.form-control-btn {
+    border-radius: 50px;
+    border: 3px solid #fac003;
+    height: 40px;
+    font-size: 1rem;
+    color: #fac003;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    background-color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-control-btn:hover {
+    background-color: #fac003;
+    border: 3px solid white;
+    color: white;
+}
+
+.footer-bottom-bar {
+    background-color: #fac003;
+}
 
 
 
@@ -601,7 +774,7 @@ input[type="time"] {
 
     /* Menu*/
     .menu-heading {
-
+        font-size: 1.5rem;
         padding: 10px;
         margin: 20px 0;
     }
@@ -659,4 +832,18 @@ input[type="time"] {
     #item-options input[type="checkbox"] {
         transform: scale(0.8);
     }
+
+
+    /* Table Booking Section */
+    .booking-form .form-row {
+        flex-direction: column;
+    }
+
+    .booking-form button {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .form-heading {
+        font-size: 1.5rem;    }
 }
