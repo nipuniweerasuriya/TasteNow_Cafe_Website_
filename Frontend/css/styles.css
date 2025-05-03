@@ -180,108 +180,150 @@ body, html {
 }
 
 
-
-
 /* cart */
 #cart-page .navbar {
     margin-top: 2.5rem;
     background-color: #f1cc52 !important;
-    position: relative;
 }
 
 /* Container for navbar */
 #cart-page .navbar-container {
     display: flex;
-    justify-content: space-between; /* Space between brand and cart icon */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
+    padding: 0 1rem;
 }
 
-/* Center the search bar */
+#cart-page .navbar-brand {
+    flex: 1;
+}
+
 .navbar-search {
-    position: absolute;
-    left: 10%;
-    transform: translateX(-25%); /* Center horizontally */
-    max-width: 400px;
-    width: 100%;
-}
-
-/* Search input styling (no border radius) */
-.search-input {
-    width: 100%;
-    padding: 0.4rem 2.5rem 0.4rem 1rem; /* Space for the icon */
-    border-radius: 0; /* No border radius */
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background-color: rgba(255, 255, 255, 0.9);
-    transition: box-shadow 0.3s ease;
-}
-
-/* Highlight on focus */
-.search-input:focus {
-    box-shadow: 0 0 0 3px rgba(241, 204, 82, 0.5);
-}
-
-/* Search icon inside input */
-.search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #fac003;
-    font-size: 22px;
-    pointer-events: none; /* So clicking doesn't block input */
-}
-
-/* Cart icon styling */
-.icon-cart {
-    margin-left: 15px; /* Space between search bar and cart icon */
-}
-
-
-/* Container for search */
-.navbar-search {
-    flex-grow: 1; /* Allow the search bar to take the remaining space */
-    max-width: 700px; /* Optional: Set a max width for the search bar */
-    margin-left: 115px; /* Space between brand and search bar */
-    margin-right: 15px; /* Space between search bar and cart icon */
     position: relative;
+    width: 100%;
+    max-width: 900px;
+}
+
+.search-input::placeholder {
+    color: #f1d476;
+    font-size: 1rem;
 }
 
 .search-input {
     width: 100%;
-    padding: 0.4rem 2.5rem 0.4rem 1rem; /* right padding for icon space */
-    border-radius: 0;
+    padding: 0.4rem 2.5rem 0.4rem 1rem;
+    border-radius: 3px;
     border: none;
     outline: none;
     font-size: 1rem;
-    background-color: rgba(255, 255, 255, 0.9);
-    transition: box-shadow 0.3s ease;
+    background-color: white;
+    color: #f1cc52;
 }
 
-/* Highlight on focus */
-.search-input:focus {
-    box-shadow: 0 0 0 3px rgba(241, 204, 82, 0.5);
-}
-
-/* Search icon inside input */
-.search-icon {
+.icon-search {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #fac003;
+    color: #f1cc52 !important;
     font-size: 22px;
-    pointer-events: none; /* So clicking doesn't block input */
+    pointer-events: none;
 }
-
 
 #cart-page .material-symbols-outlined {
     color: white;
 }
 
 
+/* Cart items part */
+.cart-item img {
+    width: 100px;
+    height: 100px;
+}
+
+#cart-page .cart-items-container {
+    border: 1px solid #fac003;
+}
+
+.item-title {
+    font-size: 1.2rem;
+}
+
+.item-price .price {
+    color: #fac003;
+    font-size: 1rem;
+}
+
+.quantity-control button {
+    padding: 2px 10px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    color: #fac003;
+    border-radius: 2px;
+    border-color: #fac003;
+    font-size: 1rem;
+}
+
+.quantity-control button:hover {
+    color: white;
+    background-color: orange;
+    border-color: #fac003;
+}
+.customizations p {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.custom-text-danger {
+    color: #fac003;
+}
+
+.order-summary-container {
+    margin-top: 3rem;
+    border: 1px solid #fac003;
+    padding: 20px;
+    border-radius: 2px;
+    background-color: white;
+
+}
+
+#cart-page .custom-form-control {
+    width: 100%;
+    height: 2rem;
+    max-width: 500px;
+    border-radius: 2px;
+    border: 1px solid #fac003;
+    font-size: 16px;
+    color: #f1cc52;
+}
+
+#cart-page .custom-form-control::placeholder {
+    padding-left: 0.5rem;
+    color: #f1d476;
+    font-size: 1rem;
+}
+
+#cart-page .payment-btn {
+    border-radius: 3px;
+    border: 3px solid #fac003;
+    height: 40px;
+    font-size: 1rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    background-color: #fac003;
+    cursor: pointer;
+    width: 100%;
+}
+
+#cart-page .payment-btn:hover {
+    background-color: white;
+    color: #fac003;
+}
 
 
 
@@ -629,7 +671,7 @@ body, html {
     width: 100%;
     padding: 12px;
     border: 1px solid white;
-    border-radius: 8px;
+    border-radius: 3px;
     font-size: 16px;
     background-color: #f1cc52;
 }
@@ -647,7 +689,7 @@ input[type="time"] {
 }
 
 .booking-form button {
-    border-radius: 8px;
+    border-radius: 3px;
     border: 3px solid white;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
@@ -732,14 +774,19 @@ ul.list-payment-icon li {
 }
 
 .form-control {
-    border-radius: 8px;
+    border-radius: 3px;
     font-size: 16px;
-    color: black;
+    color: #f1d476 !important;
     width: 139%;
 }
 
+.form-control::placeholder {
+    color: #f1d476;
+    font-size: 1rem;
+}
+
 .form-control-btn {
-    border-radius: 8px;
+    border-radius: 3px;
     border: 3px solid #fac003;
     height: 40px;
     font-size: 1rem;

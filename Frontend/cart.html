@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,32 +27,135 @@
 
 
 <body id="cart-page">
-<!-- navbar -->
-<nav class="navbar" id="navbar">
-    <div class="container navbar-container d-flex justify-content-between align-items-center">
-        <!-- Brand -->
-        <a class="navbar-brand" href="#">TASTENOW</a>
+    <!-- navbar -->
+    <div>
+        <div class="navbar">
+            <div class="navbar-container">
 
-        <!-- Search bar -->
-        <div class="navbar-search mx-3 position-relative">
-            <input type="text" class="form-control search-input" placeholder="Search in Tastenow">
-            <span class="material-symbols-outlined search-icon">search</span>
+                <div class="navbar-brand">
+                    <a class="navbar-brand" href="index.html">TASTENOW</a>
+                </div>
+
+                <div class="navbar-search">
+                    <input type="text" class="search-input" placeholder="Search">
+                    <span class="material-symbols-outlined icon-search">search</span>
+                </div>
+
+                <!-- Account Icons -->
+                <div class="d-flex align-items-center ms-3">
+                    <span class="material-symbols-outlined icon-account me-3">account_circle</span>
+                </div>
+
+            </div>
         </div>
 
-        <!-- Cart Icon -->
-        <a href="../Frontend/cart.html">
-            <span class="material-symbols-outlined icon-cart">shopping_cart</span>
-        </a>
-    </div>
-</nav>
+        <!-- Cart Item Part -->
+        <div class="container my-5">
+            <div class="row">
+                <!-- Cart Left -->
+                <div class="col-lg-8">
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <input type="checkbox" class="form-check-input me-2">
+                            <label>SELECT ALL (39 ITEM(S))</label>
+                        </div>
+                        <button class="btn btn-sm">DELETE</button>
+                    </div>
 
+                    <!-- Cart Items -->
+                    <div class="cart-items-container bg-white p-3 mb-3">
+                        <div class="d-flex align-items-start gap-3 cart-item">
+                            <input type="checkbox" class="mt-2">
+                            <img src="./assets/images/Menu/banana-smoothie.jpg" alt="Product">
+                            <div class="flex-grow-1">
+                                <p class="item-title">Banana Smoothie</p>
+                                <p class="custom-text-danger">Only 7 item(s) we have now</p>
+                                <div class="customizations">
+                                    <p><span>Variant:</span> Spicy (+Rs.20)</p>
+                                    <p><span>Add-ons:</span> Extra Cheese (+Rs.50)</p>
+                                    <p><span>Special Request:</span> No onions</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="item-price">
+                                    <span class="price">Rs. 680</span>
+                                </div>
+                                <div class="quantity-control d-flex align-items-center gap-2 mt-2">
+                                    <button class="btn btn-outline-secondary btn-sm">−</button>
+                                    <span>1</span>
+                                    <button class="btn btn-outline-secondary btn-sm">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="cart-items-container bg-white p-3 mb-3">
+                        <div class="d-flex align-items-start gap-3 cart-item">
+                            <input type="checkbox" class="mt-2">
+                            <img src="./assets/images/Menu/banana-smoothie.jpg" alt="Product">
+                            <div class="flex-grow-1">
+                                <p class="item-title">Banana Smoothie</p>
+                                <p class="custom-text-danger">Only 7 item(s) we have now</p>
+                                <div class="customizations">
+                                    <p><span>Variant:</span> Spicy (+Rs.20)</p>
+                                    <p><span>Add-ons:</span> Extra Cheese (+Rs.50)</p>
+                                    <p><span>Special Request:</span> No onions</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="item-price">
+                                    <span class="price">Rs. 680</span>
+                                </div>
+                                <div class="quantity-control d-flex align-items-center gap-2 mt-2">
+                                    <button class="btn btn-outline-secondary btn-sm">−</button>
+                                    <span>1</span>
+                                    <button class="btn btn-outline-secondary btn-sm">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="cart-items-container bg-white p-3 mb-3">
+                        <div class="d-flex align-items-start gap-3 cart-item">
+                            <input type="checkbox" class="mt-2">
+                            <img src="./assets/images/Menu/banana-smoothie.jpg" alt="Product">
+                            <div class="flex-grow-1">
+                                <p class="item-title">Banana Smoothie</p>
+                                <p class="custom-text-danger">Only 7 item(s) we have now</p>
+                                <div class="customizations">
+                                    <p><span>Variant:</span> Spicy (+Rs.20)</p>
+                                    <p><span>Add-ons:</span> Extra Cheese (+Rs.50)</p>
+                                    <p><span>Special Request:</span> No onions</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="item-price">
+                                    <span class="price">Rs. 680</span>
+                                </div>
+                                <div class="quantity-control d-flex align-items-center gap-2 mt-2">
+                                    <button class="btn btn-outline-secondary btn-sm">−</button>
+                                    <span>1</span>
+                                    <button class="btn btn-outline-secondary btn-sm">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
 
-
-
-
-
+                <!-- Cart Order Summary -->
+                <div class="col-lg-4">
+                    <div class="order-summary-container">
+                        <h5>Order Summary</h5>
+                        <p class="mb-2">Total (0): <span class="price fw-bold">Rs. 0</span></p>
+                        <input type="text" class="custom-form-control mb-3" placeholder="Enter Your Table Number">
+                        <button class="payment-btn  w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                            PROCEED TO CHECKOUT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
 </body>
 </html>
