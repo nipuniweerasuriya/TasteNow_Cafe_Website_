@@ -139,6 +139,48 @@ body, html {
     margin-left: 1rem;
 }
 
+/* Style for the navbar toggler button */
+.navbar-toggler {
+    width: 40px;
+    height: 40px;
+    border: #fac003;
+    background-color: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* the three bars */
+.navbar-toggler-icon {
+    background-image: none;
+    width: 24px;
+    height: 2px;
+    background-color: #fac003;
+    display: block;
+    position: relative;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background-color: #fac003;
+    left: 0;
+}
+
+.navbar-toggler-icon::before {
+    top: -8px;
+}
+
+.navbar-toggler-icon::after {
+    top: 8px;
+}
+
+
+
 
 /* cart */
 #cart-page .navbar {
@@ -574,6 +616,10 @@ body, html {
     margin-bottom: 15px;
 }
 
+.booking-form .form-row > * {
+    flex: 1; /* Ensures all inputs in a row have equal width */
+}
+
 .booking-form .form-row.single-column {
     flex-direction: column;
 }
@@ -590,8 +636,8 @@ body, html {
 
 .booking-form input::placeholder,
 .booking-form textarea::placeholder {
-    color: white; /* light gray - you can change it */
-    opacity: 0.8;  /* makes sure it's not faded out */
+    color: white;
+    opacity: 0.8;
 }
 
 input[type="date"],
@@ -601,7 +647,7 @@ input[type="time"] {
 }
 
 .booking-form button {
-    border-radius: 50px;
+    border-radius: 8px;
     border: 3px solid white;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
@@ -618,6 +664,7 @@ input[type="time"] {
     background-color: white;
     color: #f1cc52;
 }
+
 
 /* footer */
 .footer {
@@ -688,10 +735,11 @@ ul.list-payment-icon li {
     border-radius: 8px;
     font-size: 16px;
     color: black;
+    width: 139%;
 }
 
 .form-control-btn {
-    border-radius: 50px;
+    border-radius: 8px;
     border: 3px solid #fac003;
     height: 40px;
     font-size: 1rem;
@@ -748,6 +796,7 @@ ul.list-payment-icon li {
         gap: 10px;
         padding-top: 10px;
     }
+
 
 
     /* Main Heading */
