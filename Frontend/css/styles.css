@@ -113,6 +113,11 @@ body, html {
     color: white;
 }
 
+.logo-wiggle {
+    display: inline-block;
+    animation: slideLeftRight 2s ease-in-out infinite;
+}
+
 .navbar-nav .nav-link {
     color: white;
     font-weight: 500;
@@ -212,6 +217,7 @@ body, html {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    height: 3.3rem;
     padding: 0 1rem;
 }
 
@@ -399,7 +405,7 @@ body, html {
     color: white;
 }
 
-.h1-heading, .p-0, button {
+.h1-heading, .p-0, .btn-booking, .btn-menu  {
     opacity: 0.5;
     transform: translateY(30px);
     animation: fadeSlideUp 0.5s ease-out forwards;
@@ -840,6 +846,43 @@ ul.list-payment-icon li {
 }
 
 
+/*Profile Page */
+.profile-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.profile-actions i {
+    font-size: 24px;
+    color: #333;
+}
+
+.profile-actions small {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.profile-actions > div:hover {
+    color: #007bff;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
 /* Animations */
 @keyframes fadeSlideUp {
     to {
@@ -847,6 +890,14 @@ ul.list-payment-icon li {
         transform: translateY(0);
     }
 
+}
+
+@keyframes slideLeftRight {
+    0%   { transform: translateX(0); }
+    25%  { transform: translateX(-5px); }
+    50%  { transform: translateX(0); }
+    75%  { transform: translateX(5px); }
+    100% { transform: translateX(0); }
 }
 
 
