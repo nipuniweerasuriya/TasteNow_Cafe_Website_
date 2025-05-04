@@ -84,3 +84,17 @@ function addToCart() {
     cart.push(item);
     closeModal();
 }
+
+
+const signupButton = document.getElementById('signup-btn');
+const signupForm = document.getElementById('signup-form');
+
+// Toggle visibility of the sign-up form when the button is clicked
+signupButton.addEventListener('click', () => {
+    if (signupForm.style.display === "none" || signupForm.style.display === "") {
+        signupForm.style.display = "block";
+    } else {
+        signupForm.style.display = "none";
+    }
+});
+
