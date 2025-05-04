@@ -62,9 +62,27 @@
 
                         <!-- Account & Cart Icons -->
                         <div class="d-flex align-items-center ms-3">
-                            <span class="material-symbols-outlined icon-account me-3">account_circle</span>
-                            <a href="../Frontend/cart.html"><span class="material-symbols-outlined icon-cart me-3">shopping_cart</span></a>
+                            <!-- Cart Icon -->
+                            <a href="../Frontend/cart.html">
+                                <span class="material-symbols-outlined icon-cart me-3">shopping_cart</span>
+                            </a>
+
+                            <!-- User Account Dropdown -->
+                            <div class="dropdown">
+                                <span class="material-symbols-outlined icon-account me-3"
+                                      id="accountDropdown"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
+                                      style="cursor: pointer;">
+                                    account_circle
+                                </span>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                                    <li class="text-center mb-2"><button class="btn btn-dark w-100">Sign in</button></li>
+                                    <li class="text-center mb-2"><a href="#" class="text-decoration-none">Register</a></li>
+                                </ul>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </nav>

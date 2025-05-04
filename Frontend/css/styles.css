@@ -139,6 +139,26 @@ body, html {
     margin-left: 1rem;
 }
 
+
+/*Drop Down Sign In/Up */
+.dropdown-menu {
+    width: 250px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.dropdown-item.fw-bold {
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+}
+
 /* Style for the navbar toggler button */
 .navbar-toggler {
     width: 40px;
@@ -181,13 +201,13 @@ body, html {
 
 
 /* cart */
-#cart-page .navbar {
+.common-page .navbar {
     margin-top: 2.5rem;
     background-color: #f1cc52 !important;
 }
 
 /* Container for navbar */
-#cart-page .navbar-container {
+.common-page .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -195,22 +215,22 @@ body, html {
     padding: 0 1rem;
 }
 
-#cart-page .navbar-brand {
+.common-page .navbar-brand {
     flex: 1;
 }
 
-.navbar-search {
+.common-page .navbar-search {
     position: relative;
     width: 100%;
     max-width: 900px;
 }
 
-.search-input::placeholder {
+.common-page .search-input::placeholder {
     color: #f1d476;
     font-size: 1rem;
 }
 
-.search-input {
+.common-page .search-input {
     width: 100%;
     padding: 0.4rem 2.5rem 0.4rem 1rem;
     border-radius: 3px;
@@ -221,7 +241,7 @@ body, html {
     color: #f1cc52;
 }
 
-.icon-search {
+.common-page .icon-search {
     position: absolute;
     right: 15px;
     top: 50%;
@@ -231,7 +251,7 @@ body, html {
     pointer-events: none;
 }
 
-#cart-page .material-symbols-outlined {
+.common-page .material-symbols-outlined {
     color: white;
 }
 
