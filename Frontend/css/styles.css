@@ -864,15 +864,14 @@ ul.list-payment-icon li {
     flex-direction: column;
 }
 
-/* Profile avatar */
 .profile-avatar {
     width: 50px;
     height: 50px;
     font-size: 1.2rem;
     border-radius: 50%;
+    background-color: #fac003;
 }
 
-/* Action items */
 .profile-actions {
     margin-top: 2rem;
     display: flex;
@@ -883,17 +882,64 @@ ul.list-payment-icon li {
 .profile-action-item {
     display: flex;
     align-items: center;
-    color: #343a40; /* Bootstrap text-dark */
+    color: black;
     cursor: pointer;
     transition: background-color 0.2s ease;
     padding: 0.25rem 0.5rem;
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 .profile-action-item:hover {
-    background-color: #e9ecef;
+    background-color: #fac003;
 }
 
+#profile-page .order-container {
+    flex: 1;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid #fac003;
+    height: auto;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+#profile-page .order-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+#profile-page .order-actions .btn-pending,
+.btn-prepared, .btn-served, .btn-update, .btn-cancel {
+    font-size: smaller;
+    background-color: white;
+    border-radius: 3px;
+    border: 3px solid #fac003;
+    width: 15%;
+    height: 2rem;
+    color: #fac003;
+    font-weight: 600;
+}
+
+.btn-cancel:hover,
+.btn-update:hover {
+    background-color: #fac003;
+    color: white;
+}
+
+.profile-layout {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.common-page .order-items-container {
+    width: 90%;
+    border: 1px solid #fac003;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: 2rem;
+}
 
 
 
