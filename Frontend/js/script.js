@@ -86,6 +86,8 @@ function addToCart() {
 }
 
 
+
+/* SignIn ans SignUp */
 const signinBtn = document.getElementById('signin-btn');
 const dropdown = document.getElementById('form-dropdown');
 
@@ -102,6 +104,28 @@ signinBtn.addEventListener('click', () => {
     signinForm.style.display = "block";
     signupForm.style.display = "none";
 });
+
+
+/* Dashboard */
+function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', function (event) {
+    const isInside = event.target.closest('.dropdown-wrapper');
+    if (!isInside) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+
+
+
+
+
 
 // Switch to Sign Up form
 switchToSignup.addEventListener('click', (e) => {

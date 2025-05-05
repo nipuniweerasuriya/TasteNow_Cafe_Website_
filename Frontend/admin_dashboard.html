@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Load Poppins & Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <!--icons-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
+
+
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <!--css link-->
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+
+<body class="common-page" id="admin-page">
+<!-- navbar -->
+<div class="navbar">
+    <div class="navbar-container">
+
+        <div class="navbar-brand">
+            <a class="navbar-brand logo-wiggle" href="index.html">TASTENOW</a>
+        </div>
+
+        <!-- Log Out Icon -->
+        <div class="d-flex align-items-center ms-3">
+            <a href="#" class="text-decoration-none text-dark d-flex align-items-center">
+                <span class="material-symbols-outlined icon-logout me-2">logout</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- Dashboard content -->
+<div class="container">
+    <div class="dashboard-layout">
+
+        <!-- Dashboard Sidebar -->
+        <div class="dashboard-sidebar">
+            <!-- Profile Info -->
+            <div class="d-flex align-items-center mb-4">
+                <div class="text-white d-flex justify-content-center align-items-center dashboard-avatar me-3">
+                    NW
+                </div>
+                <div>
+                    <h6 class="mb-0">Nipuni Weerasuriya</h6>
+                    <small class="text-muted">nipuni@example.com</small>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="dashboard-actions">
+                <div class="dashboard-sidebar">
+                    <div class="dashboard-action-item">
+                        <small>Home</small>
+                    </div>
+                    <div class="dashboard-action-item">
+                        <small>Kitchen</small>
+                    </div>
+                    <div class="dashboard-action-item">
+                        <small>Cashier</small>
+                    </div>
+
+                <!-- Orders Dropdown -->
+                <div class="dropdown-wrapper">
+                    <div class="dashboard-action-item" onclick="toggleDropdown('ordersDropdown')">
+                        <small>Orders</small>
+                    </div>
+                    <div class="dropdown-menu" id="ordersDropdown">
+                        <div class="dropdown-item">All Orders</div>
+                        <div class="dropdown-item">Pending Orders</div>
+                        <div class="dropdown-item">Completed Orders</div>
+                        <div class="dropdown-item">Canceled Orders</div>
+
+                    </div>
+                </div>
+
+                <!-- Paid Dropdown -->
+                <div class="dropdown-wrapper">
+                    <div class="dashboard-action-item" onclick="toggleDropdown('paidDropdown')">
+                        <small>Manage</small>
+                    </div>
+                    <div class="dropdown-menu" id="paidDropdown">
+                        <div class="dropdown-item">Menu</div>
+                        <div class="dropdown-item">Gallery</div>
+                        <div class="dropdown-item">Footer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Present Order Section -->
+        <div class="order-container">
+            <div class="order-actions">
+                <button type="button" class="btn-pending">PENDING</button>
+                <button type="button" class="btn-prepared">PREPARED</button>
+                <button type="button" class="btn-served">SERVED</button>
+                <button type="button" class="btn-update">UPDATE</button>
+                <button type="button" class="btn-cancel">CANCEL</button>
+            </div>
+
+            <!-- Orders -->
+            <div class="order-items-container bg-white p-3 mb-3">
+                <div class="d-flex align-items-start gap-3 cart-item">
+                    <input type="checkbox" class="mt-2">
+                    <img src="./assets/images/Menu/banana-smoothie.jpg" alt="Product">
+                    <div class="flex-grow-1">
+                        <p class="item-title">Banana Smoothie</p>
+                        <p class="custom-text-danger">Only 7 item(s) we have now</p>
+                        <div class="customizations">
+                            <p><span>Variant:</span> Spicy (+Rs.20)</p>
+                            <p><span>Add-ons:</span> Extra Cheese (+Rs.50)</p>
+                            <p><span>Special Request:</span> No onions</p>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="item-price mb-2">
+                            <span class="price">Rs. 680</span>
+                        </div>
+                        <!-- Payment Status -->
+                        <div class="payment-status">
+                            <span>Paid</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+<!--js link-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
