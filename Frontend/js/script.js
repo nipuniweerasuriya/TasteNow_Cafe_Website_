@@ -86,15 +86,36 @@ function addToCart() {
 }
 
 
-const signupButton = document.getElementById('signup-btn');
+const signinBtn = document.getElementById('signin-btn');
+const dropdown = document.getElementById('form-dropdown');
+
+const signinForm = document.getElementById('signin-form');
 const signupForm = document.getElementById('signup-form');
 
-// Toggle visibility of the sign-up form when the button is clicked
-signupButton.addEventListener('click', () => {
-    if (signupForm.style.display === "none" || signupForm.style.display === "") {
-        signupForm.style.display = "block";
-    } else {
-        signupForm.style.display = "none";
-    }
+const switchToSignup = document.getElementById('switch-to-signup');
+const switchToSignin = document.getElementById('switch-to-signin');
+
+// Toggle dropdown visibility
+signinBtn.addEventListener('click', () => {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    // Always show sign-in form initially
+    signinForm.style.display = "block";
+    signupForm.style.display = "none";
 });
+
+// Switch to Sign Up form
+switchToSignup.addEventListener('click', (e) => {
+    e.preventDefault();
+    signinForm.style.display = "none";
+    signupForm.style.display = "block";
+});
+
+// Switch back to Sign In form
+switchToSignin.addEventListener('click', (e) => {
+    e.preventDefault();
+    signupForm.style.display = "none";
+    signinForm.style.display = "block";
+});
+
+
 

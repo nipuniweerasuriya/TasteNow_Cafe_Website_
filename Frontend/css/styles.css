@@ -188,44 +188,107 @@ body, html {
 
 
 /* SignIn,SignUp */
+#signin-form {
+    display: none;
+    position: absolute;
+    top: 75px;
+    right: 25px;
+    background-color: white;
+    border-radius: 3px;
+    padding: 20px;
+    width: 300px;
+    height: auto;
+    color: black;
+    z-index: 1000;
+}
+
 #signup-form {
     display: none;
     position: absolute;
     top: 75px;
     right: 25px;
-    background-color: #fff;
+    background-color: white;
+    border-radius: 3px;
     padding: 20px;
     width: 300px;
     color: black;
+    height: 29.5rem;
+    z-index: 1000;
 }
 
-#signup-form form {
+#signin-form h2,
+#signup-form h2{
+    font-size: 24px;
+    color: #fac003;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+#signup-form label,
+#signin-form label {
+    display: block;
+    color: black;
+}
+
+#signin-form form,
+#signup-form form{
     display: flex;
     flex-direction: column;
+    height: auto;
 }
 
-#signup-form input {
-    margin-bottom: 10px;
+#signin-form input,
+#signup-form input{
+    margin-bottom: 7px;
     padding: 10px;
     border: 1px solid #fac003;
-}
-
-#signup-form button {
     border-radius: 3px;
-    border: 3px solid white;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    color: white;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    transition: background-color 0.3s ease;
-    background-color: #f1cc52;
-    cursor: pointer;
     width: 100%;
 }
 
-#signup-form button:hover {
-    background-color: #45a049;
+#signin-form input::placeholder,
+#signup-form input::placeholder{
+    color: #f1d476;
+    font-size: 0.9rem;
+}
+
+#signin-form button[type="submit"],
+#signup-form button[type="submit"]{
+    padding: 10px;
+    background-color: #fac003;
+    color: white;
+    border: 1px solid #fac003;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+#signin-form button[type="submit"]:hover,
+#signup-form button[type="submit"]:hover{
+    background-color: white;
+    color: #fac003;
+    border: 3px solid #fac003;
+}
+
+#signin-form p,
+#signup-form p{
+    text-align: center;
+    font-size: 14px;
+}
+
+#signin-form a,
+#signup-form a{
+    color: #fac003;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#signin-form a:hover,
+#signup-form a:hover {
+    text-decoration: underline;
 }
 
 
@@ -728,7 +791,7 @@ input[type="time"] {
     opacity: 0.8;
 }
 
-.booking-form button {
+.booking-form, #signup-form button {
     border-radius: 3px;
     border: 3px solid white;
     padding: 0.75rem 1.5rem;
