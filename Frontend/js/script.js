@@ -1,16 +1,16 @@
 /* Navbar Fixed Top */
-    window.addEventListener('scroll', function () {
-        const navbar = document.getElementById('navbar');
-        const topBarHeight = document.querySelector('.top-bar').offsetHeight;
+window.addEventListener('scroll', function () {
+    const navbar = document.getElementById('navbar');
+    const topBarHeight = document.querySelector('.top-bar').offsetHeight;
 
-        if (window.scrollY > topBarHeight) {
-            navbar.classList.add('fixed-top', 'navbar-scrolled');
-            document.body.classList.add('fixed-nav-padding');
-        } else {
-            navbar.classList.remove('fixed-top', 'navbar-scrolled');
-            document.body.classList.remove('fixed-nav-padding');
-        }
-    });
+    if (window.scrollY > topBarHeight) {
+        navbar.classList.add('fixed-top', 'navbar-scrolled');
+        document.body.classList.add('fixed-nav-padding');
+    } else {
+        navbar.classList.remove('fixed-top', 'navbar-scrolled');
+        document.body.classList.remove('fixed-nav-padding');
+    }
+});
 
 /* Menu See More Btn */
 document.addEventListener("DOMContentLoaded", function () {
@@ -42,7 +42,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach((btn) => {
         const name = itemEl.querySelector('h6').innerText;
         const price = parseFloat(itemEl.querySelector('p').innerText.replace('Rs.', ''));
 
-        currentItem = { name, price };
+        currentItem = {name, price};
         document.getElementById('modal-item-name').innerText = name;
         document.getElementById('modal-item-price').value = price;
         document.getElementById('modal-qty').value = 1;
@@ -63,8 +63,7 @@ function addToCart() {
 
     const checkboxes = document.querySelectorAll('#customization-modal input[type="checkbox"]:checked');
     const addOns = Array.from(checkboxes).map(cb => ({
-        name: cb.value,
-        price: parseFloat(cb.dataset.price)
+        name: cb.value, price: parseFloat(cb.dataset.price)
     }));
 
     const specialRequest = document.getElementById('modal-request').value;
@@ -72,19 +71,12 @@ function addToCart() {
     const basePrice = parseFloat(document.getElementById('modal-item-price').value);
 
     const item = {
-        ...currentItem,
-        variant,
-        variantExtra,
-        addOns,
-        specialRequest,
-        quantity,
-        basePrice
+        ...currentItem, variant, variantExtra, addOns, specialRequest, quantity, basePrice
     };
 
     cart.push(item);
     closeModal();
 }
-
 
 
 /* SignIn ans SignUp */
@@ -123,10 +115,6 @@ document.addEventListener('click', function (event) {
 });
 
 
-
-
-
-
 // Switch to Sign Up form
 switchToSignup.addEventListener('click', (e) => {
     e.preventDefault();
@@ -142,4 +130,73 @@ switchToSignin.addEventListener('click', (e) => {
 });
 
 
+// Line Chart
+let chart;
+
+function loadChartData() {
+    const monthInput = document.getElementById("monthInput").value;
+    if (!monthInput) {
+        alert("Please select a month.");
+        return;
+    }
+
+    const [year, month] = monthInput.split('-');
+
+    // TODO: Replace this simulated data with actual fetch() from your backend
+    // Example API: /api/profit?month=4&year=2025
+    const simulatedResponse = {
+        labels: [`${year}-${month}-01`, `${year}-${month}-02`, `${year}-${month}-03`, `${year}-${month}-04`, `${year}-${month}-05`, `${year}-${month}-06`, `${year}-${month}-07`],
+        data: [3500, 4200, 3000, 5000, 6200, 7100, 6600]
+    };
+
+    updateChart(simulatedResponse.labels, simulatedResponse.data);
+}
+
+function updateChart(labels, data) {
+    const ctx = document.getElementById('profitChart').getContext('2d');
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line', data: {
+            labels: labels, datasets: [{
+                label: 'Profit (LKR)',
+                data: data,
+                fill: true,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                tension: 0.4,
+                pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                pointRadius: 4
+            }]
+        }, options: {
+            responsive: true, plugins: {
+                legend: {
+                    display: true
+                }
+            }, scales: {
+                y: {
+                    beginAtZero: true, title: {
+                        display: true, text: 'Profit (LKR)'
+                    }
+                }, x: {
+                    title: {
+                        display: true, text: 'Date'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Optional: Load current month data by default
+window.onload = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    document.getElementById("monthInput").value = `${year}-${month}`;
+    loadChartData();
+};
 
