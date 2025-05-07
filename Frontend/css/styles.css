@@ -921,6 +921,7 @@ ul.list-payment-icon li {
     background-color: #f8f9fa;
     padding: 1.5rem;
     display: flex;
+    margin-top: 1rem;
     flex-direction: column;
 }
 
@@ -1083,8 +1084,23 @@ ul.list-payment-icon li {
    color: #fac003;
 }
 
+.chart-container {
+    flex: 1;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid #fac003;
+    height: 300px;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
 
-
+/* Responsive styles */
+@media (max-width: 768px) {
+    #totalIncome {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
 
 
 

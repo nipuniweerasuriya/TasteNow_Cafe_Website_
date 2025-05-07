@@ -1,16 +1,16 @@
 /* Navbar Fixed Top */
-    window.addEventListener('scroll', function () {
-        const navbar = document.getElementById('navbar');
-        const topBarHeight = document.querySelector('.top-bar').offsetHeight;
+window.addEventListener('scroll', function () {
+    const navbar = document.getElementById('navbar');
+    const topBarHeight = document.querySelector('.top-bar')?.offsetHeight || 0;
 
-        if (window.scrollY > topBarHeight) {
-            navbar.classList.add('fixed-top', 'navbar-scrolled');
-            document.body.classList.add('fixed-nav-padding');
-        } else {
-            navbar.classList.remove('fixed-top', 'navbar-scrolled');
-            document.body.classList.remove('fixed-nav-padding');
-        }
-    });
+    if (window.scrollY > topBarHeight) {
+        navbar?.classList.add('fixed-top', 'navbar-scrolled');
+        document.body.classList.add('fixed-nav-padding');
+    } else {
+        navbar?.classList.remove('fixed-top', 'navbar-scrolled');
+        document.body.classList.remove('fixed-nav-padding');
+    }
+});
 
 /* Menu See More Btn */
 document.addEventListener("DOMContentLoaded", function () {
@@ -19,16 +19,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const initiallyVisible = 8;
 
-    // Show the first 8 items
     menuItems.forEach((item, index) => {
         if (index < initiallyVisible) {
             item.classList.add("visible");
         }
     });
 
-    seeMoreBtn.addEventListener("click", function () {
+    seeMoreBtn?.addEventListener("click", function () {
         menuItems.forEach(item => item.classList.add("visible"));
-        seeMoreBtn.style.display = "none"; // Hide the button after clicked
+        seeMoreBtn.style.display = "none";
     });
 });
 
@@ -85,34 +84,38 @@ function addToCart() {
     closeModal();
 }
 
-
-
-/* SignIn ans SignUp */
+/* SignIn and SignUp */
 const signinBtn = document.getElementById('signin-btn');
 const dropdown = document.getElementById('form-dropdown');
-
 const signinForm = document.getElementById('signin-form');
 const signupForm = document.getElementById('signup-form');
-
 const switchToSignup = document.getElementById('switch-to-signup');
 const switchToSignin = document.getElementById('switch-to-signin');
 
-// Toggle dropdown visibility
-signinBtn.addEventListener('click', () => {
+signinBtn?.addEventListener('click', () => {
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    // Always show sign-in form initially
     signinForm.style.display = "block";
     signupForm.style.display = "none";
 });
 
+switchToSignup?.addEventListener('click', (e) => {
+    e.preventDefault();
+    signinForm.style.display = "none";
+    signupForm.style.display = "block";
+});
 
-/* Dashboard */
+switchToSignin?.addEventListener('click', (e) => {
+    e.preventDefault();
+    signupForm.style.display = "none";
+    signinForm.style.display = "block";
+});
+
+/* Dashboard Dropdowns */
 function toggleDropdown(id) {
     const dropdown = document.getElementById(id);
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
 
-// Close all dropdowns when clicking outside
 document.addEventListener('click', function (event) {
     const isInside = event.target.closest('.dropdown-wrapper');
     if (!isInside) {
@@ -121,54 +124,3 @@ document.addEventListener('click', function (event) {
         });
     }
 });
-
-
-// Switch to Sign Up form
-switchToSignup.addEventListener('click', (e) => {
-    e.preventDefault();
-    signinForm.style.display = "none";
-    signupForm.style.display = "block";
-});
-
-// Switch back to Sign In form
-switchToSignin.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupForm.style.display = "none";
-    signinForm.style.display = "block";
-});
-
-
-
-const ctx = document.getElementById('profitChart').getContext('2d');
-
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        datasets: [{
-            label: 'Profit',
-            data: [18000, 22000, 20000, 24000, 21000, 25049],
-            borderColor: '#3b82f6',
-            backgroundColor: 'transparent',
-            tension: 0.4,
-            fill: false,
-            pointRadius: 0,
-            borderWidth: 2
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false }
-        },
-        scales: {
-            x: { display: false },
-            y: { display: false }
-        }
-    }
-});
-
-
-
-
-
