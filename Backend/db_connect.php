@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db   = 'cafe_website';
+$db   = 'cafe_website_db';
 $user = 'root';
 $pass = '1234';
 $charset = 'utf8mb4';
