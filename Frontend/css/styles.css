@@ -188,7 +188,7 @@ body, html {
 
 
 /* SignIn,SignUp */
-#signin-form {
+#signing-form {
     display: none;
     position: absolute;
     top: 75px;
@@ -216,7 +216,7 @@ body, html {
     z-index: 1000;
 }
 
-#signin-form h2,
+#signing-form h2,
 #signup-form h2{
     font-size: 24px;
     color: #fac003;
@@ -226,19 +226,19 @@ body, html {
 }
 
 #signup-form label,
-#signin-form label {
+#signing-form label {
     display: block;
     color: black;
 }
 
-#signin-form form,
+#signing-form form,
 #signup-form form{
     display: flex;
     flex-direction: column;
     height: auto;
 }
 
-#signin-form input,
+#signing-form input,
 #signup-form input{
     margin-bottom: 7px;
     padding: 10px;
@@ -247,13 +247,13 @@ body, html {
     width: 100%;
 }
 
-#signin-form input::placeholder,
+#signing-form input::placeholder,
 #signup-form input::placeholder{
     color: #f1d476;
     font-size: 0.9rem;
 }
 
-#signin-form button[type="submit"],
+#signing-form button[type="submit"],
 #signup-form button[type="submit"]{
     padding: 10px;
     background-color: #fac003;
@@ -266,27 +266,27 @@ body, html {
     width: 100%;
 }
 
-#signin-form button[type="submit"]:hover,
+#signing-form button[type="submit"]:hover,
 #signup-form button[type="submit"]:hover{
     background-color: white;
     color: #fac003;
     border: 3px solid #fac003;
 }
 
-#signin-form p,
+#signing-form p,
 #signup-form p{
     text-align: center;
     font-size: 14px;
 }
 
-#signin-form a,
+#signing-form a,
 #signup-form a{
     color: #fac003;
     text-decoration: none;
     font-weight: bold;
 }
 
-#signin-form a:hover,
+#signing-form a:hover,
 #signup-form a:hover {
     text-decoration: underline;
 }

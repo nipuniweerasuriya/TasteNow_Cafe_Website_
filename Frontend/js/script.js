@@ -85,9 +85,9 @@ function addToCart() {
 }
 
 /* SignIn and SignUp */
-const signinBtn = document.getElementById('signin-btn');
+const signinBtn = document.getElementById('signing-btn');
 const dropdown = document.getElementById('form-dropdown');
-const signinForm = document.getElementById('signin-form');
+const signinForm = document.getElementById('signing-form');
 const signupForm = document.getElementById('signup-form');
 const switchToSignup = document.getElementById('switch-to-signup');
 const switchToSignin = document.getElementById('switch-to-signin');
@@ -117,10 +117,11 @@ function toggleDropdown(id) {
 }
 
 document.addEventListener('click', function (event) {
-    const isInside = event.target.closest('.dropdown-wrapper');
+    const isInside = event.target.closest('.dropdown-wrapper') || event.target.closest('#form-dropdown') || event.target.closest('#signing-btn');
     if (!isInside) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.style.display = 'none';
         });
+        dropdown.style.display = 'none';
     }
 });
