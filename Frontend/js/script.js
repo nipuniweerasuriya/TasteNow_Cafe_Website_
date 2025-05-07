@@ -41,7 +41,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach((btn) => {
         const name = itemEl.querySelector('h6').innerText;
         const price = parseFloat(itemEl.querySelector('p').innerText.replace('Rs.', ''));
 
-        currentItem = { name, price };
+        currentItem = {name, price};
         document.getElementById('modal-item-name').innerText = name;
         document.getElementById('modal-item-price').value = price;
         document.getElementById('modal-qty').value = 1;
@@ -84,7 +84,8 @@ function addToCart() {
     closeModal();
 }
 
-/* SignIn and SignUp */
+
+// Sign In and Sign Up Toggle Logic
 const signinBtn = document.getElementById('signing-btn');
 const dropdown = document.getElementById('form-dropdown');
 const signinForm = document.getElementById('signing-form');
@@ -92,36 +93,142 @@ const signupForm = document.getElementById('signup-form');
 const switchToSignup = document.getElementById('switch-to-signup');
 const switchToSignin = document.getElementById('switch-to-signin');
 
-signinBtn?.addEventListener('click', () => {
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+// Toggle dropdown visibility
+signinBtn?.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    const isVisible = dropdown.style.display === "block";
+    dropdown.style.display = isVisible ? "none" : "block";
     signinForm.style.display = "block";
     signupForm.style.display = "none";
 });
 
+// Switch to the SignUp form
 switchToSignup?.addEventListener('click', (e) => {
     e.preventDefault();
     signinForm.style.display = "none";
     signupForm.style.display = "block";
 });
 
+// Switch to Sign In form
 switchToSignin?.addEventListener('click', (e) => {
     e.preventDefault();
     signupForm.style.display = "none";
     signinForm.style.display = "block";
 });
 
-/* Dashboard Dropdowns */
-function toggleDropdown(id) {
-    const dropdown = document.getElementById(id);
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-}
-
-document.addEventListener('click', function (event) {
-    const isInside = event.target.closest('.dropdown-wrapper') || event.target.closest('#form-dropdown') || event.target.closest('#signing-btn');
-    if (!isInside) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            menu.style.display = 'none';
-        });
-        dropdown.style.display = 'none';
+// Optional: Close dropdown if clicked outside
+window.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target) && e.target !== signinBtn) {
+        dropdown.style.display = "none";
     }
 });
+
+
+
+function toggleDropdown(dropdownId) {
+    // Close all dropdowns first
+    const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
+    allDropdowns.forEach(dropdown => {
+    if (dropdown.id !== dropdownId) {
+    dropdown.style.display = 'none';
+}
+});
+
+    // Toggle the clicked dropdown
+    const dropdown = document.getElementById(dropdownId);
+    if (dropdown) {
+    const isVisible = dropdown.style.display === 'block';
+    dropdown.style.display = isVisible ? 'none' : 'block';
+}
+}
+
+    // Optional: Close dropdowns if clicking outside
+    document.addEventListener('click', function(event) {
+    const isClickInside = event.target.closest('.dropdown-wrapper');
+    if (!isClickInside) {
+    const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
+    allDropdowns.forEach(dropdown => {
+    dropdown.style.display = 'none';
+});
+}
+});
+
+
+
+
+
+function showAddMenuForm() {
+    const formContainer = document.getElementById('form-container');
+
+    // Prevent re-rendering if form is already visible
+    if (formContainer.innerHTML.trim() !== '') return;
+
+    formContainer.innerHTML = `
+        <div id="menu-form-box" style="background:#fff; border:1px solid #ccc; padding:20px; max-width:500px; margin-top:10px;">
+            <h3>Add New Menu Item</h3>
+            <form action="" method="POST">
+                <label>Name:</label>
+                <input type="text" name="name" required><br/><br/>
+
+                <label>Price (Rs.):</label>
+                <input type="number" name="price" required><br/><br/>
+
+                <label>Image URL:</label>
+                <input type="text" name="image_url" required><br/><br/>
+
+                <label>Category:</label>
+                <select name="category_id" required>
+                    <option value="1">Coffee</option>
+                    <option value="2">Tea</option>
+                    <option value="3">Smoothies</option>
+                    <option value="4">Snacks & Pastries</option>
+                    <option value="5">Desserts</option>
+                    <option value="6">Drinks</option>
+                </select><br/><br/>
+
+                <label>Variants:</label>
+                <div id="variants-container">
+                    <div>
+                        <input type="text" name="variants[]" placeholder="Variant Name">
+                        <input type="number" name="variant_prices[]" placeholder="Extra Price">
+                    </div>
+                </div>
+                <button type="button" onclick="addVariant()">+ Add Variant</button><br/><br/>
+
+                <label>Add-ons:</label>
+                <div id="addons-container">
+                    <div>
+                        <input type="text" name="addons[]" placeholder="Add-on Name">
+                        <input type="number" name="addon_prices[]" placeholder="Add-on Price">
+                    </div>
+                </div>
+                <button type="button" onclick="addAddon()">+ Add Add-on</button><br/><br/>
+
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+    `;
+
+
+}
+
+function addVariant() {
+    const container = document.getElementById('variants-container');
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <input type="text" name="variants[]" placeholder="Variant Name">
+        <input type="number" name="variant_prices[]" placeholder="Extra Price">
+    `;
+    container.appendChild(div);
+}
+
+function addAddon() {
+    const container = document.getElementById('addons-container');
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <input type="text" name="addons[]" placeholder="Add-on Name">
+        <input type="number" name="addon_prices[]" placeholder="Add-on Price">
+    `;
+    container.appendChild(div);
+}
+

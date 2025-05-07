@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute and check for errors
     if ($stmt->execute()) {
-        header("Location: ../Backend/signin.php");
+        header("Location: ../Frontend/index.html");
         exit();
     } else {
         // Handle duplicate email error
