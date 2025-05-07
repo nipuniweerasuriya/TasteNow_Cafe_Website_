@@ -123,10 +123,6 @@ document.addEventListener('click', function (event) {
 });
 
 
-
-
-
-
 // Switch to Sign Up form
 switchToSignup.addEventListener('click', (e) => {
     e.preventDefault();
@@ -140,6 +136,39 @@ switchToSignin.addEventListener('click', (e) => {
     signupForm.style.display = "none";
     signinForm.style.display = "block";
 });
+
+
+
+const ctx = document.getElementById('profitChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [{
+            label: 'Profit',
+            data: [18000, 22000, 20000, 24000, 21000, 25049],
+            borderColor: '#3b82f6',
+            backgroundColor: 'transparent',
+            tension: 0.4,
+            fill: false,
+            pointRadius: 0,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { display: false },
+            y: { display: false }
+        }
+    }
+});
+
+
 
 
 
