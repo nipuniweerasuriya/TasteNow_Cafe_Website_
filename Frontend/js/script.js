@@ -155,69 +155,72 @@ function toggleDropdown(dropdownId) {
 
 
 
-
-
 function showAddMenuForm() {
     const formContainer = document.getElementById('form-container');
 
-    // Prevent re-rendering if form is already visible
+    // Show the container
+    formContainer.style.display = 'block';
+
+    // Prevent re-rendering if the form already exists
     if (formContainer.innerHTML.trim() !== '') return;
 
     formContainer.innerHTML = `
-        <div id="menu-form-box" style="background:#fff; border:1px solid #ccc; padding:20px; max-width:500px; margin-top:10px;">
-            <h3>Add New Menu Item</h3>
-            <form action="" method="POST">
-                <label>Name:</label>
-                <input type="text" name="name" required><br/><br/>
-
-                <label>Price (Rs.):</label>
-                <input type="number" name="price" required><br/><br/>
-
-                <label>Image URL:</label>
-                <input type="text" name="image_url" required><br/><br/>
-
-                <label>Category:</label>
-                <select name="category_id" required>
-                    <option value="1">Coffee</option>
-                    <option value="2">Tea</option>
-                    <option value="3">Smoothies</option>
-                    <option value="4">Snacks & Pastries</option>
-                    <option value="5">Desserts</option>
-                    <option value="6">Drinks</option>
-                </select><br/><br/>
-
-                <label>Variants:</label>
-                <div id="variants-container">
-                    <div>
-                        <input type="text" name="variants[]" placeholder="Variant Name">
-                        <input type="number" name="variant_prices[]" placeholder="Extra Price">
-                    </div>
+        <div class="add-menu-container">
+            <h2 class="form-heading">-----Add New Menu Item-----</h2>
+            <form class="menu-form" action="" method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <label><input type="text" name="name" placeholder="Item Name" required /></label>
+                    <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
+<label>Select Image:</label><input type="file" name="image_file" accept="image/*" required><br/><br/>
                 </div>
-                <button type="button" onclick="addVariant()">+ Add Variant</button><br/><br/>
-
-                <label>Add-ons:</label>
-                <div id="addons-container">
-                    <div>
-                        <input type="text" name="addons[]" placeholder="Add-on Name">
-                        <input type="number" name="addon_prices[]" placeholder="Add-on Price">
-                    </div>
+                <div class="form-row">
+                    <label>
+                        <select name="category_id" required>
+                            <option value="">Select Category</option>
+                            <option value="1">Coffee</option>
+                            <option value="2">Tea</option>
+                            <option value="3">Smoothies</option>
+                            <option value="4">Snacks & Pastries</option>
+                            <option value="5">Desserts</option>
+                            <option value="6">Drinks</option>
+                        </select>
+                    </label>
                 </div>
-                <button type="button" onclick="addAddon()">+ Add Add-on</button><br/><br/>
-
-                <button type="submit">Add Item</button>
+                <div class="form-row">
+                    <label>Variants:</label>
+                    <div id="variants-container">
+                        <div class="form-subrow">
+                            <input type="text" name="variants[]" placeholder="Variant Name" />
+                            <input type="number" name="variant_prices[]" placeholder="Extra Price" />
+                        </div>
+                    </div>
+                    <button type="button" onclick="addVariant()">+ Add Variant</button>
+                </div>
+                <div class="form-row">
+                    <label>Add-ons:</label>
+                    <div id="addons-container">
+                        <div class="form-subrow">
+                            <input type="text" name="addons[]" placeholder="Add-on Name" />
+                            <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
+                        </div>
+                    </div>
+                    <button type="button" onclick="addAddon()">+ Add Add-on</button>
+                </div>
+                <div class="form-row">
+                    <button type="submit">Add Item</button>
+                </div>
             </form>
         </div>
     `;
-
-
 }
 
 function addVariant() {
     const container = document.getElementById('variants-container');
     const div = document.createElement('div');
+    div.className = "form-subrow";
     div.innerHTML = `
-        <input type="text" name="variants[]" placeholder="Variant Name">
-        <input type="number" name="variant_prices[]" placeholder="Extra Price">
+        <input type="text" name="variants[]" placeholder="Variant Name" />
+        <input type="number" name="variant_prices[]" placeholder="Extra Price" />
     `;
     container.appendChild(div);
 }
@@ -225,9 +228,10 @@ function addVariant() {
 function addAddon() {
     const container = document.getElementById('addons-container');
     const div = document.createElement('div');
+    div.className = "form-subrow";
     div.innerHTML = `
-        <input type="text" name="addons[]" placeholder="Add-on Name">
-        <input type="number" name="addon_prices[]" placeholder="Add-on Price">
+        <input type="text" name="addons[]" placeholder="Add-on Name" />
+        <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
     `;
     container.appendChild(div);
 }
