@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-/* Menu Adds To Cart And Cart */
+
+
+/* Menu Display Logic */
 document.addEventListener('DOMContentLoaded', function () {
     const menuItems = document.querySelectorAll('.menu-item');
     const seeMoreBtn = document.getElementById('see-more-btn');
@@ -53,9 +55,133 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    // CATEGORY FILTERING
+    const buttons = document.querySelectorAll('.category-button');
 
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const category = button.getAttribute('data-category').toLowerCase();
+            const items = document.querySelectorAll('.menu-item');
 
+            items.forEach(item => {
+                const itemCategory = item.getAttribute('data-category').toLowerCase();
+                item.style.display = (category === 'all' || itemCategory === category) ? 'block' : 'none';
+            });
 
+            // Highlight active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        });
+    });
+
+    // ADD TO CART BUTTONS
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = this.getAttribute('data-id');
+            const itemDiv = this.closest('.menu-item');
+            const variants = JSON.parse(itemDiv.getAttribute('data-variants'));
+            const addOns = JSON.parse(itemDiv.getAttribute('data-addons'));
+
+            openModal(itemId, variants, addOns);
+        });
+    });
+
+    // ADD ITEM TO CART WITH OPTIONS
+    document.getElementById('addToCartWithOptions').addEventListener('click', () => {
+        const modal = document.getElementById("menu-options-modal");
+
+        // Get all selected variants
+        const variantOptions = document.querySelectorAll('#variantsDropdown option:checked');
+        const variantIds = Array.from(variantOptions).map(opt => parseInt(opt.value));
+
+        if (variantIds.length === 0) {
+            alert("Please select at least one variant.");
+            return;
+        }
+
+        const addOnCheckboxes = document.querySelectorAll('#addOnsContainer input[type="checkbox"]:checked');
+        const addOnIds = Array.from(addOnCheckboxes).map(cb => parseInt(cb.value));
+
+        const itemId = parseInt(modal.getAttribute('data-item-id'));
+
+        const cartData = {
+            itemId: itemId,
+            variantIds: variantIds,
+            addOnIds: addOnIds
+        };
+
+        // Send to server
+        fetch('../Backend/add_to_cart.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cartData)
+        })
+            .then(async response => {
+                const text = await response.text();
+                try {
+                    const data = JSON.parse(text);
+                    if (data.status === 'success') {
+                        alert('Item added to cart!');
+                        modal.style.display = "none";
+                    } else {
+                        alert(data.message || 'Failed to add to cart.');
+                    }
+                } catch (e) {
+                    console.error('Non-JSON response from server:', text);
+                    alert('Unexpected server response. Check console.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Server error. Check console for details.');
+            });
+    });
+});
+
+// MODAL HANDLING
+function openModal(itemId, variants, addOns) {
+    const modal = document.getElementById("menu-options-modal");
+    modal.style.display = "block";
+    modal.setAttribute('data-item-id', itemId);
+
+    // Populate variant dropdown (multi-select)
+    const variantsDropdown = document.getElementById('variantsDropdown');
+    variantsDropdown.innerHTML = '';
+    variantsDropdown.multiple = true; // ensure it's multiple
+
+    variants.forEach(variant => {
+        let option = document.createElement('option');
+        option.value = variant.id;
+        option.textContent = `${variant.variant_name} - Rs. ${variant.price}`;
+        variantsDropdown.appendChild(option);
+    });
+
+    // Populate add-ons
+    const addOnsContainer = document.getElementById('addOnsContainer');
+    addOnsContainer.innerHTML = '';
+    addOns.forEach(addOn => {
+        let checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `addon-${addOn.id}`;
+        checkbox.value = addOn.id;
+
+        let label = document.createElement('label');
+        label.setAttribute('for', `addon-${addOn.id}`);
+        label.textContent = `${addOn.addon_name} - Rs. ${addOn.addon_price}`;
+
+        addOnsContainer.appendChild(checkbox);
+        addOnsContainer.appendChild(label);
+        addOnsContainer.appendChild(document.createElement('br'));
+    });
+
+    // Close modal
+    document.getElementById('close-modal').onclick = () => {
+        modal.style.display = "none";
+    };
+}
 
 
 

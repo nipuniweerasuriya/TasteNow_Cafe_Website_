@@ -188,22 +188,49 @@
 
     <!-- Category Buttons -->
     <div id="category-container">
-        <button class="category-button">All</button>
-        <button class="category-button">Coffee</button>
-        <button class="category-button">Tea</button>
-        <button class="category-button">Smoothies</button>
-        <button class="category-button">Snacks & Pastries</button>
-        <button class="category-button">Desserts</button>
-        <button class="category-button">Drinks</button>
+        <button class="category-button" data-category="all">All</button>
+        <button class="category-button" data-category="coffee">Coffee</button>
+        <button class="category-button" data-category="tea">Tea</button>
+        <button class="category-button" data-category="smoothies">Smoothies</button>
+        <button class="category-button" data-category="snacks-&-pastries">Snacks & Pastries</button>
+        <button class="category-button" data-category="desserts">Desserts</button>
+        <button class="category-button" data-category="drinks">Drinks</button>
     </div>
 
     <!-- Menu Items (loaded from DB) -->
     <div id="menu-container">
         <?php include '../Backend/get_menu_items.php'; ?>
     </div>
+
+    <button class="see-more-btn" id="see-more-btn">See More</button>
 </section>
 
 
+
+<!-- Modal for Variants and Add-ons -->
+<div id="menu-options-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h3>Select Variants and Add-ons</h3>
+
+        <!-- Variant selection -->
+
+        <label for="variantsDropdown">Select Variant:</label>
+        <select id="variantsDropdown">
+            <option value="">Select Variant</option>
+            <!-- Options will be dynamically added -->
+        </select>
+
+        <!-- Add-ons selection -->
+        <h4>Add-ons:</h4>
+        <div id="addOnsContainer">
+            <!-- Add-on checkboxes will be dynamically added -->
+        </div>
+
+        <!-- Submit Button -->
+        <button id="addToCartWithOptions">Add</button>
+    </div>
+</div>
 
 
 

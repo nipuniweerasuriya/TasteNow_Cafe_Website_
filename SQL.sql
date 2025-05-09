@@ -59,6 +59,18 @@ CREATE TABLE orders (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE cart_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT,
+    name VARCHAR(255),
+    price DECIMAL(10, 2),
+    quantity INT,
+    variant VARCHAR(100),
+    addons TEXT,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 --  Cart Item Table
 CREATE TABLE cart_item (
     cart_item_id INT PRIMARY KEY AUTO_INCREMENT,
