@@ -32,57 +32,28 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* Menu Adds To Cart And Cart */
-let cart = [];
-let currentItem = null;
+document.addEventListener('DOMContentLoaded', function () {
+    const menuItems = document.querySelectorAll('.menu-item');
+    const seeMoreBtn = document.getElementById('see-more-btn');
 
-document.querySelectorAll('.add-to-cart-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-        const itemEl = btn.parentElement;
-        const name = itemEl.querySelector('h6').innerText;
-        const price = parseFloat(itemEl.querySelector('p').innerText.replace('Rs.', ''));
+    // Hide all items after the first 4
+    menuItems.forEach((item, index) => {
+        if (index >= 4) {
+            item.style.display = 'none';
+        }
+    });
 
-        currentItem = {name, price};
-        document.getElementById('modal-item-name').innerText = name;
-        document.getElementById('modal-item-price').value = price;
-        document.getElementById('modal-qty').value = 1;
-        document.getElementById('modal-request').value = '';
-        document.querySelectorAll('#customization-modal input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.getElementById('customization-modal').style.display = 'flex';
+    // Show all when See More is clicked
+    seeMoreBtn.addEventListener('click', () => {
+        menuItems.forEach(item => {
+            item.style.display = 'block';
+        });
+        seeMoreBtn.style.display = 'none'; // Hide button after clicked
     });
 });
 
-function closeModal() {
-    document.getElementById('customization-modal').style.display = 'none';
-}
 
-function addToCart() {
-    const variantSelect = document.getElementById('modal-variant');
-    const variant = variantSelect.value;
-    const variantExtra = parseFloat(variantSelect.selectedOptions[0].dataset.extra);
 
-    const checkboxes = document.querySelectorAll('#customization-modal input[type="checkbox"]:checked');
-    const addOns = Array.from(checkboxes).map(cb => ({
-        name: cb.value,
-        price: parseFloat(cb.dataset.price)
-    }));
-
-    const specialRequest = document.getElementById('modal-request').value;
-    const quantity = parseInt(document.getElementById('modal-qty').value);
-    const basePrice = parseFloat(document.getElementById('modal-item-price').value);
-
-    const item = {
-        ...currentItem,
-        variant,
-        variantExtra,
-        addOns,
-        specialRequest,
-        quantity,
-        basePrice
-    };
-
-    cart.push(item);
-    closeModal();
-}
 
 
 

@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($stmt->execute()) {
-            // Redirect to index.html after successful registration
-            header("Location: ../Frontend/index.html");
+            // Redirect to index.php after successful registration
+            header("Location: ../Frontend/index.php");
             exit;
         } else {
             echo "Error: Could not register user.";

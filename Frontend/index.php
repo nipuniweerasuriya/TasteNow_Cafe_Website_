@@ -79,18 +79,26 @@
                             <input type="email" id="signin-email" name="email" required placeholder="Enter Your Email">
 
                             <label for="signin-password">Password</label>
-                            <input type="password" id="signin-password" name="password" required
-                                   placeholder="Enter Your Password">
+                            <input type="password" id="signin-password" name="password" required placeholder="Enter Your Password">
+
+                            <label for="signin-role">Role</label>
+                            <select id="signin-role" name="role" required>
+                                <option value="admin">Admin</option>
+                                <option value="kitchen">Kitchen</option>
+                                <option value="cashier">Cashier</option>
+                                <option value="user">User</option>
+                            </select>
 
                             <button type="submit">SIGN IN</button>
                             <p>Don't have an account? <a href="#" id="switch-to-signup">Register</a></p>
-
                         </div>
                     </form>
+
                     <!-- Signup Form -->
                     <form action="../Backend/signup.php" method="post">
                         <div id="signup-form">
                             <h2>Sign Up</h2>
+
                             <label for="name">Username</label>
                             <input type="text" id="name" name="name" required placeholder="Enter Your Name">
 
@@ -101,13 +109,21 @@
                             <input type="password" id="password" name="password" required placeholder="Enter Your Password">
 
                             <label for="confirm-password">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" required
-                                   placeholder="Confirm Your Password">
+                            <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirm Your Password">
+
+                            <label for="role">Role</label>
+                            <select id="role" name="role" required>
+                                <option value="admin">Admin</option>
+                                <option value="kitchen">Kitchen</option>
+                                <option value="cashier">Cashier</option>
+                                <option value="user">User</option>
+                            </select>
 
                             <button type="submit">SIGN UP</button>
                             <p>Already have an account? <a href="#" id="switch-to-signin">Sign In</a></p>
                         </div>
                     </form>
+
                 </div>
 
 
@@ -164,127 +180,35 @@
     </div>
 </div>
 
-<!-- Menu -->
-<div class="menu-heading-container">
-    <h2>-----Our Menu-----</h2>
-</div>
+<!-- Menu Section -->
+<section id="menu">
+    <div class="menu-heading-container">
+        <h2>-----Our Menu-----</h2>
+    </div>
 
-<!-- Category Buttons -->
-<div id="category-container">
-    <button class="category-button">All</button>
-    <button class="category-button">Coffee</button>
-    <button class="category-button">Tea</button>
-    <button class="category-button">Smoothies</button>
-    <button class="category-button">Snacks & Pastries</button>
-    <button class="category-button">Desserts</button>
-    <button class="category-button">Drinks</button>
-</div>
+    <!-- Category Buttons -->
+    <div id="category-container">
+        <button class="category-button">All</button>
+        <button class="category-button">Coffee</button>
+        <button class="category-button">Tea</button>
+        <button class="category-button">Smoothies</button>
+        <button class="category-button">Snacks & Pastries</button>
+        <button class="category-button">Desserts</button>
+        <button class="category-button">Drinks</button>
+    </div>
 
-<!-- Menu Items -->
-<div id="menu-container">
-    <!-- Example Menu Item -->
-    <div class="menu-item">
-        <img src="assets/images/Menu/black-coffee.webp" alt="Food Item" class="menu-image"/>
-        <h6>Grilled Chicken</h6>
-        <p>Rs.480.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
+    <!-- Menu Items (loaded from DB) -->
+    <div id="menu-container">
+        <?php include '../Backend/get_menu_items.php'; ?>
     </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/black-coffee.webp" alt="Food Item" class="menu-image"/>
-        <h6>Veggie Pizza</h6>
-        <p>Rs.300.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/Burger.webp" alt="Food Item" class="menu-image"/>
-        <h6>Bugger</h6>
-        <p>Rs.480.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/ice-cream.webp" alt="Food Item" class="menu-image"/>
-        <h6>Ice Cream</h6>
-        <p>Rs.250.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/latte.webp" alt="Food Item" class="menu-image"/>
-        <h6>Latte</h6>
-        <p>Rs.250.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/milk-tea.webp" alt="Food Item" class="menu-image"/>
-        <h6>Milk Tea</h6>
-        <p>Rs.200.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/mix-berry-smoothie.webp" alt="Food Item" class="menu-image"/>
-        <h6>Mix Berry Smoothie</h6>
-        <p>Rs.350.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/Chicken-wrap.webp" alt="Food Item" class="menu-image"/>
-        <h6>Chicken Wrap</h6>
-        <p>Rs.350.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/masala-chai.webp" alt="Food Item" class="menu-image"/>
-        <h6>Masala Chai</h6>
-        <p>Rs.350.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/iced-coffee.webp" alt="Food Item" class="menu-image"/>
-        <h6>Iced Coffee</h6>
-        <p>Rs.350.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-    <div class="menu-item">
-        <img src="assets/images/Menu/chocolate-muffin.webp" alt="Food Item" class="menu-image"/>
-        <h6>Chocolate Muffin</h6>
-        <p>Rs.350.00</p>
-        <button class="add-to-cart-btn">Add to Cart</button>
-    </div>
-</div>
-<!-- See More Button -->
-<button class="see-more-btn" id="see-more-btn">See More</button>
+</section>
 
 
-<!--  customize model -->
-<div id="customization-modal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h3 id="modal-item-name">Customize Item</h3>
-        <input type="hidden" id="modal-item-price"/>
 
-        <label>Variant:</label>
-        <label for="modal-variant"></label><select id="modal-variant">
-        <option value="Regular" data-extra="0">Regular</option>
-        <option value="Spicy" data-extra="20">Spicy (+Rs.20)</option>
-        <option value="Cheese" data-extra="30">Cheese (+Rs.30)</option>
-    </select>
 
-        <label>Add-ons:</label><br/>
-        <label>
-            <input type="checkbox" value="Extra Cheese" data-price="50">Extra Cheese (+Rs.50)
-        </label><br/>
-        <label>
-            <input type="checkbox" value="Bacon" data-price="70"> Bacon (+Rs.70)
-        </label><br/>
 
-        <label>Special Request:</label><br/>
-        <label for="modal-request"></label><textarea id="modal-request" placeholder="e.g., No onions"></textarea><br/>
 
-        <label>Quantity:</label>
-        <label for="modal-qty"></label><input type="number" id="modal-qty" min="1" value="1"><br/><br/>
 
-        <button onclick="addToCart()">Add to Cart</button>
-        <button onclick="closeModal()">Cancel</button>
-    </div>
-</div>
 
 
 <!-- Table Booking Section -->
