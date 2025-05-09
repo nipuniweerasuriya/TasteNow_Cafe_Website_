@@ -3,45 +3,52 @@ global $conn;
 session_start();
 include 'db_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
-
-    if (empty($email) || empty($password)) {
-        die("Please fill in both fields.");
+function redirectByRole($role) {
+    switch ($role) {
+        case 'admin':
+            header("Location: ../Frontend/admin_dashboard.html");
+            break;
+        case 'kitchen':
+            header("Location: ../Frontend/kitchen/kitchen.html");
+            break;
+        case 'cashier':
+            header("Location: ../Frontend/cashier/cashier.html");
+            break;
+        case 'user':
+            header("Location: ../Frontend/user/profile.html");
+            break;
+        default:
+            echo "Unknown role.";
     }
+    exit;
+}
 
-    $sql = "SELECT id, name, email, password_hash FROM users WHERE email = ?";
-    $stmt = $conn->prepare($sql);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $role = $_POST['role'];
 
-    if (!$stmt) {
-        die("Database error: " . $conn->error);
-    }
-
-    $stmt->bind_param("s", $email);
+    // Fetch user by email + role
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND role = ? AND status = 1 LIMIT 1");
+    $stmt->bind_param("ss", $email, $role);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-
+    if ($user = $result->fetch_assoc()) {
         if (password_verify($password, $user['password_hash'])) {
-            // Valid login
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
-
-            header("Location: ../Frontend/index.html");
-            exit();
+            $_SESSION['role'] = $user['role'];
+            redirectByRole($user['role']);
         } else {
-            echo "Invalid credentials.";
+            echo "Incorrect password.";
         }
     } else {
-        echo "Invalid credentials.";
+        echo "Invalid email or role.";
     }
 
     $stmt->close();
     $conn->close();
+} else {
+    echo "Invalid request.";
 }
-?>
-
-

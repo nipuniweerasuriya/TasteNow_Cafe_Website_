@@ -1,57 +1,63 @@
 <?php
-// Include your database connection file
 global $conn;
-include 'db_connect.php'; // Make sure this connects to your MySQL
+session_start();
+include 'db_connect.php'; // your DB connection file
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize and get user inputs
-    $name = trim($_POST["name"]);
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
-    $confirm_password = $_POST["confirm-password"];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name     = trim($_POST['name']);
+    $email    = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm  = $_POST['confirm-password'];
+    $role     = $_POST['role'];
 
     // Basic validation
-    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
-        die("Please fill in all fields.");
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        die("Invalid email format.");
-    }
-
-    if ($password !== $confirm_password) {
+    if ($password !== $confirm) {
         die("Passwords do not match.");
     }
 
-    // Hash the password
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+    // Enforce role uniqueness for admin, kitchen, cashier
+    if (in_array($role, ['admin', 'kitchen', 'cashier'])) {
+        $checkSql = "SELECT id FROM users WHERE role = ? LIMIT 1";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("s", $role);
+        $checkStmt->execute();
+        $checkStmt->store_result();
 
-    // Prepare SQL and bind parameters
-    $sql = "INSERT INTO users (name, email, password, password_hash) VALUES (?, ?, ?, ?)";
+        if ($checkStmt->num_rows > 0) {
+            die("A user with the '$role' role already exists. Please choose a different role.");
+        }
 
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt === false) {
-        die("Error preparing statement: " . $conn->error);
+        $checkStmt->close();
     }
 
-    $stmt->bind_param("ssss", $name, $email, $password, $password_hash);
+    // Hash the password
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Execute and check for errors
-    if ($stmt->execute()) {
-        header("Location: ../Frontend/index.html");
-        exit();
-    } else {
-        // Handle duplicate email error
-        if ($conn->errno == 1062) {
-            echo "This email is already registered.";
+    // Insert the user
+    $sql = "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $name, $email, $passwordHash, $role);
+
+    try {
+        if ($stmt->execute()) {
+            // Redirect to index.html after successful registration
+            header("Location: ../Frontend/index.html");
+            exit;
         } else {
-            echo "Error: " . $stmt->error;
+            echo "Error: Could not register user.";
+        }
+    } catch (mysqli_sql_exception $e) {
+        if ($e->getCode() == 1062) {
+            echo "Email already exists.";
+        } else {
+            echo "Database error: " . $e->getMessage();
         }
     }
 
     $stmt->close();
     $conn->close();
+} else {
+    echo "Invalid request.";
 }
 ?>
+

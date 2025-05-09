@@ -1,14 +1,14 @@
---  Users Table
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) CHECK (role IN ('user', 'admin', 'kitchen', 'reception')) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL, -- store only hashed password
+    role VARCHAR(50) NOT NULL CHECK (role IN ('user', 'admin', 'kitchen', 'reception')),
     status BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 
 --  Categories Table
 CREATE TABLE categories (

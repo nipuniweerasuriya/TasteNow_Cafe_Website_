@@ -85,6 +85,9 @@ function addToCart() {
 }
 
 
+
+
+
 // Sign In and Sign Up Toggle Logic
 const signinBtn = document.getElementById('signing-btn');
 const dropdown = document.getElementById('form-dropdown');
@@ -124,7 +127,7 @@ window.addEventListener('click', (e) => {
 });
 
 
-
+//ADMIN PAGE DROPDOWN LOGIC
 function toggleDropdown(dropdownId) {
     // Close all dropdowns first
     const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
@@ -155,84 +158,112 @@ function toggleDropdown(dropdownId) {
 
 
 
-function showAddMenuForm() {
-    const formContainer = document.getElementById('form-container');
+document.addEventListener("DOMContentLoaded", function () {
+    // Show the form
+    window.showAddMenuForm = function () {
+        const formContainer = document.getElementById('form-container');
+        formContainer.style.display = 'block';
 
-    // Show the container
-    formContainer.style.display = 'block';
+        // Avoid duplicate rendering
+        if (formContainer.innerHTML.trim() !== '') return;
 
-    // Prevent re-rendering if the form already exists
-    if (formContainer.innerHTML.trim() !== '') return;
-
-    formContainer.innerHTML = `
-        <div class="add-menu-container">
-            <h2 class="form-heading">-----Add New Menu Item-----</h2>
-            <form class="menu-form" action="" method="POST" enctype="multipart/form-data">
-                <div class="form-row">
-                    <label><input type="text" name="name" placeholder="Item Name" required /></label>
-                    <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
-<label>Select Image:</label><input type="file" name="image_file" accept="image/*" required><br/><br/>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <select name="category_id" required>
-                            <option value="">Select Category</option>
-                            <option value="1">Coffee</option>
-                            <option value="2">Tea</option>
-                            <option value="3">Smoothies</option>
-                            <option value="4">Snacks & Pastries</option>
-                            <option value="5">Desserts</option>
-                            <option value="6">Drinks</option>
-                        </select>
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>Variants:</label>
-                    <div id="variants-container">
-                        <div class="form-subrow">
-                            <input type="text" name="variants[]" placeholder="Variant Name" />
-                            <input type="number" name="variant_prices[]" placeholder="Extra Price" />
-                        </div>
+        formContainer.innerHTML = `
+            <div class="add-menu-container">
+                <h2 class="form-heading">-----Add New Menu Item-----</h2>
+                <form class="menu-form" action="../Backend/add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                    <div class="form-row">
+                        <label><input type="text" name="name" placeholder="Item Name" required /></label>
+                        <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
+                        <label>Select Image:</label><input type="file" name="image_file" accept="image/*" required><br/><br/>
                     </div>
-                    <button type="button" onclick="addVariant()">+ Add Variant</button>
-                </div>
-                <div class="form-row">
-                    <label>Add-ons:</label>
-                    <div id="addons-container">
-                        <div class="form-subrow">
-                            <input type="text" name="addons[]" placeholder="Add-on Name" />
-                            <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
-                        </div>
+                    <div class="form-row">
+                        <label>
+                            <select name="category_id" required>
+                                <option value="">Select Category</option>
+                                <option value="1">Coffee</option>
+                                <option value="2">Tea</option>
+                                <option value="3">Smoothies</option>
+                                <option value="4">Snacks & Pastries</option>
+                                <option value="5">Desserts</option>
+                                <option value="6">Drinks</option>
+                            </select>
+                        </label>
                     </div>
-                    <button type="button" onclick="addAddon()">+ Add Add-on</button>
-                </div>
-                <div class="form-row">
-                    <button type="submit">Add Item</button>
-                </div>
-            </form>
-        </div>
-    `;
-}
+                    <div class="form-row">
+                        <label>Variants:</label>
+                        <div id="variants-container">
+                            <div class="form-subrow">
+                                <input type="text" name="variants[]" placeholder="Variant Name" />
+                                <input type="number" name="variant_prices[]" placeholder="Extra Price" />
+                            </div>
+                        </div>
+                        <button type="button" onclick="addVariant()">+ Add Variant</button>
+                    </div>
+                    <div class="form-row">
+                        <label>Add-ons:</label>
+                        <div id="addons-container">
+                            <div class="form-subrow">
+                                <input type="text" name="addons[]" placeholder="Add-on Name" />
+                                <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
+                            </div>
+                        </div>
+                        <button type="button" onclick="addAddon()">+ Add Add-on</button>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    };
 
-function addVariant() {
-    const container = document.getElementById('variants-container');
-    const div = document.createElement('div');
-    div.className = "form-subrow";
-    div.innerHTML = `
-        <input type="text" name="variants[]" placeholder="Variant Name" />
-        <input type="number" name="variant_prices[]" placeholder="Extra Price" />
-    `;
-    container.appendChild(div);
-}
+    // Handle form submission
+    window.handleFormSubmit = function (event) {
+        event.preventDefault();
 
-function addAddon() {
-    const container = document.getElementById('addons-container');
-    const div = document.createElement('div');
-    div.className = "form-subrow";
-    div.innerHTML = `
-        <input type="text" name="addons[]" placeholder="Add-on Name" />
-        <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
-    `;
-    container.appendChild(div);
-}
+        const form = event.target;
+        const formData = new FormData(form);
 
+        fetch(form.action, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => response.text())
+            .then(result => {
+                console.log("Server response:", result);
+                alert(result);
+                form.reset();
+                document.getElementById('form-container').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("There was an error adding the menu item.");
+            });
+
+        return false;
+    };
+
+    // Add new variant input row
+    window.addVariant = function () {
+        const container = document.getElementById('variants-container');
+        const div = document.createElement('div');
+        div.className = "form-subrow";
+        div.innerHTML = `
+            <input type="text" name="variants[]" placeholder="Variant Name" />
+            <input type="number" name="variant_prices[]" placeholder="Extra Price" />
+        `;
+        container.appendChild(div);
+    };
+
+    // Add new add-on input row
+    window.addAddon = function () {
+        const container = document.getElementById('addons-container');
+        const div = document.createElement('div');
+        div.className = "form-subrow";
+        div.innerHTML = `
+            <input type="text" name="addons[]" placeholder="Add-on Name" />
+            <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
+        `;
+        container.appendChild(div);
+    };
+});
