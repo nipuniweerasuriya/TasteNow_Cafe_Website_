@@ -2,16 +2,28 @@
 // Include the database connection file
 include('../Backend/db_connect.php');
 
+// Start the session to access the logged-in user's ID
+session_start();
+
+// Check if the user is logged in (assuming the user ID is stored in the session)
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'User not logged in.']);
+    exit;
+}
+
+// Get the logged-in user's ID
+$user_id = $_SESSION['user_id'];
+
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the table number and selected items from the request
     $table_number = mysqli_real_escape_string($conn, $_POST['table_number']);
     $selected_items = json_decode($_POST['selected_items'], true);
 
-    // Insert the order into the 'processed_order' table
+    // Insert the order into the 'processed_order' table, including the user ID
     $order_query = "
-        INSERT INTO processed_order (table_number, order_date)
-        VALUES ('$table_number', NOW())
+        INSERT INTO processed_order (table_number, order_date, user_id)
+        VALUES ('$table_number', NOW(), '$user_id')
     ";
 
     if (mysqli_query($conn, $order_query)) {
@@ -46,3 +58,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_close($conn);
 }
 ?>
+

@@ -1,4 +1,10 @@
 <?php
+// Start the session to manage user login information
+session_start();
+
+// Check if the user is logged in and get the user's name
+$user_name = $_SESSION['user_name'] ?? 'Guest';
+
 // Include your database connection file
 include('../Backend/db_connect.php');
 
@@ -93,7 +99,7 @@ mysqli_close($conn);  // Close the database connection
             </div>
             <!-- Account -->
             <div class="d-flex align-items-center ms-3">
-                <a class="nav-link" href="#">User's Account</a>
+                <a class="nav-link" href="#"><?php echo htmlspecialchars($user_name); ?></a>
             </div>
         </div>
     </div>
@@ -178,7 +184,6 @@ mysqli_close($conn);  // Close the database connection
                         <button class="payment-btn w-100" id="checkout-btn">
                             PROCEED TO CHECKOUT
                         </button>
-
                     </div>
                 </div>
             </div>

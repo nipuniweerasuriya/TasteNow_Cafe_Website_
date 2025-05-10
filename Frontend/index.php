@@ -66,7 +66,7 @@ session_start();
                     <a class="nav-link" href="#">Feedback</a>
 
                     <?php if (isset($_SESSION['user_name'])): ?>
-                        <a class="nav-link" href="../Frontend/profile.html"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                        <a class="nav-link" href="profile.php"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <?php else: ?>
                         <a class="nav-link" href="#" id="signing-btn">Sign In</a>
                     <?php endif; ?>
