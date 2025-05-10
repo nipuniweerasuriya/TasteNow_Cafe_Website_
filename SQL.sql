@@ -59,6 +59,9 @@ CREATE TABLE orders (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+
+
+
 CREATE TABLE cart_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     item_id INT,
@@ -93,6 +96,16 @@ CREATE TABLE cart_item_addon (
     FOREIGN KEY (cart_item_id) REFERENCES cart_item(cart_item_id),
     FOREIGN KEY (menu_addon_id) REFERENCES menu_add_ons(id)
 );
+
+--  Cart Item variants Table
+CREATE TABLE cart_item_variants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cart_item_id INT,
+    variant_id INT,
+    FOREIGN KEY (cart_item_id) REFERENCES cart_items(id),
+    FOREIGN KEY (variant_id) REFERENCES menu_variants(id)
+);
+
 
 --  Table Bookings
 CREATE TABLE table_bookings (

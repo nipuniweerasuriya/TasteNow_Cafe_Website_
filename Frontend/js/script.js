@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-/* Menu Display Logic */
+//* Menu Display Logic */
 document.addEventListener('DOMContentLoaded', function () {
     const menuItems = document.querySelectorAll('.menu-item');
     const seeMoreBtn = document.getElementById('see-more-btn');
@@ -182,7 +182,6 @@ function openModal(itemId, variants, addOns) {
         modal.style.display = "none";
     };
 }
-
 
 
 // Sign In and Sign Up Toggle Logic
@@ -363,4 +362,125 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         container.appendChild(div);
     };
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to update the total price of the cart
+    function updateOrderTotal() {
+        let orderTotal = 0;
+        let selectedItemsCount = 0;
+
+        document.querySelectorAll('.cart-item').forEach(function (item) {
+            const checkbox = item.querySelector('.item-select');
+            if (checkbox.checked) {
+                selectedItemsCount++;
+                const qty = parseInt(item.querySelector('.item-qty').textContent);
+                const basePrice = parseFloat(item.querySelector('#price-' + item.dataset.itemId).value);
+                const addonTotal = parseFloat(item.querySelector('#addons-total-' + item.dataset.itemId).value);
+                orderTotal += (basePrice + addonTotal) * qty;
+            }
+        });
+
+        // Update the order total in the summary
+        document.getElementById('order-total').textContent = 'Rs. ' + orderTotal.toFixed(2);
+
+        // Update the SELECT ALL text with the number of selected items
+        const selectAllLabel = document.querySelector('label');
+        selectAllLabel.textContent = `SELECT ALL (${selectedItemsCount} ITEM(S))`;
+    }
+
+    // Handle the "Select All" checkbox
+    const selectAllCheckbox = document.querySelector('input[type="checkbox"]');
+    selectAllCheckbox.addEventListener('change', function () {
+        const isChecked = selectAllCheckbox.checked;
+        document.querySelectorAll('.item-select').forEach(function (checkbox) {
+            checkbox.checked = isChecked;
+        });
+        updateOrderTotal();
+    });
+
+    // Handle item selection checkbox change
+    document.querySelectorAll('.item-select').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            updateOrderTotal();
+        });
+    });
+
+    // Handle the quantity increase and decrease
+    document.querySelectorAll('.cart-item').forEach(function (item) {
+        const increaseBtn = item.querySelector('.btn-increase');
+        const decreaseBtn = item.querySelector('.btn-decrease');
+        const qtySpan = item.querySelector('.item-qty');
+        const totalSpan = item.querySelector('.item-price .price');
+        const cartItemId = item.dataset.itemId;
+
+        increaseBtn.addEventListener('click', function () {
+            let qty = parseInt(qtySpan.textContent);
+            qty++;
+            qtySpan.textContent = qty;
+            const basePrice = parseFloat(document.getElementById('price-' + cartItemId).value);
+            const addonTotal = parseFloat(document.getElementById('addons-total-' + cartItemId).value);
+            const newTotal = (basePrice + addonTotal) * qty;
+            totalSpan.textContent = 'Rs. ' + newTotal.toFixed(2);
+            updateOrderTotal();
+        });
+
+        decreaseBtn.addEventListener('click', function () {
+            let qty = parseInt(qtySpan.textContent);
+            if (qty > 1) {
+                qty--;
+                qtySpan.textContent = qty;
+                const basePrice = parseFloat(document.getElementById('price-' + cartItemId).value);
+                const addonTotal = parseFloat(document.getElementById('addons-total-' + cartItemId).value);
+                const newTotal = (basePrice + addonTotal) * qty;
+                totalSpan.textContent = 'Rs. ' + newTotal.toFixed(2);
+                updateOrderTotal();
+            }
+        });
+    });
+
+    // Handle "Delete Selected" button click
+    document.querySelector('.btn-delete').addEventListener('click', function () {
+        const selectedItems = [];
+        document.querySelectorAll('.item-select:checked').forEach(function (checkbox) {
+            const cartItemId = checkbox.dataset.itemId;
+            selectedItems.push(cartItemId);
+        });
+
+        if (selectedItems.length > 0) {
+            // Perform an AJAX request to delete the selected items
+            const formData = new FormData();
+            formData.append('action', 'delete_cart_items');
+            formData.append('cart_item_ids', JSON.stringify(selectedItems));
+
+            fetch('../Backend/delete_cart_items.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Debugging step
+                    if (data.success) {
+                        // Loop through each selected item and remove its corresponding element
+                        selectedItems.forEach(function (itemId) {
+                            const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                            if (itemElement) {
+                                itemElement.remove();  // Remove the item from the DOM immediately
+                            }
+                        });
+                        updateOrderTotal();  // Update the order total after removing items
+                    } else {
+                        // Display error message if deletion failed
+                        alert('Failed to delete selected items: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete items. Please try again.');
+                });
+        } else {
+            alert('No items selected to delete.');
+        }
+    });
 });

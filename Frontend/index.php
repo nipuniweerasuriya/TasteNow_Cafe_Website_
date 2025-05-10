@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,12 +21,10 @@
     <!--icons-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
 
-
     <!--Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
 
     <!--css link-->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
@@ -47,15 +48,15 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navbar">
         <div class="container navbar-container">
             <!-- Logo at the start -->
-            <a class="navbar-brand logo-wiggle" href="index.html">TASTENOW</a>
+            <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
 
-            <!-- Toggler for mobile view (optional but recommended) -->
+            <!-- Toggler for mobile view -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Nav links aligned to the right -->
+            <!-- Nav links -->
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto align-items-lg-center d-flex gap-2">
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
@@ -63,7 +64,12 @@
                     <a class="nav-link" href="#">About</a>
                     <a class="nav-link" href="#">Contact</a>
                     <a class="nav-link" href="#">Feedback</a>
-                    <a class="nav-link" href="#" id="signing-btn">Sign In</a>
+
+                    <?php if (isset($_SESSION['user_name'])): ?>
+                        <a class="nav-link" href="../Frontend/profile.html"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                    <?php else: ?>
+                        <a class="nav-link" href="#" id="signing-btn">Sign In</a>
+                    <?php endif; ?>
                 </div>
 
 
@@ -130,7 +136,7 @@
                 <!-- Account & Cart Icons -->
                 <div class="d-flex align-items-center ms-3">
                     <!-- Cart Icon -->
-                    <a href="../Frontend/cart.html">
+                    <a href="cart.php">
                         <span class="material-symbols-outlined icon-cart me-3">shopping_cart</span>
                     </a>
                 </div>
@@ -215,7 +221,7 @@
 
         <!-- Variant selection -->
 
-        <label for="variantsDropdown">Select Variant:</label>
+        <label for="variantsDropdown" multiple >Select Variant:</label>
         <select id="variantsDropdown">
             <option value="">Select Variant</option>
             <!-- Options will be dynamically added -->
@@ -229,6 +235,7 @@
 
         <!-- Submit Button -->
         <button id="addToCartWithOptions">Add</button>
+
     </div>
 </div>
 

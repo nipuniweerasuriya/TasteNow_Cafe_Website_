@@ -9,13 +9,13 @@ function redirectByRole($role) {
             header("Location: ../Frontend/admin_dashboard.html");
             break;
         case 'kitchen':
-            header("Location: ../Frontend/kitchen/kitchen.html");
+            header("Location: ../Frontend/kitchen.html");
             break;
         case 'cashier':
-            header("Location: ../Frontend/cashier/cashier.html");
+            header("Location: ../Frontend/cashier.html");
             break;
         case 'user':
-            header("Location: ../Frontend/user/profile.html");
+            header("Location: ../Frontend/profile.html");
             break;
         default:
             echo "Unknown role.";
