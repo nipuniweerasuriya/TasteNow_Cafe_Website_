@@ -175,9 +175,10 @@ mysqli_close($conn);  // Close the database connection
                         <h5>Order Summary</h5>
                         <p class="mb-2">Total (0): <span class="price fw-bold" id="order-total">Rs. 0</span></p>
                         <input type="text" class="custom-form-control mb-3" placeholder="Enter Your Table Number">
-                        <button class="payment-btn w-100" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                        <button class="payment-btn w-100" id="checkout-btn">
                             PROCEED TO CHECKOUT
                         </button>
+
                     </div>
                 </div>
             </div>

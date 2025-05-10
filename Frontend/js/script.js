@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 });
 
-
+//Cart
 document.addEventListener('DOMContentLoaded', function () {
     // Function to update the total price of the cart
     function updateOrderTotal() {
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('action', 'delete_cart_items');
             formData.append('cart_item_ids', JSON.stringify(selectedItems));
 
-            fetch('../Backend/delete_cart_items.php', {
+            fetch('delete_cart_items.php', {
                 method: 'POST',
                 body: formData
             })
@@ -483,4 +483,59 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('No items selected to delete.');
         }
     });
+});
+
+document.getElementById('checkout-btn').addEventListener('click', function () {
+    // Get the table number input value
+    const tableNumber = document.querySelector('input[placeholder="Enter Your Table Number"]').value;
+
+    if (!tableNumber) {
+        alert("Please enter a table number.");
+        return;
+    }
+
+    // Get the selected items
+    const selectedItems = [];
+    document.querySelectorAll('.item-select:checked').forEach(function (checkbox) {
+        const cartItemId = checkbox.dataset.itemId;
+        const qty = parseInt(checkbox.closest('.cart-item').querySelector('.item-qty').textContent);
+        const basePrice = parseFloat(document.getElementById('price-' + cartItemId).value);
+        const addonTotal = parseFloat(document.getElementById('addons-total-' + cartItemId).value);
+
+        // Add item details to the array
+        selectedItems.push({
+            cart_item_id: cartItemId,
+            quantity: qty,
+            base_price: basePrice,
+            addon_total: addonTotal
+        });
+    });
+
+    if (selectedItems.length === 0) {
+        alert("Please select at least one item.");
+        return;
+    }
+
+    // Send the data via AJAX
+    const formData = new FormData();
+    formData.append('table_number', tableNumber);
+    formData.append('selected_items', JSON.stringify(selectedItems));
+
+    fetch('../Backend/process_order.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order processed successfully!');
+                // Redirect to a success page or update the UI as needed
+            } else {
+                alert('Failed to process order: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to process the order. Please try again.');
+        });
 });
