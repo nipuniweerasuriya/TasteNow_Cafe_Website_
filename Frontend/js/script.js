@@ -539,3 +539,5 @@ document.getElementById('checkout-btn').addEventListener('click', function () {
             alert('Failed to process the order. Please try again.');
         });
 });
+
+

@@ -58,6 +58,3 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
-
-//Get and display menu items in home page

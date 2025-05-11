@@ -9,7 +9,7 @@ $sql = "
         poi.total_price,
         mi.name AS item_name,
         mi.image_url AS item_image,
-        mv.variant_name AS variant_name,
+        ci.variant AS variant_name,  -- Get variant name directly from cart_items
         ma.addon_name AS addon_name,
         ma.addon_price AS addon_price,
         po.table_number,
@@ -18,13 +18,13 @@ $sql = "
     JOIN processed_order_items poi ON po.id = poi.order_id
     JOIN cart_items ci ON poi.cart_item_id = ci.id
     JOIN menu_items mi ON ci.item_id = mi.id
-    LEFT JOIN menu_variants mv ON ci.variant = mv.id
     LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
     LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
     ORDER BY po.order_date DESC";
 
 $result = $conn->query($sql);
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -47,7 +47,7 @@ $result = $conn->query($sql);
 <div class="navbar">
     <div class="navbar-container">
         <div class="navbar-brand">
-            <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
+            <a class="navbar-brand logo-wiggle" href="../Frontend/index.php">TASTENOW</a>
         </div>
         <div class="d-flex align-items-center ms-3">
             <a href="../Backend/logout.php" class="text-decoration-none text-dark d-flex align-items-center">
@@ -80,17 +80,26 @@ $result = $conn->query($sql);
                                 </div>
                             </div>
                             <div class="text-end">
+                                <div class="order-id text-muted small mb-2">
+                                    <span>Order ID: #<?php echo $order['order_id']; ?></span>
+                                </div>
                                 <div class="item-price mb-2">
                                     <span class="price">Rs. <?php echo $order['total_price']; ?></span>
                                 </div>
                                 <div class="table-number">
                                     <span>Table <?php echo $order['table_number']; ?></span>
                                 </div>
-                                <div class="qty">
+                                <div class="qty mb-2">
                                     <span>Qty: <?php echo $order['quantity']; ?></span>
                                 </div>
-                                <div class="order-date text-muted small">
+                                <div class="order-date text-muted small mb-2">
                                     <span><?php echo date('Y-m-d H:i', strtotime($order['order_date'])); ?></span>
+                                </div>
+                                <!-- Status Buttons -->
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-warning btn-sm">Pending</button>
+                                    <button class="btn btn-outline-primary btn-sm">Prepared</button>
+                                    <button class="btn btn-outline-success btn-sm">Served</button>
                                 </div>
                             </div>
                         </div>

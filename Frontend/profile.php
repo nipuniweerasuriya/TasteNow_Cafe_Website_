@@ -1,17 +1,14 @@
 <?php
-session_start();  // Start the session to access session variables
-require_once '../Backend/db_connect.php';  // Include your database connection file
+session_start();
+require_once '../Backend/db_connect.php';
 
-// Retrieve user_id from session (make sure the user is logged in and session is set)
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if the user is not logged in
     header("Location: login.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];  // Dynamically set user ID from session
+$user_id = $_SESSION['user_id'];
 
-// SQL Query to fetch the orders and related data
 $sql = "
     SELECT
         po.id AS order_id,
@@ -33,13 +30,11 @@ $sql = "
     LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
     WHERE po.user_id = ? ORDER BY po.order_date DESC";
 
-// Prepare and execute the query
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $user_id); // Bind the user_id to the query
+$stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Check for any errors
 if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
 }
@@ -51,30 +46,17 @@ if ($stmt->error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-
-    <!-- Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Load Poppins & Roboto -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
-          rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-          rel="stylesheet">
-
-    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
-
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body class="common-page" id="profile-page">
 
-<!-- Navbar -->
 <div class="navbar">
     <div class="navbar-container">
         <div class="navbar-brand">
@@ -88,11 +70,8 @@ if ($stmt->error) {
     </div>
 </div>
 
-<!-- Profile Content -->
 <div class="container">
     <div class="profile-layout">
-
-        <!-- Profile Sidebar -->
         <div class="profile-sidebar">
             <div class="d-flex align-items-center mb-4">
                 <div class="text-white d-flex justify-content-center align-items-center profile-avatar me-3">
@@ -112,22 +91,11 @@ if ($stmt->error) {
             </div>
         </div>
 
-        <!-- Present Order Section -->
         <div class="order-container">
-            <div class="order-actions">
-                <button type="button" class="btn-pending">PENDING</button>
-                <button type="button" class="btn-prepared">PREPARED</button>
-                <button type="button" class="btn-served">SERVED</button>
-                <button type="button" class="btn-update">UPDATE</button>
-                <button type="button" class="btn-cancel">CANCEL</button>
-            </div>
-
-            <!-- Orders -->
             <div class="order-items-container bg-white p-3 mb-3">
                 <?php if ($result->num_rows > 0): ?>
-                    <!-- Loop through the orders and display them -->
                     <?php while ($order = $result->fetch_assoc()): ?>
-                        <div class="d-flex align-items-start gap-3 cart-item">
+                        <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
                             <input type="checkbox" class="mt-2">
                             <img src="../Backend/uploads<?php echo $order['item_image']; ?>" alt="Product" style="width: 100px; height: auto;">
                             <div class="flex-grow-1">
@@ -152,10 +120,15 @@ if ($stmt->error) {
                                     <span>Not Paid</span>
                                 </div>
                                 <div class="table-number">
-                                    <span id="table-number" class="table-number"><?php echo $order['table_number']; ?></span>
+                                    <span>Table <?php echo $order['table_number']; ?></span>
                                 </div>
-                                <div class="qty">
-                                    <span id="qty" class="table-number"><?php echo $order['quantity']; ?></span>
+                                <div class="qty mb-2">
+                                    <span>Qty: <?php echo $order['quantity']; ?></span>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-warning btn-sm">Pending</button>
+                                    <button class="btn btn-outline-primary btn-sm">Prepared</button>
+                                    <button class="btn btn-outline-success btn-sm">Served</button>
                                 </div>
                             </div>
                         </div>
@@ -165,14 +138,11 @@ if ($stmt->error) {
                 <?php endif; ?>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
 
 </body>
 </html>
-
