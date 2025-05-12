@@ -1,5 +1,6 @@
 <?php
-require_once 'db_connect.php';
+global $conn;
+require_once '../Backend/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $itemId = $_POST['item_id'] ?? null;
@@ -20,4 +21,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     echo json_encode(["success" => false, "error" => "Invalid request method"]);
 }
-?>
+

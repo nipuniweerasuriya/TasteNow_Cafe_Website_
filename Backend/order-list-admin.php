@@ -30,7 +30,7 @@ $result = $conn->query($sql);
         <?php while ($order = $result->fetch_assoc()): ?>
             <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
                 <input type="checkbox" class="mt-2">
-                <img src="../Backend/uploads<?php echo htmlspecialchars($order['item_image']); ?>" alt="Item" style="width: 100px; height: auto;">
+                <img src="../Backend/uploads/<?php echo ltrim(htmlspecialchars($order['item_image']), '/'); ?>" alt="Item">
                 <div class="flex-grow-1">
                     <p class="item-title mb-1"><?php echo htmlspecialchars($order['item_name']); ?></p>
                     <div class="customizations">

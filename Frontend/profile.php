@@ -1,4 +1,5 @@
 <?php
+global $conn;
 session_start();
 require_once '../Backend/db_connect.php';
 

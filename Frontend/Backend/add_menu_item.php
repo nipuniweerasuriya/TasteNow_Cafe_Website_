@@ -1,6 +1,6 @@
 <?php
 global $conn;
-include 'db_connect.php'; // Make sure the path is correct
+include '../Backend/db_connect.php'; // Make sure the path is correct
 
 // Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,4 +75,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
-?>
+
+
