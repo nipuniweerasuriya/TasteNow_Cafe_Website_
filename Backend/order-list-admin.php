@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require_once '../Backend/db_connect.php';
 
 $sql = "
