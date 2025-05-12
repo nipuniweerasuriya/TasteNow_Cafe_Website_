@@ -2,13 +2,20 @@
 // Start the session to manage user login information
 session_start();
 
-// Check if the user is logged in and get the user's name
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to the login page if the user is not logged in
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'] ?? 'Guest';
 
 // Include your database connection file
 include('../Backend/db_connect.php');
 
-// Query to fetch cart items and their details
+// Query to fetch cart items only for the logged-in user
 $query = "
     SELECT 
         ci.id AS cart_item_id,
@@ -16,7 +23,6 @@ $query = "
         ci.price AS item_price,
         ci.quantity AS item_quantity,
         ci.variant AS item_variant,
-        ci.addons AS item_addons,
         GROUP_CONCAT(ma.addon_name) AS addon_names,
         GROUP_CONCAT(ma.addon_price) AS addon_prices
     FROM 
@@ -25,43 +31,45 @@ $query = "
         cart_item_addons cia ON ci.id = cia.cart_item_id
     LEFT JOIN 
         menu_add_ons ma ON cia.addon_id = ma.id
+    WHERE 
+        ci.user_id = ?
     GROUP BY 
         ci.id
 ";
 
-$result = mysqli_query($conn, $query);
+// Prepare and execute the query
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Array to store cart items
 $cart_items = [];
 
 if ($result) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $cart_item_id = $row['cart_item_id'];
-        $item_name = $row['item_name'];
-        $item_price = $row['item_price'];
-        $item_quantity = $row['item_quantity'];
-        $item_variant = $row['item_variant'];
-        $addon_names = explode(',', $row['addon_names']);
-        $addon_prices = explode(',', $row['addon_prices']);
+    while ($row = $result->fetch_assoc()) {
+        $addon_names = isset($row['addon_names']) ? explode(',', $row['addon_names']) : [];
+        $addon_prices = isset($row['addon_prices']) ? array_map('floatval', explode(',', $row['addon_prices'])) : [];
 
         // Add the cart item to the array
         $cart_items[] = [
-            'cart_item_id' => $cart_item_id,
-            'item_name' => $item_name,
-            'item_price' => $item_price,
-            'item_quantity' => $item_quantity,
-            'item_variant' => $item_variant,
+            'cart_item_id' => $row['cart_item_id'],
+            'item_name' => $row['item_name'],
+            'item_price' => (float)$row['item_price'],
+            'item_quantity' => (int)$row['item_quantity'],
+            'item_variant' => $row['item_variant'],
             'addon_names' => $addon_names,
             'addon_prices' => $addon_prices,
         ];
     }
 } else {
-    // Handle error if the query fails
     echo "Error retrieving cart items.";
 }
 
-mysqli_close($conn);  // Close the database connection
+$stmt->close();
+$conn->close();
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -113,14 +121,14 @@ mysqli_close($conn);  // Close the database connection
                     <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div>
                             <input type="checkbox" class="form-check-input me-2">
-                            <label>SELECT ALL (39 ITEM(S))</label>
+                            <label>SELECT ALL (<?php echo count($cart_items); ?> ITEM(S))</label>
                         </div>
                         <button class="btn btn-sm btn-delete">DELETE</button>
                     </div>
 
                     <!-- Cart Items -->
                     <?php
-                    // Cart Items Loop (inside your foreach loop)
+                    // Cart Items Loop
                     foreach ($cart_items as $item) {
                         $cart_item_id = $item['cart_item_id'];
                         $item_name = $item['item_name'];
@@ -179,7 +187,7 @@ mysqli_close($conn);  // Close the database connection
                 <div class="col-lg-4">
                     <div class="order-summary-container">
                         <h5>Order Summary</h5>
-                        <p class="mb-2">Total (0): <span class="price fw-bold" id="order-total">Rs. 0</span></p>
+                        <p class="mb-2">Total (<?php echo count($cart_items); ?>): <span class="price fw-bold" id="order-total">Rs. 0</span></p>
                         <input type="text" class="custom-form-control mb-3" placeholder="Enter Your Table Number">
                         <button class="payment-btn w-100" id="checkout-btn">
                             PROCEED TO CHECKOUT

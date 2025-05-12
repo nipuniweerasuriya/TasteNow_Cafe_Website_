@@ -28,7 +28,7 @@
             <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
         </div>
         <div class="d-flex align-items-center ms-3">
-            <a href="#" class="text-decoration-none text-dark d-flex align-items-center">
+            <a href="../Backend/logout.php" class="text-decoration-none text-dark d-flex align-items-center">
                 <span class="material-symbols-outlined icon-logout me-2">logout</span>
             </a>
         </div>
@@ -79,20 +79,25 @@
             </div>
         </div>
 
-        <!-- Wrap these two in a common div if needed -->
-        <div class="dashboard-main-content">
-            <div class="chart-container" id="chartContainer"></div>
-            <div id="form-container" class="form-container"></div>
+        <!-- Orders + Form Container -->
+        <div class="flex-grow-1">
+            <div class="current-orders" id="current-orders">
+                <?php include '../Backend/order-list-admin.php'; ?>
+            </div>
+
+            <!-- Add Menu Form Container -->
+            <div id="form-container" style="display: none; margin-top: 30px;"></div>
         </div>
-
-
-
     </div>
+</div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
+
+<!-- Add Menu Form JS -->
+
 
 </body>
 </html>

@@ -1,15 +1,39 @@
 <?php
+require_once 'db_connect.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $itemId = $_POST['item_id'] ?? null;
+    $status = $_POST['status'] ?? null;
+
+    if ($itemId && in_array($status, ['Pending', 'Prepared', 'Served'])) {
+        $stmt = $conn->prepare("UPDATE processed_order_items SET status = ? WHERE id = ?");
+        $stmt->bind_param("si", $status, $itemId);
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false, "error" => "DB update failed"]);
+        }
+        $stmt->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "Invalid input"]);
+    }
+} else {
+    echo json_encode(["success" => false, "error" => "Invalid request method"]);
+}
+?><?php
 require_once '../Backend/db_connect.php';  // Include your database connection
 
 // SQL Query to fetch all processed orders and related data
 $sql = "
     SELECT
+        poi.id AS item_id,
         po.id AS order_id,
         poi.quantity,
         poi.total_price,
+        poi.status,
         mi.name AS item_name,
         mi.image_url AS item_image,
-        ci.variant AS variant_name,  -- Get variant name directly from cart_items
+        ci.variant AS variant_name,
         ma.addon_name AS addon_name,
         ma.addon_price AS addon_price,
         po.table_number,
@@ -21,6 +45,7 @@ $sql = "
     LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
     LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
     ORDER BY po.order_date DESC";
+
 
 $result = $conn->query($sql);
 ?>
@@ -96,11 +121,13 @@ $result = $conn->query($sql);
                                     <span><?php echo date('Y-m-d H:i', strtotime($order['order_date'])); ?></span>
                                 </div>
                                 <!-- Status Buttons -->
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-warning btn-sm">Pending</button>
-                                    <button class="btn btn-outline-primary btn-sm">Prepared</button>
-                                    <button class="btn btn-outline-success btn-sm">Served</button>
+                                <div class="btn-group status-btn-group" data-item-id="<?php echo $order['item_id']; ?>">
+                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
+                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
+                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
                                 </div>
+
+
                             </div>
                         </div>
                     <?php endwhile; ?>
@@ -112,9 +139,58 @@ $result = $conn->query($sql);
     </div>
 </div>
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.status-btn-group').forEach(group => {
+            group.addEventListener('click', function (e) {
+                if (e.target.classList.contains('status-btn')) {
+                    const button = e.target;
+                    const newStatus = button.getAttribute('data-status');
+                    const itemId = group.getAttribute('data-item-id');
+
+                    fetch('update_status.php', {  // Changed path
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `item_id=${itemId}&status=${newStatus}`
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                group.querySelectorAll('.status-btn').forEach(btn => {
+                                    btn.classList.remove('btn-warning', 'btn-outline-warning', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success', 'active');
+                                    if (btn.getAttribute('data-status') === 'Pending') {
+                                        btn.classList.add('btn-outline-warning');
+                                    } else if (btn.getAttribute('data-status') === 'Prepared') {
+                                        btn.classList.add('btn-outline-primary');
+                                    } else if (btn.getAttribute('data-status') === 'Served') {
+                                        btn.classList.add('btn-outline-success');
+                                    }
+                                });
+
+                                button.classList.remove('btn-outline-warning', 'btn-outline-primary', 'btn-outline-success');
+                                button.classList.add('active');
+                                if (newStatus === 'Pending') button.classList.add('btn-warning');
+                                if (newStatus === 'Prepared') button.classList.add('btn-primary');
+                                if (newStatus === 'Served') button.classList.add('btn-success');
+                            } else {
+                                alert('Failed to update status: ' + data.error);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('An error occurred.');
+                        });
+                }
+            });
+        });
+    });
+</script>
+
+
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
 
-</body>
+
+ </body>
 </html>

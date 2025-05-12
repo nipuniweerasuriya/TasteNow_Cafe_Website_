@@ -1,7 +1,7 @@
 <?php
 global $conn;
 session_start();
-include 'db_connect.php'; // your DB connection file
+include 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['name']);
@@ -9,6 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm  = $_POST['confirm-password'];
     $role     = $_POST['role'];
+
+    // Validate role against allowed options
+    $allowedRoles = ['admin', 'kitchen', 'cashier', 'user'];
+    if (!in_array($role, $allowedRoles)) {
+        die("Invalid role selected.");
+    }
 
     // Basic validation
     if ($password !== $confirm) {
@@ -40,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($stmt->execute()) {
-            // Redirect to index.php after successful registration
             header("Location: ../Frontend/index.php");
             exit;
         } else {

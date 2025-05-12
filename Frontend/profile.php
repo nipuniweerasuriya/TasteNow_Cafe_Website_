@@ -2,6 +2,7 @@
 session_start();
 require_once '../Backend/db_connect.php';
 
+// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -9,9 +10,11 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
+// SQL query to fetch the orders and their details
 $sql = "
     SELECT
         po.id AS order_id,
+        po.status AS order_status,  /* Add status */
         poi.quantity,
         poi.total_price,
         mi.name AS item_name,
@@ -35,6 +38,7 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+// Handle SQL errors
 if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
 }
@@ -126,9 +130,11 @@ if ($stmt->error) {
                                     <span>Qty: <?php echo $order['quantity']; ?></span>
                                 </div>
                                 <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-warning btn-sm">Pending</button>
-                                    <button class="btn btn-outline-primary btn-sm">Prepared</button>
-                                    <button class="btn btn-outline-success btn-sm">Served</button>
+                                    <button class="btn btn-outline-warning btn-sm <?php echo ($order['order_status'] == 'Pending') ? 'active' : ''; ?>">Pending</button>
+                                    <button class="btn btn-outline-primary btn-sm <?php echo ($order['order_status'] == 'Prepared') ? 'active' : ''; ?>">Prepared</button>
+                                    <button class="btn btn-outline-success btn-sm <?php echo ($order['order_status'] == 'Served') ? 'active' : ''; ?>">Served</button>
+                                    <button class="btn btn-outline-info btn-sm">Update</button>
+                                    <button class="btn btn-outline-danger btn-sm">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -146,3 +152,4 @@ if ($stmt->error) {
 
 </body>
 </html>
+

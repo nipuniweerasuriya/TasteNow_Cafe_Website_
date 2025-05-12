@@ -6,13 +6,13 @@ include 'db_connect.php';
 function redirectByRole($role) {
     switch ($role) {
         case 'admin':
-            header("Location: ../Frontend/admin_dashboard.html");
+            header("Location: ../Frontend/admin_dashboard.php");
             break;
         case 'kitchen':
             header("Location: ../Backend/kitchen.php");
             break;
         case 'cashier':
-            header("Location: ../Frontend/cashier.html");
+            header("Location: ../Frontend/cashier.php");
             break;
         case 'user':
             header("Location: ../Frontend/profile.php");

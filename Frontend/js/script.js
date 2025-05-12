@@ -223,6 +223,9 @@ window.addEventListener('click', (e) => {
 });
 
 
+
+
+
 //ADMIN PAGE DROPDOWN LOGIC
 function toggleDropdown(dropdownId) {
     // Close all dropdowns first
@@ -255,12 +258,11 @@ function toggleDropdown(dropdownId) {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Show the form
     window.showAddMenuForm = function () {
         const formContainer = document.getElementById('form-container');
         formContainer.style.display = 'block';
+        formContainer.scrollIntoView({ behavior: "smooth" });
 
-        // Avoid duplicate rendering
         if (formContainer.innerHTML.trim() !== '') return;
 
         formContainer.innerHTML = `
@@ -313,7 +315,6 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     };
 
-    // Handle form submission
     window.handleFormSubmit = function (event) {
         event.preventDefault();
 
@@ -330,6 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert(result);
                 form.reset();
                 document.getElementById('form-container').style.display = 'none';
+                document.getElementById('form-container').innerHTML = '';
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -339,7 +341,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
     };
 
-    // Add new variant input row
     window.addVariant = function () {
         const container = document.getElementById('variants-container');
         const div = document.createElement('div');
@@ -351,7 +352,6 @@ document.addEventListener("DOMContentLoaded", function () {
         container.appendChild(div);
     };
 
-    // Add new add-on input row
     window.addAddon = function () {
         const container = document.getElementById('addons-container');
         const div = document.createElement('div');
@@ -363,6 +363,8 @@ document.addEventListener("DOMContentLoaded", function () {
         container.appendChild(div);
     };
 });
+
+
 
 //Cart
 document.addEventListener('DOMContentLoaded', function () {
@@ -540,4 +542,7 @@ document.getElementById('checkout-btn').addEventListener('click', function () {
         });
 });
 
+
+
+//Order status update
 
