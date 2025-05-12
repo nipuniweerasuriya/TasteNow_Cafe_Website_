@@ -21,6 +21,7 @@
 </head>
 
 <body class="common-page" id="admin-page">
+
 <!-- Navbar -->
 <div class="navbar">
     <div class="navbar-container">
@@ -50,9 +51,9 @@
 
             <!-- Sidebar Menu -->
             <div class="dashboard-actions">
-                <div class="dashboard-action-item"><small>Home</small></div>
-                <div class="dashboard-action-item"><small>Kitchen</small></div>
-                <div class="dashboard-action-item"><small>Cashier</small></div>
+                <a href="../Frontend/index.php" class="dashboard-action-item"><small>Home</small></a>
+                <a href="../Backend/kitchen.php" class="dashboard-action-item"><small>Kitchen</small></a>
+                <a href="#" class="dashboard-action-item"><small>Cashier</small></a>
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('ordersDropdown')">
@@ -79,25 +80,29 @@
             </div>
         </div>
 
-        <!-- Orders + Form Container -->
+        <!-- Orders Display Section -->
         <div class="flex-grow-1">
-            <div class="current-orders" id="current-orders">
-                <?php include '../Backend/order-list-admin.php'; ?>
+            <!-- Processed Orders Display -->
+            <h4 class="mt-4 mb-3">Processed Orders</h4>
+            <div id="current-orders" class="row gy-3"></div>
+            <!-- Add Menu Form Container with Yellow Background -->
+            <div id="form-container" style="display: none; margin-top: 30px; background-color: yellow; padding: 20px; border-radius: 8px;">
+                <h1>Menu</h1>
             </div>
+
 
             <!-- Add Menu Form Container -->
             <div id="form-container" style="display: none; margin-top: 30px;"></div>
         </div>
     </div>
+
+
 </div>
 
-<!-- Scripts -->
+<!-- JS Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
-
-<!-- Add Menu Form JS -->
-
 
 </body>
 </html>

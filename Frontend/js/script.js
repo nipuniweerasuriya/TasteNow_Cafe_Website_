@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formContainer.innerHTML = `
             <div class="add-menu-container">
                 <h2 class="form-heading">-----Add New Menu Item-----</h2>
-                <form class="menu-form" action="../Backend/add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                <form class="menu-form" action="../../Backend/add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
                     <div class="form-row">
                         <label><input type="text" name="name" placeholder="Item Name" required /></label>
                         <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
@@ -544,5 +544,60 @@ document.getElementById('checkout-btn').addEventListener('click', function () {
 
 
 
-//Order status update
+//Processed order display
+document.addEventListener("DOMContentLoaded", function () {
+    fetchProcessedOrders();
+});
+
+function fetchProcessedOrders() {
+    fetch("../Backend/get_processed_orders.php") // Adjust this to your API endpoint for processed orders
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("current-orders");
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = "<p>No processed orders found.</p>";
+                return;
+            }
+
+            data.forEach(order => {
+                const card = document.createElement("div");
+                card.className = "col-md-6";
+
+                card.innerHTML = `
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Table: ${order.table_number}</h5>
+                                <p class="card-text">
+                                    <strong>Item:</strong> ${order.item_name} (${order.variant || "No Variant"})<br>
+                                    <strong>Quantity:</strong> ${order.quantity}<br>
+                                    <strong>Add-ons:</strong> ${order.addons || "None"}<br>
+                                    <strong>Total:</strong> Rs. ${order.total_price}<br>
+                                    <strong>Status:</strong>
+                                    <span class="badge bg-${getStatusColor(order.status)}">${order.status}</span><br>
+                                    <small class="text-muted">Ordered on: ${new Date(order.order_date).toLocaleString()}</small>
+                                </p>
+                            </div>
+                        </div>
+                    `;
+
+                container.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error("Failed to load processed orders", err);
+            document.getElementById("current-orders").innerHTML = "<p>Error loading orders.</p>";
+        });
+}
+
+function getStatusColor(status) {
+    switch (status) {
+        case 'Pending': return 'warning';
+        case 'Prepared': return 'info';
+        case 'Served': return 'success';
+        default: return 'secondary';
+    }
+}
+
 

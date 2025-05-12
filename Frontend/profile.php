@@ -3,7 +3,6 @@ global $conn;
 session_start();
 require_once '../Backend/db_connect.php';
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -11,11 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// SQL query to fetch the orders and their details
 $sql = "
     SELECT
         po.id AS order_id,
-        po.status AS order_status,  /* Add status */
+        poi.status AS item_status,  -- ✅ item-level status
         poi.quantity,
         poi.total_price,
         mi.name AS item_name,
@@ -32,14 +30,14 @@ $sql = "
     LEFT JOIN menu_variants mv ON ci.variant = mv.id
     LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
     LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
-    WHERE po.user_id = ? ORDER BY po.order_date DESC";
+    WHERE po.user_id = ? ORDER BY po.order_date DESC
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Handle SQL errors
 if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
 }
@@ -49,16 +47,26 @@ if ($stmt->error) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css"/>
+    <style>
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-pending { background-color: #ffc107; color: black; }
+        .status-prepared { background-color: #0d6efd; color: white; }
+        .status-served { background-color: #198754; color: white; }
+        .status-canceled { background-color: #dc3545; color: white; }
+    </style>
 </head>
 <body class="common-page" id="profile-page">
 
@@ -108,7 +116,7 @@ if ($stmt->error) {
                                 <p class="custom-text-danger">Only <?php echo $order['quantity']; ?> item(s) we have now</p>
                                 <div class="customizations">
                                     <?php if (!empty($order['variant_name'])): ?>
-                                        <p><span>Variant:</span> <?php echo $order['variant_name']; ?> (+Rs.<?php echo $order['addon_price']; ?>)</p>
+                                        <p><span>Variant:</span> <?php echo $order['variant_name']; ?></p>
                                     <?php else: ?>
                                         <p><span>Variant:</span> No variant selected</p>
                                     <?php endif; ?>
@@ -130,13 +138,48 @@ if ($stmt->error) {
                                 <div class="qty mb-2">
                                     <span>Qty: <?php echo $order['quantity']; ?></span>
                                 </div>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-warning btn-sm <?php echo ($order['order_status'] == 'Pending') ? 'active' : ''; ?>">Pending</button>
-                                    <button class="btn btn-outline-primary btn-sm <?php echo ($order['order_status'] == 'Prepared') ? 'active' : ''; ?>">Prepared</button>
-                                    <button class="btn btn-outline-success btn-sm <?php echo ($order['order_status'] == 'Served') ? 'active' : ''; ?>">Served</button>
-                                    <button class="btn btn-outline-info btn-sm">Update</button>
-                                    <button class="btn btn-outline-danger btn-sm">Cancel</button>
+                                <div class="mb-2">
+                                    <?php
+                                    // Use 'item_status' to access the status from the query result
+                                    $status = $order['item_status'] ?? 'Unknown';
+                                    $statusClass = strtolower($status);
+
+                                    // Display different status badge based on the status
+                                    if ($status == 'Pending') {
+                                        $statusClass = 'pending';
+                                    } elseif ($status == 'Prepared') {
+                                        $statusClass = 'prepared';
+                                    } elseif ($status == 'Served') {
+                                        $statusClass = 'served';
+                                    } elseif ($status == 'Canceled') {
+                                        $statusClass = 'canceled';
+                                    }
+                                    echo '<span class="status-badge status-' . $statusClass . '">' . $status . '</span>';
+                                    ?>
                                 </div>
+
+                                <!-- ✅ Conditional buttons for 'Pending' status -->
+                                <?php if (strtolower($order['item_status']) === 'pending'): ?>
+                                    <div class="mb-2 d-flex gap-2">
+                                        <!-- Update Button -->
+                                        <a href="update-order-item.php?id=<?php echo $order['order_id']; ?>" class="btn btn-sm btn-outline-primary">
+                                            Update
+                                        </a>
+
+                                        <!-- Cancel Button -->
+                                        <form method="POST" action="../Backend/cancel-order-item.php" style="display:inline;">
+                                            <input type="hidden" name="order_item_id" value="<?php echo $order['order_id']; ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Are you sure you want to cancel this item?');">
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="text-muted small">
+                                        <em>Cannot update or cancel this item (status: <?php echo $order['item_status']; ?>)</em>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endwhile; ?>
@@ -153,4 +196,3 @@ if ($stmt->error) {
 
 </body>
 </html>
-

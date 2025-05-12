@@ -150,7 +150,7 @@ $result = $conn->query($sql);
                     const newStatus = button.getAttribute('data-status');
                     const itemId = group.getAttribute('data-item-id');
 
-                    fetch('update_status.php', {  // Changed path
+                    fetch('../Backend/update_order_status.php', {  // Changed path
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: `item_id=${itemId}&status=${newStatus}`
