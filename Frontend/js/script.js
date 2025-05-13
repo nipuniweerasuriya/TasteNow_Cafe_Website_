@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('action', 'delete_cart_items');
             formData.append('cart_item_ids', JSON.stringify(selectedItems));
 
-            fetch('delete_cart_items.php', {
+            fetch('../Backend/delete_cart_items.php', {
                 method: 'POST',
                 body: formData
             })

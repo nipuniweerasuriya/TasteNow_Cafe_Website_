@@ -13,7 +13,8 @@ $user_id = $_SESSION['user_id'];
 $sql = "
     SELECT
         po.id AS order_id,
-        poi.status AS item_status,  -- ✅ item-level status
+        poi.id AS order_item_id, -- ✅ Needed for cancel
+        poi.status AS item_status,
         poi.quantity,
         poi.total_price,
         mi.name AS item_name,
@@ -42,6 +43,7 @@ if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
 }
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -168,12 +170,13 @@ if ($stmt->error) {
 
                                         <!-- Cancel Button -->
                                         <form method="POST" action="../Backend/cancel-order-item.php" style="display:inline;">
-                                            <input type="hidden" name="order_item_id" value="<?php echo $order['order_id']; ?>">
+                                            <input type="hidden" name="order_item_id" value="<?php echo $order['order_item_id']; ?>"> <!-- ✅ FIXED -->
                                             <button type="submit" class="btn btn-sm btn-outline-danger"
                                                     onclick="return confirm('Are you sure you want to cancel this item?');">
                                                 Cancel
                                             </button>
                                         </form>
+
                                     </div>
                                 <?php else: ?>
                                     <div class="text-muted small">

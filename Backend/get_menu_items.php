@@ -14,7 +14,7 @@ if ($result->num_rows > 0) {
         // Clean the data
         $itemName = htmlspecialchars($item['name']);
         $itemPrice = number_format($item['price'], 2);
-        $itemImage = !empty($item['image_url']) ? '../Backend/' . htmlspecialchars($item['image_url']) : 'default.jpg';
+        $itemImage = !empty($item['image_url']) ? '../Backend/uploads/' . htmlspecialchars($item['image_url']) : 'default.jpg';
         $categoryName = htmlspecialchars($item['category_name']);
         $itemId = $item['id'];
 
@@ -57,4 +57,3 @@ if ($result->num_rows > 0) {
 }
 
 $conn->close();
-?>
