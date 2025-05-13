@@ -33,6 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+function toggleCategories() {
+    const container = document.getElementById('category-container');
+    container.classList.toggle('show');
+}
+
+
+
 //* Menu Display Logic */
 document.addEventListener('DOMContentLoaded', function () {
     const menuItems = document.querySelectorAll('.menu-item');
