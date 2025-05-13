@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formContainer.innerHTML = `
             <div class="add-menu-container">
                 <h2 class="form-heading">-----Add New Menu Item-----</h2>
-                <form class="menu-form" action="../../Backend/add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                <form class="menu-form" action="../Backend/add_menu_item.php/" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
                     <div class="form-row">
                         <label><input type="text" name="name" placeholder="Item Name" required /></label>
                         <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
@@ -310,6 +310,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="form-row">
                         <button type="submit">Add Item</button>
                     </div>
+                    
+                     <div class="form-row">
+                        <button type="button" onclick="displayMenu()">Display Menu</button>
+                     </div>
                 </form>
             </div>
         `;
@@ -363,6 +367,115 @@ document.addEventListener("DOMContentLoaded", function () {
         container.appendChild(div);
     };
 });
+
+
+
+function displayMenu() {
+    fetch('../Backend/display_menu_items.php')
+        .then(response => response.json())
+        .then(data => {
+            const menuSection = document.getElementById('menu-section');
+            menuSection.innerHTML = '';
+            menuSection.style.display = 'block';
+
+            if (data.length === 0) {
+                menuSection.innerHTML = '<p>No menu items found.</p>';
+                return;
+            }
+
+            // Create search bar
+            const searchHTML = `
+                <input type="text" id="searchBar" placeholder="Search by item name..." onkeyup="filterTable()">
+            `;
+            menuSection.innerHTML = searchHTML;
+
+            let tableHTML = `
+                <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse;" id="menuTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Variants</th>
+                            <th>Add-ons</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menuTableBody">
+            `;
+
+            data.forEach(item => {
+                const variants = item.variants.length
+                    ? item.variants.map(v => `${v.variant_name} (+Rs.${v.price})`).join('<br>')
+                    : 'None';
+
+                const addons = item.addons.length
+                    ? item.addons.map(a => `${a.addon_name} (+Rs.${a.addon_price})`).join('<br>')
+                    : 'None';
+
+                tableHTML += `
+                    <tr data-item-name="${item.name.toLowerCase()}">
+                        <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
+                        <td>${item.name}</td>
+                        <td>Rs.${item.price}</td>
+                        <td>${variants}</td>
+                        <td>${addons}</td>
+                        <td><button onclick="deleteMenuItem(${item.id})" style="background-color:red;color:white;">Delete</button></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            menuSection.innerHTML += tableHTML;
+        })
+        .catch(error => {
+            console.error('Error fetching menu:', error);
+            document.getElementById('menu-section').innerHTML = '<p>Error loading menu.</p>';
+        });
+}
+
+function filterTable() {
+    const searchValue = document.getElementById('searchBar').value.toLowerCase();
+    const tableBody = document.getElementById('menuTableBody');
+    const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+    const matchingRows = [];
+    const nonMatchingRows = [];
+
+    rows.forEach(row => {
+        const itemName = row.getAttribute('data-item-name'); // Get the item name from the row's data attribute
+
+        if (itemName.includes(searchValue)) {
+            matchingRows.push(row); // Keep matching rows
+        } else {
+            nonMatchingRows.push(row); // Keep non-matching rows for later
+        }
+    });
+
+    // Reorder the rows: matching rows at the top, then non-matching rows
+    const allRows = [...matchingRows, ...nonMatchingRows];
+
+    // Clear the table body and append the reordered rows
+    tableBody.innerHTML = '';
+    allRows.forEach(row => {
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+function deleteMenuItem(itemId) {
+    if (!confirm("Delete this menu item and related variants/add-ons?")) return;
+
+    fetch(`../Backend/delete_menu_item.php?id=${itemId}`, { method: 'DELETE' })
+    .then(res => res.text())
+    .then(result => {
+    alert(result);
+    displayMenu(); // refresh
+})
+    .catch(err => console.error('Delete failed:', err));
+}
+
 
 
 

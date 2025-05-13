@@ -14,7 +14,7 @@ if ($result->num_rows > 0) {
         // Clean the data
         $itemName = htmlspecialchars($item['name']);
         $itemPrice = number_format($item['price'], 2);
-        $itemImage = !empty($item['image_url']) ? '../Backend/uploads/' . htmlspecialchars($item['image_url']) : 'default.jpg';
+        $itemImage = !empty($item['image_url']) ? '../Backend/uploads/' . htmlspecialchars($item['image_url']) : 'default.jpg'; // Ensure correct image path
         $categoryName = htmlspecialchars($item['category_name']);
         $itemId = $item['id'];
 
@@ -46,7 +46,7 @@ if ($result->num_rows > 0) {
 
         // Output the menu item HTML along with its variants and add-ons
         echo '<div class="menu-item" data-category="' . $categoryName . '" data-variants=\'' . $variantsJson . '\' data-addons=\'' . $addOnsJson . '\'>';
-        echo '  <img src="' . $itemImage . '" alt="' . $itemName . '" class="menu-image"/>';
+        echo '<img src="' . $itemImage . '" alt="' . $itemName . '" class="menu-image"/>';
         echo '  <h6>' . $itemName . '</h6>';
         echo '  <p>Rs. ' . $itemPrice . '</p>';
         echo '  <button class="add-to-cart-btn" data-id="' . $itemId . '">Add To Cart</button>';

@@ -1,17 +1,37 @@
 <?php
-global $conn;
 session_start();
-require_once '../Backend/db_connect.php';
+require_once '../Backend/db_connect.php';  // Ensure your database connection file is included
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: login.php");  // Redirect to login if the user is not logged in
     exit();
 }
 
+// Fetch user details from the session
 $user_id = $_SESSION['user_id'];
-$filter = $_GET['filter'] ?? ''; // Get filter from URL if set
+$filter = $_GET['filter'] ?? '';  // Get the filter from URL if set
 
+// Query to fetch user name and email from the database
+$sql = "SELECT name, email FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
 
+// Fetch user data
+$stmt->bind_result($name, $email);
+$stmt->fetch();
+$stmt->close();
+
+// Handle if no user found
+if (!$name || !$email) {
+    echo "User not found.";
+    exit();
+}
+
+// Get initials from the user's name
+$initials = strtoupper(substr($name, 0, 1) . substr(strrchr($name, ' '), 1, 1));
+
+// Query to fetch order details based on user ID
 $sql = "
     SELECT
         po.id AS order_id,
@@ -36,7 +56,7 @@ $sql = "
     WHERE po.user_id = ?
 ";
 
-// 🟡 Add filtering for served or canceled
+// Add filtering for served or canceled orders
 if ($filter === 'served') {
     $sql .= " AND poi.status = 'Served'";
 } elseif ($filter === 'canceled') {
@@ -50,13 +70,11 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-
-
+// Handle SQL errors
 if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
 }
 ?>
-
 
 <!doctype html>
 <html lang="en">
@@ -103,13 +121,13 @@ if ($stmt->error) {
         <div class="profile-sidebar">
             <div class="d-flex align-items-center mb-4">
                 <div class="text-white d-flex justify-content-center align-items-center profile-avatar me-3">
-                    NW
+                    <?= $initials ?>  <!-- Display initials -->
                 </div>
                 <div>
-                    <h6 class="mb-0">Nipuni Weerasuriya</h6>
-                    <small class="text-muted">nipuni@example.com</small>
+                    <h6 class="mb-0"><?= htmlspecialchars($name) ?></h6>  <!-- Display name -->
+                    <small class="text-muted"><?= htmlspecialchars($email) ?></small>  <!-- Display email -->
                 </div>
-            </div>
+            </div> <!-- End of Profile Info -->
 
             <div class="profile-actions">
                 <div class="profile-action-item <?php echo ($filter === 'served') ? 'active' : ''; ?>">
