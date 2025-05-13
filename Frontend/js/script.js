@@ -463,7 +463,6 @@ function filterTable() {
 }
 
 
-
 function deleteMenuItem(itemId) {
     if (!confirm("Delete this menu item and related variants/add-ons?")) return;
 
@@ -475,6 +474,47 @@ function deleteMenuItem(itemId) {
 })
     .catch(err => console.error('Delete failed:', err));
 }
+
+
+
+
+function showTableBooking() {
+    // Use Fetch to get table booking details from the server
+    fetch('../Backend/get_table_bookings.php')
+        .then(response => response.json())
+        .then(data => {
+            let tableBookingContainer = document.getElementById('tableBookingContainer');
+            tableBookingContainer.innerHTML = ''; // Clear any existing content
+
+            // Create table to display booking details
+            let table = document.createElement('table');
+            table.innerHTML = `
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Customer Name</th>
+                    <th>Table Number</th>
+                    <th>Booking Time</th>
+                    <th>Status</th>
+                </tr>
+            `;
+
+            data.forEach(booking => {
+                let row = table.insertRow();
+                row.innerHTML = `
+                    <td>${booking.booking_id}</td>
+                    <td>${booking.customer_name}</td>
+                    <td>${booking.table_number}</td>
+                    <td>${booking.booking_time}</td>
+                    <td>${booking.status}</td>
+                `;
+            });
+
+            tableBookingContainer.appendChild(table);
+            tableBookingContainer.style.display = 'block'; // Show the container
+        })
+        .catch(error => console.log('Error loading table bookings:', error));
+}
+
 
 
 

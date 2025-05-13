@@ -196,6 +196,8 @@ if (isset($_GET['load_orders'])) {
                 <a href="../Frontend/index.php" class="dashboard-action-item"><small>Home</small></a>
                 <a href="../Backend/kitchen.php" class="dashboard-action-item"><small>Kitchen</small></a>
                 <a href="#" class="dashboard-action-item"><small>Cashier</small></a>
+                <a href="#" class="dashboard-action-item" onclick="showTableBooking()">Table Booking</a>
+
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('ordersDropdown')">
@@ -231,6 +233,13 @@ if (isset($_GET['load_orders'])) {
             <div id="ordersContainer">
                 <!-- Orders will be displayed here -->
             </div>
+
+
+            <div id="tableBookingContainer" style="display:none;">
+                <!-- Tabele Booking Details -->
+            </div>
+
+
 
             <div id="userDetailsContainer" style="display: none;">
                 <!-- User details will be inserted here -->
@@ -401,6 +410,12 @@ if (isset($_GET['load_orders'])) {
                 console.error('Error deleting user:', error);
             });
     }
+
+
+
+
+
+
 
 
 

@@ -83,6 +83,20 @@ $result = $conn->query($sql);
     </div>
 </div>
 
+
+
+
+<!-- Display Menu Button -->
+<div class="mb-3 text-end">
+    <button class="btn btn-dark" onclick="displayMenu()">Display Menu</button>
+</div>
+
+<!-- Menu Section (Populated by JS) -->
+<div id="menu-section" style="display: none;"></div>
+
+
+
+
 <!-- Kitchen Orders -->
 <div class="container">
     <div class="profile-layout">
@@ -191,7 +205,6 @@ $result = $conn->query($sql);
 
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
+<script src="../Frontend/js/script.js"></script>
  </body>
 </html>

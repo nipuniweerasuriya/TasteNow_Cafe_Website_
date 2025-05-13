@@ -12,7 +12,7 @@ function redirectByRole($role) {
             header("Location: ../Backend/kitchen.php");
             break;
         case 'cashier':
-            header("Location: ../Frontend/cashier.php");
+            header("Location: ../Backend/cashier.php");
             break;
         case 'user':
             header("Location: ../Frontend/profile.php");

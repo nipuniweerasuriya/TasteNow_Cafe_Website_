@@ -3,6 +3,8 @@ session_start();
 ?>
 <!doctype html>
 <html lang="en">
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +13,10 @@ session_start();
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet">
 
     <!-- Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
@@ -22,9 +26,11 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
 </head>
-<body>
+
+
+<body id="home_page">
 
 <!-- Top Bar -->
 <div class="container-fluid">
@@ -65,13 +71,14 @@ session_start();
                                 $profileLink = "../Backend/kitchen.php";
                                 break;
                             case 'cashier':
-                                $profileLink = "../Frontend/cashier.php";
+                                $profileLink = "../Backend/cashier.php";
                                 break;
                             default:
                                 $profileLink = "../Frontend/profile.php";
                         }
                         ?>
-                        <a class="nav-link" href="<?= $profileLink ?>"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
+                        <a class="nav-link"
+                           href="<?= $profileLink ?>"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <?php else: ?>
                         <a class="nav-link" href="#" id="signing-btn">Sign In</a>
                     <?php endif; ?>
@@ -156,8 +163,19 @@ session_start();
     <div class="about-text">
         <h2 class="section-title">----- About Us -----</h2>
         <h2>Welcome to <strong>TASTENOW</strong></h2>
-        <p>Welcome to TasteNow – where flavor meets passion!... [trimmed for brevity]</p>
-        <a href="#" class="read-more">Read More</a>
+        <p>Welcome to TasteNow, your cozy corner for great coffee, delicious food,
+            and warm conversations. We’re passionate about creating a relaxed,
+            welcoming atmosphere where everyone feels at home—whether you're
+            stopping by for a quick bite, meeting friends, or just enjoying a
+            quiet moment to yourself. Every item on
+            our menu is made with care, using fresh, locally sourced ingredients
+            to bring out the best in every flavor.
+            At TasteNow, we believe that a café is more than just a place to
+            eat—it’s a space to connect, unwind, and enjoy the little things.
+            From our handcrafted beverages to our tasty pastries and meals,
+            we’re here to make your day a little brighter. We invite you to come in,
+            take a seat, and experience the comfort and quality that make TasteNow a
+            local favorite.</p>
     </div>
 </div>
 
@@ -202,23 +220,23 @@ session_start();
 <!-- Table Booking -->
 <div class="booking-container">
     <h2 class="form-heading">-----Book Your Table-----</h2>
-    <form class="booking-form">
+    <form class="booking-form" action="../Backend/table_booking.php" method="POST">
         <div class="form-row">
-            <input type="text" placeholder="Your Name" required/>
-            <input type="tel" placeholder="Your Phone Number" required/>
-            <input type="email" placeholder="Your Email" required/>
+            <input type="text" name="name" placeholder="Your Name" required/>
+            <input type="tel" name="phone" placeholder="Your Phone Number" required/>
+            <input type="email" name="email" placeholder="Your Email" required/>
         </div>
         <div class="form-row">
-            <input type="number" placeholder="Number of People" required/>
-            <input type="date" required/>
-            <input type="time" required/>
+            <input type="number" name="number_of_people" placeholder="Number of People" required/>
+            <input type="date" name="booking_date" required/>
+            <input type="time" name="booking_time" required/>
         </div>
-        <textarea placeholder="Special Request" rows="4"></textarea>
+        <textarea name="special_request" placeholder="Special Request" rows="4"></textarea>
         <button type="submit">Book Now</button>
     </form>
 </div>
 
-<!-- Footer -->
+
 <footer class="footer text-white pt-5 pb-3">
     <div class="container">
         <div class="row">
