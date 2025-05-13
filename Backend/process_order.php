@@ -21,10 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selected_items = json_decode($_POST['selected_items'], true);
 
     // Insert the order into the 'processed_order' table, including the user ID
-    $order_query = "
-        INSERT INTO processed_order (table_number, order_date, user_id)
-        VALUES ('$table_number', NOW(), '$user_id')
+    // Insert the order into the 'processed_order' table with 'Unpaid' status
+        $order_query = "
+        INSERT INTO processed_order (table_number, order_date, user_id, payment_status)
+        VALUES ('$table_number', NOW(), '$user_id', 'Unpaid')
     ";
+
 
     if (mysqli_query($conn, $order_query)) {
         // Get the inserted order ID
@@ -57,5 +59,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Close the database connection
     mysqli_close($conn);
 }
-?>
+
 

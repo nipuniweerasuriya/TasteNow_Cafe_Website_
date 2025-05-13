@@ -9,11 +9,13 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+$filter = $_GET['filter'] ?? ''; // Get filter from URL if set
+
 
 $sql = "
     SELECT
         po.id AS order_id,
-        poi.id AS order_item_id, -- ✅ Needed for cancel
+        poi.id AS order_item_id,
         poi.status AS item_status,
         poi.quantity,
         poi.total_price,
@@ -31,13 +33,24 @@ $sql = "
     LEFT JOIN menu_variants mv ON ci.variant = mv.id
     LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
     LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
-    WHERE po.user_id = ? ORDER BY po.order_date DESC
+    WHERE po.user_id = ?
 ";
+
+// 🟡 Add filtering for served or canceled
+if ($filter === 'served') {
+    $sql .= " AND poi.status = 'Served'";
+} elseif ($filter === 'canceled') {
+    $sql .= " AND poi.status = 'Canceled'";
+}
+
+$sql .= " ORDER BY po.order_date DESC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
+
 
 if ($stmt->error) {
     echo "SQL Error: " . $stmt->error;
@@ -99,10 +112,20 @@ if ($stmt->error) {
             </div>
 
             <div class="profile-actions">
-                <div class="profile-action-item"><small>Orders</small></div>
+                <div class="profile-action-item <?php echo ($filter === 'served') ? 'active' : ''; ?>">
+                    <a href="profile.php?filter=served" class="text-decoration-none text-white">
+                        <small>History</small>
+                    </a>
+                </div>
+
                 <div class="profile-action-item"><small>Paid</small></div>
                 <div class="profile-action-item"><small>Unpaid</small></div>
-                <div class="profile-action-item"><small>Canceled</small></div>
+                <div class="profile-action-item <?php echo ($filter === 'canceled') ? 'active' : ''; ?>">
+                    <a href="profile.php?filter=canceled" class="text-decoration-none text-white">
+                        <small>Canceled</small>
+                    </a>
+                </div>
+
             </div>
         </div>
 

@@ -1130,6 +1130,20 @@ ul.list-payment-icon li {
 }
 
 
+/*profile page */
+.profile-action-item.active {
+    background-color: #dc3545;
+    border-radius: 6px;
+}
+
+.profile-action-item.active {
+    background-color: #0d6efd;
+    border-radius: 6px;
+}
+
+
+
+
 
 
 
