@@ -164,9 +164,10 @@ if ($stmt->error) {
                                 <?php if (strtolower($order['item_status']) === 'pending'): ?>
                                     <div class="mb-2 d-flex gap-2">
                                         <!-- Update Button -->
-                                        <a href="update-order-item.php?id=<?php echo $order['order_id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="../Backend/update-order-item.php?item_id=<?php echo $order['order_item_id']; ?>" class="btn btn-sm btn-outline-primary">
                                             Update
                                         </a>
+
 
                                         <!-- Cancel Button -->
                                         <form method="POST" action="../Backend/cancel-order-item.php" style="display:inline;">
