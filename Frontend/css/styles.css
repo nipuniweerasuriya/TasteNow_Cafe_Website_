@@ -70,7 +70,6 @@ body, html {
 }
 
 
-
 /* navbar */
 .navbar {
     background-color: rgba(0, 0, 0, 0.7) !important;
@@ -144,7 +143,6 @@ body, html {
 }
 
 
-
 /* Style for the navbar toggler button */
 .navbar-toggler {
     width: 40px;
@@ -186,7 +184,6 @@ body, html {
 }
 
 
-
 /* SignIn,SignUp */
 #signing-form {
     display: none;
@@ -217,7 +214,7 @@ body, html {
 }
 
 #signing-form h2,
-#signup-form h2{
+#signup-form h2 {
     font-size: 24px;
     color: #fac003;
     text-align: center;
@@ -232,14 +229,14 @@ body, html {
 }
 
 #signing-form form,
-#signup-form form{
+#signup-form form {
     display: flex;
     flex-direction: column;
     height: auto;
 }
 
 #signing-form input,
-#signup-form input{
+#signup-form input {
     margin-bottom: 7px;
     padding: 10px;
     border: 1px solid #fac003;
@@ -248,13 +245,13 @@ body, html {
 }
 
 #signing-form input::placeholder,
-#signup-form input::placeholder{
+#signup-form input::placeholder {
     color: #f1d476;
     font-size: 0.9rem;
 }
 
 #signing-form button[type="submit"],
-#signup-form button[type="submit"]{
+#signup-form button[type="submit"] {
     padding: 10px;
     background-color: #fac003;
     color: white;
@@ -267,20 +264,20 @@ body, html {
 }
 
 #signing-form button[type="submit"]:hover,
-#signup-form button[type="submit"]:hover{
+#signup-form button[type="submit"]:hover {
     background-color: white;
     color: #fac003;
     border: 3px solid #fac003;
 }
 
 #signing-form p,
-#signup-form p{
+#signup-form p {
     text-align: center;
     font-size: 14px;
 }
 
 #signing-form a,
-#signup-form a{
+#signup-form a {
     color: #fac003;
     text-decoration: none;
     font-weight: bold;
@@ -317,8 +314,6 @@ body, html {
 }
 
 
-
-
 /* Profiles and Cart Pages Navbar*/
 #cart-page .navbar,
 #kitchen-page .navbar,
@@ -350,15 +345,13 @@ body, html {
 }
 
 
-
-
 /* Cart items part */
 .common-page .container {
-        width: 100%;
-        max-width: 100rem;
-        height: 100%;
-        background-color: #f8f9fa;
-        margin-top: 1rem;
+    width: 100%;
+    max-width: 100rem;
+    height: 100%;
+    background-color: #f8f9fa;
+    margin-top: 1rem;
 }
 
 .cart-item img {
@@ -395,6 +388,7 @@ body, html {
     background-color: orange;
     border-color: #fac003;
 }
+
 .customizations p {
     margin: 0;
     font-size: 0.9em;
@@ -450,7 +444,6 @@ body, html {
 }
 
 
-
 /* Welcome massage */
 .h1-container {
     margin-left: 2rem;
@@ -503,13 +496,11 @@ body, html {
     color: white;
 }
 
-.h1-heading, .p-0, .btn-booking, .btn-menu  {
+.h1-heading, .p-0, .btn-booking, .btn-menu {
     opacity: 0.5;
     transform: translateY(30px);
     animation: fadeSlideUp 0.5s ease-out forwards;
 }
-
-
 
 
 /* About Us */
@@ -561,7 +552,7 @@ body, html {
     color: Black;
     font-size: x-large;
     font-style: italic;
-    font-family: 'Playfair Display',ui-sans-serif ;
+    font-family: 'Playfair Display', ui-sans-serif;
 }
 
 .read-more {
@@ -573,18 +564,25 @@ body, html {
 }
 
 
-
-
 /* Menu */
 .menu-heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: x-large;
     font-style: italic;
     color: #fac003;
     padding: 2rem 1rem 1rem;
-    text-align: center;
-    background-size: cover;
     margin-top: 0.1rem;
-    font-family: 'Playfair Display',ui-sans-serif ;
+    font-family: 'Playfair Display', ui-sans-serif;
+    background-size: cover;
+}
+
+/* Style the icon */
+#filter-toggle {
+    font-size: 2rem;
+    cursor: pointer;
+    display: none; /* hidden by default */
 }
 
 #category-container {
@@ -609,20 +607,10 @@ body, html {
     color: #fac003;
 }
 
-/* Base styles */
-#category-container {
+.category-header {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}
+    justify-content: flex-end; /* Push the icon to the right end */
 
-#filter-toggle {
-    display: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    text-align: center;
-    margin: 10px auto;
 }
 
 #menu-container {
@@ -641,7 +629,7 @@ body, html {
     background-color: white;
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.2s ease;
 }
@@ -656,7 +644,7 @@ body, html {
 
 .menu-image {
     width: 100%;
-    height:250px;
+    height: 250px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -712,16 +700,18 @@ body, html {
     background-color: #fff;
     margin: 6% auto;
     padding: 15px;
-    width: 30%;
+    width: 40%;
+    height: auto;
     max-width: 600px;
     border-radius: 3px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .close {
     color: #fac003;
     float: right;
     font-size: 15px;
+    cursor: pointer;
 }
 
 select {
@@ -744,7 +734,7 @@ select {
 .addOnOption {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between checkbox and label */
+    gap: 15px; /* Space between checkbox and label */
 }
 
 .addOnOption input[type="checkbox"] {
@@ -776,8 +766,6 @@ select {
     color: #fac003;
     border: 3px solid #fac003;
 }
-
-
 
 
 /* Table Booking Section */
@@ -852,8 +840,6 @@ input[type="time"] {
 }
 
 
-
-
 /* footer */
 .footer {
     background-color: black;
@@ -883,7 +869,7 @@ input[type="time"] {
     font-size: small;
 }
 
-.footer ul li a{
+.footer ul li a {
     color: darkgrey;
     text-decoration: none;
     font-size: small;
@@ -949,7 +935,10 @@ ul.list-payment-icon li {
 }
 
 .footer-bottom-bar {
+    width: 100%; /* ensures full screen */
     background-color: #fac003;
+    font-size: 0.7rem;
+    font-weight: 500;
 }
 
 
@@ -1045,8 +1034,6 @@ ul.list-payment-icon li {
 }
 
 
-
-
 .card {
     background: #fff;
     border-radius: 12px;
@@ -1121,14 +1108,14 @@ ul.list-payment-icon li {
 }
 
 #admin-page .dropdown-item:hover {
-   color: #fac003;
+    color: #fac003;
 }
 
 /* Ensure that the main content area stacks the chart and the new section */
 .main-content {
     display: flex;
-    flex-direction: column;  /* Stack the chart and the new section vertically */
-    gap: 1rem;               /* Add some space between the chart and the new section */
+    flex-direction: column; /* Stack the chart and the new section vertically */
+    gap: 1rem; /* Add some space between the chart and the new section */
     flex: 1;
 }
 
@@ -1153,7 +1140,7 @@ ul.list-payment-icon li {
     height: 300px;
     width: 100%;
     max-width: 900px;
-    margin-bottom: 1rem;  /* Add margin at the bottom */
+    margin-bottom: 1rem; /* Add margin at the bottom */
 }
 
 #form-container {
@@ -1182,12 +1169,6 @@ ul.list-payment-icon li {
 }
 
 
-
-
-
-
-
-
 /* Responsive styles */
 @media (max-width: 768px) {
     #totalIncome {
@@ -1206,15 +1187,22 @@ ul.list-payment-icon li {
 }
 
 @keyframes slideLeftRight {
-    0%   { transform: translateX(0); }
-    25%  { transform: translateX(-5px); }
-    50%  { transform: translateX(0); }
-    75%  { transform: translateX(5px); }
-    100% { transform: translateX(0); }
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(0);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
-
-
-
 
 
 /* Responsive design for small screens */
@@ -1226,20 +1214,19 @@ ul.list-payment-icon li {
     }
 
 
-
     /* Top Bar */
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
+
     .top-bar-left,
     .top-bar-right {
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
     }
-
 
 
     /*Nav Bar */
@@ -1249,7 +1236,6 @@ ul.list-payment-icon li {
         gap: 10px;
         padding-top: 10px;
     }
-
 
 
     /* Main Heading */
@@ -1283,7 +1269,6 @@ ul.list-payment-icon li {
         text-align: center;
 
     }
-
 
 
     /* About Us */
@@ -1327,38 +1312,36 @@ ul.list-payment-icon li {
         margin: 20px 0;
     }
 
-    /* Base styles */
-    #category-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-    }
-
     #filter-toggle {
-        display: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        text-align: center;
-        margin: 10px auto;
+        display: inline-block;
     }
 
-    /* Media query: Small screen (mobile) */
-        #category-container {
-            display: none;
-        }
+    /* Category buttons hidden by default */
+    #category-container {
+        display: none;
+        position: absolute;
+        top: 100px; /* adjust based on header height */
+        left: 0;
+        right: 0;
+        background: white;
+        z-index: 10;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-height: 200px;
+        overflow-y: auto;
+    }
 
-        #filter-toggle {
-            display: block;
-        }
+    /* Show when toggled */
+    #category-container.show {
+        display: flex;
+    }
 
-        /* Optional: When toggled */
-        #category-container.show {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+    /* Optional: prevent page scroll when overlay open */
+    body.category-open {
+        overflow: hidden;
+    }
 
     .menu-item {
         width: 90%;
@@ -1424,8 +1407,6 @@ ul.list-payment-icon li {
     }
 
 
-
-
     /* Cart Page */
     .common-page .navbar-container {
         height: auto;
@@ -1489,6 +1470,7 @@ ul.list-payment-icon li {
         font-size: 0.9rem;
         height: 36px;
     }
+
 
     /* Profile Page */
     .profile-layout {
@@ -1570,5 +1552,42 @@ ul.list-payment-icon li {
     .item-price,
     .payment-status {
         text-align: center;
+    }
+
+
+    /* Section: Footer */
+    .footer .row {
+        text-align: center;
+    }
+
+    .footer .footer-column,
+    .footer .col-md-3 {
+        margin-bottom: 2rem;
+    }
+
+    .footer .payment-icon {
+        margin: 0 10px;
+    }
+
+    .footer .list-payment-icon {
+        justify-content: center;
+    }
+
+    .feedback-form,
+    .submit-btn {
+        width: 100% !important;
+    }
+
+    .submit-btn {
+        font-size: 0.9rem;
+    }
+
+    .footer .social-icon {
+        margin: 0 10px;
+    }
+
+    .footer-bottom-bar {
+        font-size: 0.8rem;
+        padding: 10px 0;
     }
 }

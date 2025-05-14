@@ -1,65 +1,6 @@
-/* Navbar Fixed Top */
-window.addEventListener('scroll', function () {
-    const navbar = document.getElementById('navbar');
-    const topBarHeight = document.querySelector('.top-bar')?.offsetHeight || 0;
-
-    if (window.scrollY > topBarHeight) {
-        navbar?.classList.add('fixed-top', 'navbar-scrolled');
-        document.body.classList.add('fixed-nav-padding');
-    } else {
-        navbar?.classList.remove('fixed-top', 'navbar-scrolled');
-        document.body.classList.remove('fixed-nav-padding');
-    }
-});
-
-/* Menu See More Btn */
-document.addEventListener("DOMContentLoaded", function () {
-    const menuItems = document.querySelectorAll(".menu-item");
-    const seeMoreBtn = document.getElementById("see-more-btn");
-
-    const initiallyVisible = 8;
-
-    menuItems.forEach((item, index) => {
-        if (index < initiallyVisible) {
-            item.classList.add("visible");
-        }
-    });
-
-    seeMoreBtn?.addEventListener("click", function () {
-        menuItems.forEach(item => item.classList.add("visible"));
-        seeMoreBtn.style.display = "none";
-    });
-});
 
 
 
-function toggleCategories() {
-    const container = document.getElementById('category-container');
-    container.classList.toggle('show');
-}
-
-
-
-//* Menu Display Logic */
-document.addEventListener('DOMContentLoaded', function () {
-    const menuItems = document.querySelectorAll('.menu-item');
-    const seeMoreBtn = document.getElementById('see-more-btn');
-
-    // Hide all items after the first 4
-    menuItems.forEach((item, index) => {
-        if (index >= 4) {
-            item.style.display = 'none';
-        }
-    });
-
-    // Show all when See More is clicked
-    seeMoreBtn.addEventListener('click', () => {
-        menuItems.forEach(item => {
-            item.style.display = 'block';
-        });
-        seeMoreBtn.style.display = 'none'; // Hide button after clicked
-    });
-});
 
 
 document.addEventListener('DOMContentLoaded', () => {
