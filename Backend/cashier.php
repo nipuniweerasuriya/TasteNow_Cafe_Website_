@@ -58,7 +58,7 @@ if (!$result) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
 </head>
-<body class="common-page" id="cashier-page">
+<body class="common-page" id="kitchen-page">
 
 <!-- Navbar -->
 <div class="navbar">
@@ -81,7 +81,8 @@ if (!$result) {
     <!-- Search Form -->
     <form method="GET" action="cashier.php" class="mb-3">
         <div class="input-group">
-            <input type="text" class="form-control" name="search_order_id" placeholder="Search by Order ID" value="<?php echo isset($_GET['search_order_id']) ? htmlspecialchars($_GET['search_order_id']) : ''; ?>">
+            <input type="text" class="form-control" name="search_order_id" placeholder="Search by Order ID"
+                   value="<?php echo isset($_GET['search_order_id']) ? htmlspecialchars($_GET['search_order_id']) : ''; ?>">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
         </div>
     </form>

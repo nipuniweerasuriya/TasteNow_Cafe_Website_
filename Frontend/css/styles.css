@@ -315,15 +315,12 @@ body, html {
 
 
 /* Profiles and Cart Pages Navbar*/
-#cart-page .navbar,
-#kitchen-page .navbar,
-#profile-page .navbar,
-#admin-page .navbar {
+.common-page .navbar{
     margin-top: 2.5rem;
     background-color: #fac003 !important;
 }
 
-#cart-page .nav-link {
+.common-page .nav-link {
     color: white;
     font-weight: 500;
     margin-left: 20px;
