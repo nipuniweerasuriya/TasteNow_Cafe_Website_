@@ -6,7 +6,7 @@ include 'db_connect.php';
 function redirectByRole($role) {
     switch ($role) {
         case 'admin':
-            header("Location: ../Frontend/admin_dashboard.php");
+            header("Location: ../Backend/admin_dashboard.php");
             break;
         case 'kitchen':
             header("Location: ../Backend/kitchen.php");
@@ -15,7 +15,7 @@ function redirectByRole($role) {
             header("Location: ../Backend/cashier.php");
             break;
         case 'user':
-            header("Location: ../Frontend/profile.php");
+            header("Location: ../Backend/profile.php");
             break;
         default:
             echo "Unknown role.";

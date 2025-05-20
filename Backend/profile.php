@@ -86,7 +86,7 @@ if ($stmt->error) {
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
     <style>
         .status-badge {
             padding: 4px 8px;
@@ -109,7 +109,7 @@ if ($stmt->error) {
             <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
         </div>
         <div class="d-flex align-items-center ms-3">
-            <a href="../Backend/logout.php" class="text-decoration-none text-dark d-flex align-items-center">
+            <a href="logout.php" class="text-decoration-none text-dark d-flex align-items-center">
                 <span class="material-symbols-outlined icon-logout me-2">logout</span>
             </a>
         </div>
@@ -205,13 +205,13 @@ if ($stmt->error) {
                                 <?php if (strtolower($order['item_status']) === 'pending'): ?>
                                     <div class="mb-2 d-flex gap-2">
                                         <!-- Update Button -->
-                                        <a href="../Backend/update-order-item.php?item_id=<?php echo $order['order_item_id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="update-order-item.php?item_id=<?php echo $order['order_item_id']; ?>" class="btn btn-sm btn-outline-primary">
                                             Update
                                         </a>
 
 
                                         <!-- Cancel Button -->
-                                        <form method="POST" action="../Backend/cancel-order-item.php" style="display:inline;">
+                                        <form method="POST" action="cancel-order-item.php" style="display:inline;">
                                             <input type="hidden" name="order_item_id" value="<?php echo $order['order_item_id']; ?>"> <!-- ✅ FIXED -->
                                             <button type="submit" class="btn btn-sm btn-outline-danger"
                                                     onclick="return confirm('Are you sure you want to cancel this item?');">
@@ -237,7 +237,7 @@ if ($stmt->error) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+<script src="../Frontend/js/script.js"></script>
 
 </body>
 </html>

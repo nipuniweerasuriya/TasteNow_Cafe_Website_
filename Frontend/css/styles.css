@@ -291,7 +291,7 @@ body, html {
 /* Role Selector */
 #signing-form select,
 #signup-form select {
-    margin-bottom: 7px;
+
     padding: 10px;
     border: 1px solid #fac003;
     border-radius: 3px;
@@ -1108,36 +1108,24 @@ ul.list-payment-icon li {
     color: #fac003;
 }
 
-/* Ensure that the main content area stacks the chart and the new section */
-.main-content {
-    display: flex;
-    flex-direction: column; /* Stack the chart and the new section vertically */
-    gap: 1rem; /* Add some space between the chart and the new section */
-    flex: 1;
-}
 
-/* Chart container styling */
-.dashboard-main-content {
+
+
+
+
+
+/* Style for the order cards container */
+#current-orders {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    width: 100%;
-    max-width: 900px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    gap: 1rem; /* space between cards */
 }
 
-
-.chart-container {
-
-    background-color: white;
-    border-radius: 3px;
-    border: 1px solid #fac003;
-    height: 300px;
-    width: 100%;
-    max-width: 900px;
-    margin-bottom: 1rem; /* Add margin at the bottom */
+/* Style for each card */
+#current-orders .card {
+    border: 2px solid orange;
+    border-radius: 10px;
+    padding: 15px;
 }
 
 #form-container {

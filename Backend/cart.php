@@ -94,7 +94,7 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!--css link-->
-    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
 </head>
 
 <body class="common-page" id="cart-page">
@@ -199,7 +199,7 @@ $conn->close();
     </div>
 </div>
 
-<script src="js/script.js"></script>
+<script src="../Frontend/js/script.js"></script>
 
 </body>
 </html>

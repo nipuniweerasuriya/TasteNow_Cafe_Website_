@@ -73,7 +73,7 @@ $result = $conn->query($sql);
 <div class="navbar">
     <div class="navbar-container">
         <div class="navbar-brand">
-            <a class="navbar-brand logo-wiggle" href="../Frontend/index.php">TASTENOW</a>
+            <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
         </div>
         <div class="d-flex align-items-center ms-3">
             <a href="../Backend/logout.php" class="text-decoration-none text-dark d-flex align-items-center">

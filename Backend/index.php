@@ -73,7 +73,7 @@ session_start();
                     if (isset($_SESSION['user_name']) && isset($_SESSION['role'])):
                         switch ($_SESSION['role']) {
                             case 'admin':
-                                $profileLink = "../Frontend/admin_dashboard.php";
+                                $profileLink = "../Backend/admin_dashboard.php";
                                 break;
                             case 'kitchen':
                                 $profileLink = "../Backend/kitchen.php";
@@ -82,7 +82,7 @@ session_start();
                                 $profileLink = "../Backend/cashier.php";
                                 break;
                             default:
-                                $profileLink = "../Frontend/profile.php";
+                                $profileLink = "../Backend/profile.php";
                         }
                         ?>
                         <a class="nav-link"
@@ -96,7 +96,7 @@ session_start();
                 <!-- Section: Sign In/Sign Up Form -->
                 <div id="form-dropdown" class="form-container" style="display: none;">
                     <!-- Sign In Form -->
-                    <form action="../Backend/signin.php" method="post">
+                    <form action="signin.php" method="post">
                         <div id="signing-form">
                             <h2>Sign In</h2>
                             <label>Email</label>
@@ -116,7 +116,7 @@ session_start();
                     </form>
 
                     <!-- Sign Up Form -->
-                    <form action="../Backend/signup.php" method="post">
+                    <form action="signup.php" method="post">
                         <div id="signup-form" style="display:none;">
                             <h2>Sign Up</h2>
                             <label>Username</label>
@@ -127,6 +127,7 @@ session_start();
                             <input type="password" name="password" required placeholder="Enter Your Password">
                             <label>Confirm Password</label>
                             <input type="password" name="confirm-password" required placeholder="Confirm Your Password">
+                            <button type="submit">SIGN UP</button>
                             <label>Role</label>
                             <select name="role" required>
                                 <option value="admin">Admin</option>
@@ -134,7 +135,6 @@ session_start();
                                 <option value="cashier">Cashier</option>
                                 <option value="user">User</option>
                             </select>
-                            <button type="submit">SIGN UP</button>
                             <p>Already have an account? <a href="#" id="switch-to-signin">Sign In</a></p>
                         </div>
                     </form>
@@ -166,10 +166,10 @@ session_start();
 <!-- Section: About -->
 <div class="about-us">
     <div class="images-grid">
-        <div class="image-box"><img src="assets/images/gallery/shop-1.webp" alt="Image 1"></div>
-        <div class="image-box"><img src="assets/images/gallery/events-1.webp" alt="Image 2"></div>
-        <div class="image-box"><img src="assets/images/gallery/shop-2.webp" alt="Image 3"></div>
-        <div class="image-box"><img src="assets/images/gallery/events-2.webp" alt="Image 4"></div>
+        <div class="image-box"><img src="../Frontend/assets/images/gallery/shop-1.webp" alt="Image 1"></div>
+        <div class="image-box"><img src="../Frontend/assets/images/gallery/events-1.webp" alt="Image 2"></div>
+        <div class="image-box"><img src="../Frontend/assets/images/gallery/shop-2.webp" alt="Image 3"></div>
+        <div class="image-box"><img src="../Frontend/assets/images/gallery/events-2.webp" alt="Image 4"></div>
     </div>
     <div class="about-text">
         <h2 class="section-title">----- About Us -----</h2>
@@ -234,7 +234,7 @@ session_start();
 <!-- Section: Table Booking -->
 <div class="booking-container">
     <h2 class="form-heading">-----Book Your Table-----</h2>
-    <form class="booking-form" action="../Backend/table_booking.php" method="POST">
+    <form class="booking-form" action="table_booking.php" method="POST">
         <div class="form-row">
             <input type="text" name="name" placeholder="Your Name" required/>
             <input type="tel" name="phone" placeholder="Your Phone Number" required/>
@@ -260,9 +260,9 @@ session_start();
                 <a class="text-uppercase footer-brand">Tastenow</a>
                 <p>Delicious moments delivered.</p>
                 <ul class="list-payment-icon">
-                    <li><img src="assets/images/master.png" alt="Mastercard" class="payment-icon"/></li>
-                    <li><img src="assets/images/visa.png" alt="Visa" class="payment-icon"/></li>
-                    <li><img src="assets/images/cash-payment.png" alt="Cash" class="payment-icon"/></li>
+                    <li><img src="../Frontend/assets/images/master.png" alt="Mastercard" class="payment-icon"/></li>
+                    <li><img src="../Frontend/assets/images/visa.png" alt="Visa" class="payment-icon"/></li>
+                    <li><img src="../Frontend/assets/images/cash-payment.png" alt="Cash" class="payment-icon"/></li>
                 </ul>
             </div>
 
@@ -320,6 +320,45 @@ session_start();
         } else {
             navbar?.classList.remove('fixed-top', 'navbar-scrolled');
             document.body.classList.remove('fixed-nav-padding');
+        }
+    });
+
+
+    // Sign In and Sign Up Toggle Logic
+    const signinBtn = document.getElementById('signing-btn');
+    const dropdown = document.getElementById('form-dropdown');
+    const signinForm = document.getElementById('signing-form');
+    const signupForm = document.getElementById('signup-form');
+    const switchToSignup = document.getElementById('switch-to-signup');
+    const switchToSignin = document.getElementById('switch-to-signin');
+
+    // Toggle dropdown visibility
+    signinBtn?.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event bubbling
+        const isVisible = dropdown.style.display === "block";
+        dropdown.style.display = isVisible ? "none" : "block";
+        signinForm.style.display = "block";
+        signupForm.style.display = "none";
+    });
+
+    // Switch to the SignUp form
+    switchToSignup?.addEventListener('click', (e) => {
+        e.preventDefault();
+        signinForm.style.display = "none";
+        signupForm.style.display = "block";
+    });
+
+    // Switch to Sign In form
+    switchToSignin?.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupForm.style.display = "none";
+        signinForm.style.display = "block";
+    });
+
+    // Optional: Close dropdown if clicked outside
+    window.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && e.target !== signinBtn) {
+            dropdown.style.display = "none";
         }
     });
 
@@ -426,7 +465,7 @@ session_start();
             // Send to Server
             fetch('../Backend/add_to_cart.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(cartData)
             })
                 .then(async response => {
@@ -493,48 +532,8 @@ session_start();
         };
     }
 
-    // Sign In and Sign Up Toggle Logic
-    const signinBtn = document.getElementById('signing-btn');
-    const dropdown = document.getElementById('form-dropdown');
-    const signinForm = document.getElementById('signing-form');
-    const signupForm = document.getElementById('signup-form');
-    const switchToSignup = document.getElementById('switch-to-signup');
-    const switchToSignin = document.getElementById('switch-to-signin');
 
-    // Toggle dropdown visibility
-    signinBtn?.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent event bubbling
-        const isVisible = dropdown.style.display === "block";
-        dropdown.style.display = isVisible ? "none" : "block";
-        signinForm.style.display = "block";
-        signupForm.style.display = "none";
-    });
-
-    // Switch to the SignUp form
-    switchToSignup?.addEventListener('click', (e) => {
-        e.preventDefault();
-        signinForm.style.display = "none";
-        signupForm.style.display = "block";
-    });
-
-    // Switch to Sign In form
-    switchToSignin?.addEventListener('click', (e) => {
-        e.preventDefault();
-        signupForm.style.display = "none";
-        signinForm.style.display = "block";
-    });
-
-    // Optional: Close dropdown if clicked outside
-    window.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== signinBtn) {
-            dropdown.style.display = "none";
-        }
-    });
-
-
-
-
-    /*Category Toggler */
+    // Category Toggler
     function toggleCategories() {
         const categoryContainer = document.getElementById('category-container');
         const isVisible = categoryContainer.classList.toggle('show');
