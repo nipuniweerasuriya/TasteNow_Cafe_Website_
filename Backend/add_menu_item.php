@@ -5,11 +5,11 @@ include '../Backend/db_connect.php'; // Make sure the path is correct
 // Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get basic item data
-    $name = $_POST['name'];
-    $price = $_POST['price'];
+    $name = $_POST['item_name'];
+    $price = $_POST['item_price'];
     $category_id = $_POST['category_id'];
 
-    // Check if the category_id exists in the categories table
+    // Validate category_id
     $category_check = $conn->prepare("SELECT id FROM categories WHERE id = ?");
     $category_check->bind_param("i", $category_id);
     $category_check->execute();
@@ -20,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Upload image
+    // Handle image upload
     $imagePath = null;
-    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-        $imageTmp = $_FILES['image_file']['tmp_name'];
-        $imageName = basename($_FILES['image_file']['name']);
+    if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] === UPLOAD_ERR_OK) {
+        $imageTmp = $_FILES['item_image']['tmp_name'];
+        $imageName = basename($_FILES['item_image']['name']);
         $uploadDir = 'uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         move_uploaded_file($imageTmp, $imagePath);
     }
 
-    // Insert into menu_items
+    // Insert main menu item
     $stmt = $conn->prepare("INSERT INTO menu_items (name, price, image_url, category_id) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sdsi", $name, $price, $imagePath, $category_id);
     $stmt->execute();
@@ -71,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     echo "Menu item added successfully!";
-    // Redirect or display success message
 }
 
 $conn->close();
+
 
 

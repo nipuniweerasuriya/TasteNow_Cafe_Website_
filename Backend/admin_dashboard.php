@@ -129,59 +129,352 @@ if (isset($_GET['load_orders'])) {
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 
     <style>
+
+        .dashboard-sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: #f8f9fa;
+            border-right: 1px solid #e4e4e4;
+            border-left: none;
+            border-top: none;
+            border-bottom: none;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            margin-top: 1rem;
+            flex-direction: column;
+        }
+
+        /* Heading */
+        .heading-center {
+            text-align: center;
+            color: #f1cc52;
+            font-size: x-large;
+            margin-top: 2rem;
+            font-style: italic;
+            font-family: 'Playfair Display', ui-sans-serif;
+        }
+
+        /* Base Table Styling */
         table {
             width: 100%;
             border: 1px solid #ddd;
             font-family: Arial, sans-serif;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            vertical-align: top;
-            text-align: left;
+        /* Shared Table Styling */
+        #menu-section table,
+        #userDetailsContainer table,
+        #orders-table table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: 'Segoe UI', sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            border: 1px solid #ddd;
         }
 
-        th {
-            background-color: #f4f4f4;
-        }
-
-        img {
-            border-radius: 8px;
-        }
-
-
-
+        /* Orders Table Wrapper */
         #orders-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             background-color: white;
-            border: 1px solid #fac003;
-            font-family: Arial, sans-serif;
-            margin-top: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 40px;
             margin-bottom: 20px;
         }
 
+        /* Table Headers */
+        #menu-section table thead th,
+        #userDetailsContainer table thead th,
+        #orders-table thead th {
+            background-color: #fac003;
+            color: white;
+            border: 1px solid white;
+            font-size: small;
+            text-align: left;
+            padding: 10px;
+        }
+
+        /* Table Cells */
+        #menu-section table th,
+        #menu-section table td,
+        #userDetailsContainer table th,
+        #userDetailsContainer table td,
         #orders-table th,
         #orders-table td {
-            border: 1px solid #fac003;
-            padding: 10px 15px;
+            padding: 10px;
             text-align: left;
-            color: black;
             font-size: smaller;
+            vertical-align: top;
+            border: 1px solid #ccc;
         }
 
-        #orders-table th {
-            background-color: #fbdb71; /* lighter orange-ish */
-            font-weight: bold;
+        /* Last Row - No Bottom Border */
+        #menu-section table tr:last-child td,
+        #userDetailsContainer table tr:last-child td,
+        #orders-table tr:last-child td {
+            border-bottom: none;
         }
 
+        /* Hover Row Effect */
+        #menu-section table tbody tr:hover,
+        #userDetailsContainer table tbody tr:hover,
         #orders-table tbody tr:hover {
-            background-color: #ffe5b4; /* light orange highlight on hover */
+            background-color: #f6dc88;
         }
+
+        /* Menu Section Container */
+        #menu-section {
+            margin-top: 20px;
+            overflow-x: auto;
+            background: white;
+            padding: 20px;
+        }
+
+        /* Menu Images */
+        #menu-section table img {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 3px;
+        }
+
+        /* Buttons in Menu Section */
+        #menu-section button,
+        #userDetailsContainer button {
+            padding: 5px 8px;
+            font-size: 13px;
+            background-color: #fac003;
+            color: white;
+            width: 100%;
+            border: 1px solid white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+
+        /* Hover Effect for Buttons */
+        #menu-section button:hover,
+        #userDetailsContainer button:hover {
+            background-color: white;
+            color: #fac003;
+            border: 1px solid #fac003;
+        }
+
+        /* Delete Button Styling */
+        #menu-section button[onclick^="deleteMenuItem"],
+        #userDetailsContainer button.delete-btn {
+            background-color: #fac003 !important;
+            color: white !important;
+        }
+
+        /* Hover Effect for Delete Button */
+        #menu-section button[onclick^="deleteMenuItem"]:hover,
+        #userDetailsContainer button.delete-btn:hover {
+            background-color: white !important;
+            color: #fac003 !important;
+            border: 1px solid white;
+        }
+
+        .search-container {
+            position: relative;
+            width: 200%;
+            margin-top: 0.1rem;
+            margin-bottom: 0.1rem;
+            font-size: 12px;
+        }
+
+        .search-container i {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #fac003;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 8px 12px 8px 36px; /* left padding for icon space */
+            font-size: 12px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        #searchBar {
+            width: 50%;
+            padding: 8px 12px 8px 36px; /* left padding for icon space */
+            font-size: 12px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        #searchInput::placeholder,
+        #searchBar::placeholder {
+            color: #fac003;
+        }
+
+
+
+
+        /* Container for Add Menu Form */
+        .add-menu-container {
+            border: none;
+            padding: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Form Title */
+        .form-heading {
+            text-align: center;
+            color: #f1cc52;
+            font-size: x-large;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+            font-family: 'Playfair Display', ui-sans-serif;
+        }
+
+        /* Form labels */
+        .form-row label {
+            display: block;
+            color: black;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Inputs, selects, and textareas */
+        .form-row input,
+        .form-row select,
+        .form-row textarea,
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: black;
+            font-size: 1rem;
+        }
+
+        /* Placeholders */
+        .form-row input::placeholder,
+        .form-row textarea::placeholder,
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #f1d476;
+            font-size: 0.9rem;
+        }
+
+        /* Submit and Add buttons */
+        .form-row button,
+        .form-group button {
+            padding: 10px;
+            background-color: #fac003;
+            color: white;
+            width: 100%;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+
+        /* Hover effect for submit buttons */
+        .form-row button[type="submit"]:hover,
+        .form-group button[type="submit"]:hover {
+            background-color: white;
+            color: #fac003;
+            border: 3px solid #fac003;
+        }
+
+        /* Add buttons (e.g., + Add Variant, + Add Add-on) */
+        .form-group button[type="button"],
+        .form-row button[type="button"] {
+            background-color: white;
+            height: 2rem;
+            color: #fac003;
+            font-size: 14px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+            padding: 2px 10px;
+        }
+
+        /* Section title */
+        #add-menu-form h3 {
+            font-size: 24px;
+            color: #fac003;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* NEW: Horizontal layout for grouped fields */
+        .horizontal-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        /* NEW: Form group blocks inside horizontal rows */
+        .form-group {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* NEW: Variant inputs in one row */
+        .form-subrow {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-subrow input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            background-color: white;
+            color: black;
+            font-size: 1rem;
+        }
+
+        .form-subrow input::placeholder {
+            color: #f1d476;
+            font-size: 0.9rem;
+        }
+
+
+
+
+
+
+
 
 
     </style>
@@ -198,7 +491,10 @@ if (isset($_GET['load_orders'])) {
             <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
         </div>
 
-        <input type="text" id="searchInput" placeholder="Search by Table No, Date, or Status" style="margin-bottom: 10px; padding: 5px; width: 300px;">
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Date, or Status">
+        </div>
 
 
         <div class="d-flex align-items-center ms-3">
@@ -227,23 +523,11 @@ if (isset($_GET['load_orders'])) {
 
             <!-- Sidebar Menu -->
             <div class="dashboard-actions">
-                <a href="index.php" class="dashboard-action-item"><small>Home</small></a>
-                <a href="kitchen.php" class="dashboard-action-item"><small>Kitchen</small></a>
-                <a href="#" class="dashboard-action-item"><small>Cashier</small></a>
-                <a href="#" class="dashboard-action-item" onclick="showTableBooking()">Table Booking</a>
-
-
-                <div class="dropdown-wrapper">
-                    <div class="dashboard-action-item" onclick="toggleDropdown('ordersDropdown')">
-                        <small>Orders</small>
-                    </div>
-                    <div class="dropdown-menu" id="ordersDropdown">
-                        <div class="dropdown-item" onclick="loadOrders('all')">All Orders</div>
-                        <div class="dropdown-item" onclick="loadOrders('pending')">Pending Orders</div>
-                        <div class="dropdown-item" onclick="loadOrders('prepared')">Prepared Orders</div>
-                        <div class="dropdown-item" onclick="loadOrders('canceled')">Canceled Orders</div>
-                    </div>
-                </div>
+                <a href="index.php" class="dashboard-action-item" style="text-decoration: none"><small>Home</small></a>
+                <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
+                <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
+                <a href="#" class="dashboard-action-item"  style="text-decoration: none" onclick="showTableBooking()">Table Booking</a>
+                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('paidDropdown')">
@@ -261,7 +545,8 @@ if (isset($_GET['load_orders'])) {
         <!-- Orders Display Section -->
         <div class="flex-grow-1">
             <!-- Processed Orders Display -->
-            <table id="orders-table" border="1" cellspacing="0" cellpadding="10">
+            <h3 class="mb-4 heading-center">Today's Orders</h3>
+            <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
                 <thead>
                 <tr>
                     <th>Order ID</th>
@@ -280,10 +565,6 @@ if (isset($_GET['load_orders'])) {
                 </tbody>
             </table>
 
-
-            <div id="ordersContainer">
-                <!-- Orders will be displayed here -->
-            </div>
 
 
             <div id="tableBookingContainer" style="display:none;">
@@ -309,21 +590,52 @@ if (isset($_GET['load_orders'])) {
 
 <!-- JS Scripts -->
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        fetch('../Backend/get_processed_orders.php')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector("#orders-table tbody");
-                tbody.innerHTML = ''; // Clear existing rows
+    document.addEventListener("DOMContentLoaded", function () {
+        const tbody = document.querySelector("#orders-table tbody");
+        const historyBtn = document.getElementById('orderHistoryBtn');
 
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="9">No processed orders found.</td></tr>';
-                    return;
+        // Keep track of current view
+        let showingAll = false;
+
+        // Load today's orders on page load
+        loadOrders();
+
+        // Toggle view on button click
+        if (historyBtn) {
+            historyBtn.addEventListener('click', function (e) {
+                e.preventDefault(); // prevent link behavior
+
+                if (showingAll) {
+                    loadOrders(); // load today's orders
+                    historyBtn.innerHTML = '<small>Order History</small>';
+                    showingAll = false;
+                } else {
+                    loadOrders('all'); // load all orders
+                    historyBtn.innerHTML = '<small>Today\'s Orders</small>';
+                    showingAll = true;
                 }
+            });
+        }
 
-                data.forEach(order => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+        // Load orders function
+        function loadOrders(filter = 'today') {
+            const url = filter === 'all'
+                ? '../Backend/get_processed_orders.php?filter=all'
+                : '../Backend/get_processed_orders.php';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    tbody.innerHTML = ''; // clear table
+
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9">No processed orders found.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
                         <td>${order.order_id}</td>
                         <td>${order.table_number}</td>
                         <td>${order.order_date}</td>
@@ -334,29 +646,33 @@ if (isset($_GET['load_orders'])) {
                         <td>${order.status}</td>
                         <td>Rs. ${order.total_price}</td>
                     `;
-
-                    tbody.appendChild(row);
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading processed orders:', error);
+                    tbody.innerHTML = '<tr><td colspan="9">Failed to load data.</td></tr>';
                 });
-            })
-            .catch(error => {
-                console.error('Error loading processed orders:', error);
-            });
+        }
     });
 
 
 
-        // Search Prosecced orders
+
+    // Search Prosecced orders
         document.getElementById('searchInput').addEventListener('keyup', function () {
             const searchTerm = this.value.toLowerCase();
             const table = document.getElementById('orders-table');
             const rows = table.tBodies[0].rows;
 
             for (let row of rows) {
+                const orderId = row.cells[0].textContent.toLowerCase();
                 const tableNumber = row.cells[1].textContent.toLowerCase();
                 const orderDate = row.cells[2].textContent.toLowerCase();
                 const status = row.cells[7].textContent.toLowerCase();
 
                 if (
+                    orderId.includes(searchTerm) ||
                     tableNumber.includes(searchTerm) ||
                     orderDate.includes(searchTerm) ||
                     status.includes(searchTerm)
@@ -370,7 +686,8 @@ if (isset($_GET['load_orders'])) {
 
 
 
-function toggleDropdown(id) {
+
+        function toggleDropdown(id) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             if (menu.id !== id) menu.style.display = 'none';
         });
@@ -389,70 +706,6 @@ function toggleDropdown(id) {
             }
         };
         xhr.send();
-    }
-
-
-    function showUserDetails() {
-        fetch('../Backend/get-users.php')
-            .then(response => response.json())
-            .then(data => {
-                const container = document.getElementById('userDetailsContainer');
-                container.innerHTML = '';
-
-                if (data.length === 0) {
-                    container.innerHTML = '<p>No users found.</p>';
-                } else {
-                    let table = `
-                    <table border="1" cellpadding="8" cellspacing="0">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                        </tr>`;
-                    data.forEach(user => {
-                        table += `
-                        <tr>
-                            <td>${user.id}</td>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.role}</td>
-                            <td>
-                                <button onclick="deleteUser(${user.id})">Delete</button>
-                            </td>
-                        </tr>`;
-                    });
-                    table += '</table>';
-                    container.innerHTML = table;
-                }
-
-                container.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error fetching users:', error);
-            });
-    }
-
-
-    function deleteUser(userId) {
-        if (!confirm('Are you sure you want to delete this user?')) return;
-
-        fetch('../Backend/delete-user.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `user_id=${userId}`
-        })
-            .then(response => response.text())
-            .then(result => {
-                alert(result);
-                showUserDetails(); // Refresh the list
-            })
-            .catch(error => {
-                console.error('Error deleting user:', error);
-            });
     }
 
 
@@ -492,64 +745,99 @@ function toggleDropdown(id) {
 
     // Add Menu Items
     document.addEventListener("DOMContentLoaded", function () {
+        let isFormVisible = false;
+        let isMenuVisible = false;
+
         window.showAddMenuForm = function () {
             const formContainer = document.getElementById('form-container');
+            const menuSection = document.getElementById('menu-section');
+            const userDetailsContainer = document.getElementById('userDetailsContainer');
+
+            // Hide other sections
+            menuSection.style.display = 'none';
+            menuSection.innerHTML = '';
+            isMenuVisible = false;
+
+            userDetailsContainer.style.display = 'none';
+            userDetailsContainer.innerHTML = '';
+
+            // Toggle form
+            if (isFormVisible) {
+                formContainer.style.display = 'none';
+                formContainer.innerHTML = '';
+                isFormVisible = false;
+                return;
+            }
+
             formContainer.style.display = 'block';
-            formContainer.scrollIntoView({ behavior: "smooth" });
+            isFormVisible = true;
 
             if (formContainer.innerHTML.trim() !== '') return;
 
             formContainer.innerHTML = `
-            <div class="add-menu-container">
-                <h2 class="form-heading">-----Add New Menu Item-----</h2>
-                <form class="menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
-                    <div class="form-row">
-                        <label><input type="text" name="name" placeholder="Item Name" required /></label>
-                        <label><input type="number" name="price" placeholder="Price (Rs.)" required /></label>
-                        <label>Select Image:</label><input type="file" name="image_file" accept="image/*" required><br/><br/>
+        <div class="add-menu-container">
+            <h3 class="form-heading">Add New Menu Item</h3>
+            <form class="menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                <div class="form-row horizontal-group">
+                  <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" name="item_name" placeholder="Enter Item Name" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" name="item_price" placeholder="Enter Price" step="0.01" min="0" required>
+                  </div>
+                </div>
+                <div class="form-row horizontal-group">
+                  <div class="form-group">
+                    <label>Choose Image</label>
+                    <input type="file" name="item_image" accept="image/*">
+                  </div>
+                  <div class="form-group">
+                    <label>Category</label>
+                    <select name="category_id" required>
+                        <option value="">Select Category</option>
+                        <option value="1">Coffee</option>
+                        <option value="2">Tea</option>
+                        <option value="3">Smoothies</option>
+                        <option value="4">Snacks & Pastries</option>
+                        <option value="5">Desserts</option>
+                        <option value="6">Drinks</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row horizontal-group">
+                  <div class="form-group">
+                    <label>Variants:</label>
+                    <div id="variants-container">
+                      <div class="form-subrow">
+                        <input type="text" name="variants[]" placeholder="Variant Name" />
+                        <input type="number" name="variant_prices[]" placeholder="Extra Price" step="0.01" min="0" />
+                      </div>
                     </div>
-                    <div class="form-row">
-                        <label>
-                            <select name="category_id" required>
-                                <option value="">Select Category</option>
-                                <option value="1">Coffee</option>
-                                <option value="2">Tea</option>
-                                <option value="3">Smoothies</option>
-                                <option value="4">Snacks & Pastries</option>
-                                <option value="5">Desserts</option>
-                                <option value="6">Drinks</option>
-                            </select>
-                        </label>
+                    <button type="button" onclick="addVariant()">+ Add Variant</button>
+                  </div>
+                </div>
+                <div class="form-row horizontal-group">
+                  <div class="form-group">
+                    <label>Add-ons:</label>
+                    <div id="addons-container">
+                      <div class="form-subrow">
+                        <input type="text" name="addons[]" placeholder="Add-on Name" />
+                        <input type="number" name="addon_prices[]" placeholder="Add-on Price" step="0.01" min="0" />
+                      </div>
                     </div>
-                    <div class="form-row">
-                        <label>Variants:</label>
-                        <div id="variants-container">
-                            <div class="form-subrow">
-                                <input type="text" name="variants[]" placeholder="Variant Name" />
-                                <input type="number" name="variant_prices[]" placeholder="Extra Price" />
-                            </div>
-                        </div>
-                        <button type="button" onclick="addVariant()">+ Add Variant</button>
-                    </div>
-                    <div class="form-row">
-                        <label>Add-ons:</label>
-                        <div id="addons-container">
-                            <div class="form-subrow">
-                                <input type="text" name="addons[]" placeholder="Add-on Name" />
-                                <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
-                            </div>
-                        </div>
-                        <button type="button" onclick="addAddon()">+ Add Add-on</button>
-                    </div>
-                    <div class="form-row">
-                        <button type="submit">Add Item</button>
-                    </div>
-
-                     <div class="form-row">
-                        <button type="button" onclick="displayMenu()">Display Menu</button>
-                     </div>
-                </form>
-            </div>
+                    <button type="button" onclick="addAddon()">+ Add Add-on</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit">Add Item</button>
+                </div>
+                <div class="form-row">
+                    <button type="button" onclick="displayMenu()">Display Menu</button>
+                </div>
+            </form>
+        </div>
         `;
         };
 
@@ -565,11 +853,11 @@ function toggleDropdown(id) {
             })
                 .then(response => response.text())
                 .then(result => {
-                    console.log("Server response:", result);
                     alert(result);
                     form.reset();
                     document.getElementById('form-container').style.display = 'none';
                     document.getElementById('form-container').innerHTML = '';
+                    isFormVisible = false;
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -585,7 +873,7 @@ function toggleDropdown(id) {
             div.className = "form-subrow";
             div.innerHTML = `
             <input type="text" name="variants[]" placeholder="Variant Name" />
-            <input type="number" name="variant_prices[]" placeholder="Extra Price" />
+            <input type="number" name="variant_prices[]" placeholder="Extra Price" step="0.01" min="0" />
         `;
             container.appendChild(div);
         };
@@ -596,36 +884,48 @@ function toggleDropdown(id) {
             div.className = "form-subrow";
             div.innerHTML = `
             <input type="text" name="addons[]" placeholder="Add-on Name" />
-            <input type="number" name="addon_prices[]" placeholder="Add-on Price" />
+            <input type="number" name="addon_prices[]" placeholder="Add-on Price" step="0.01" min="0" />
         `;
             container.appendChild(div);
         };
-    });
 
+        window.displayMenu = function () {
+            const formContainer = document.getElementById('form-container');
+            const menuSection = document.getElementById('menu-section');
+            const userDetailsContainer = document.getElementById('userDetailsContainer');
 
+            // Hide other sections
+            formContainer.style.display = 'none';
+            formContainer.innerHTML = '';
+            userDetailsContainer.style.display = 'none';
+            userDetailsContainer.innerHTML = '';
 
-
-    // Display Menu Items In Admin Pge
-    function displayMenu() {
-        fetch('../Backend/display_menu_items.php')
-            .then(response => response.json())
-            .then(data => {
-                const menuSection = document.getElementById('menu-section');
+            // Toggle
+            if (menuSection.style.display === 'block') {
+                menuSection.style.display = 'none';
                 menuSection.innerHTML = '';
-                menuSection.style.display = 'block';
+                return;
+            }
 
-                if (data.length === 0) {
-                    menuSection.innerHTML = '<p>No menu items found.</p>';
-                    return;
-                }
+            fetch('../Backend/display_menu_items.php')
+                .then(response => response.json())
+                .then(data => {
+                    menuSection.innerHTML = '';
+                    menuSection.style.display = 'block';
 
-                // Create search bar
-                const searchHTML = `
-                <input type="text" id="searchBar" placeholder="Search by item name..." onkeyup="filterTable()">
-            `;
-                menuSection.innerHTML = searchHTML;
+                    if (data.length === 0) {
+                        menuSection.innerHTML = '<p>No menu items found.</p>';
+                        return;
+                    }
 
-                let tableHTML = `
+                    const searchHTML = `
+                 <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchBar" placeholder="Search by item name..." onkeyup="filterTable()">
+                 </div>`;
+                    menuSection.innerHTML = searchHTML;
+
+                    let tableHTML = `
                 <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse;" id="menuTable">
                     <thead>
                         <tr>
@@ -637,19 +937,17 @@ function toggleDropdown(id) {
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="menuTableBody">
-            `;
+                    <tbody id="menuTableBody">`;
 
-                data.forEach(item => {
-                    const variants = item.variants.length
-                        ? item.variants.map(v => `${v.variant_name} (+Rs.${v.price})`).join('<br>')
-                        : 'None';
+                    data.forEach(item => {
+                        const variants = item.variants.length
+                            ? item.variants.map(v => `${v.variant_name} (+Rs.${v.price})`).join('<br>')
+                            : 'None';
+                        const addons = item.addons.length
+                            ? item.addons.map(a => `${a.addon_name} (+Rs.${a.addon_price})`).join('<br>')
+                            : 'None';
 
-                    const addons = item.addons.length
-                        ? item.addons.map(a => `${a.addon_name} (+Rs.${a.addon_price})`).join('<br>')
-                        : 'None';
-
-                    tableHTML += `
+                        tableHTML += `
                     <tr data-item-name="${item.name.toLowerCase()}">
                         <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
@@ -657,62 +955,117 @@ function toggleDropdown(id) {
                         <td>${variants}</td>
                         <td>${addons}</td>
                         <td><button onclick="deleteMenuItem(${item.id})" style="background-color:red;color:white;">Delete</button></td>
-                    </tr>
-                `;
+                    </tr>`;
+                    });
+
+                    tableHTML += '</tbody></table>';
+                    menuSection.innerHTML += tableHTML;
+                })
+                .catch(error => {
+                    console.error('Error fetching menu:', error);
+                    menuSection.innerHTML = '<p>Error loading menu.</p>';
                 });
+        };
 
-                tableHTML += '</tbody></table>';
-                menuSection.innerHTML += tableHTML;
-            })
-            .catch(error => {
-                console.error('Error fetching menu:', error);
-                document.getElementById('menu-section').innerHTML = '<p>Error loading menu.</p>';
+        window.filterTable = function () {
+            const searchValue = document.getElementById('searchBar').value.toLowerCase();
+            const tableBody = document.getElementById('menuTableBody');
+            const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+            const matchingRows = [];
+            const nonMatchingRows = [];
+
+            rows.forEach(row => {
+                const itemName = row.getAttribute('data-item-name');
+                if (itemName.includes(searchValue)) {
+                    matchingRows.push(row);
+                } else {
+                    nonMatchingRows.push(row);
+                }
             });
-    }
 
-    function filterTable() {
-        const searchValue = document.getElementById('searchBar').value.toLowerCase();
-        const tableBody = document.getElementById('menuTableBody');
-        const rows = Array.from(tableBody.getElementsByTagName('tr'));
+            const allRows = [...matchingRows, ...nonMatchingRows];
 
-        const matchingRows = [];
-        const nonMatchingRows = [];
+            tableBody.innerHTML = '';
+            allRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+        };
 
-        rows.forEach(row => {
-            const itemName = row.getAttribute('data-item-name'); // Get the item name from the row's data attribute
+        window.deleteMenuItem = function (itemId) {
+            if (!confirm("Delete this menu item and related variants/add-ons?")) return;
 
-            if (itemName.includes(searchValue)) {
-                matchingRows.push(row); // Keep matching rows
-            } else {
-                nonMatchingRows.push(row); // Keep non-matching rows for later
-            }
-        });
+            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, { method: 'DELETE' })
+                .then(res => res.text())
+                .then(result => {
+                    alert(result);
+                    displayMenu(); // refresh
+                })
+                .catch(err => console.error('Delete failed:', err));
+        };
 
-        // Reorder the rows: matching rows at the top, then non-matching rows
-        const allRows = [...matchingRows, ...nonMatchingRows];
+        window.showUserDetails = function () {
+            const formContainer = document.getElementById('form-container');
+            const menuSection = document.getElementById('menu-section');
+            const userDetailsContainer = document.getElementById('userDetailsContainer');
 
-        // Clear the table body and append the reordered rows
-        tableBody.innerHTML = '';
-        allRows.forEach(row => {
-            tableBody.appendChild(row);
-        });
-    }
+            // Hide other sections
+            formContainer.style.display = 'none';
+            formContainer.innerHTML = '';
+            menuSection.style.display = 'none';
+            menuSection.innerHTML = '';
 
+            fetch('../Backend/get-users.php')
+                .then(response => response.json())
+                .then(data => {
+                    userDetailsContainer.innerHTML = '';
+                    userDetailsContainer.style.display = 'block';
 
+                    if (data.length === 0) {
+                        userDetailsContainer.innerHTML = '<p>No users found.</p>';
+                    } else {
+                        let table = `
+                    <table border="1" cellpadding="8" cellspacing="0">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>`;
+                        data.forEach(user => {
+                            table += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td><button onclick="deleteUser(${user.id})">Delete</button></td>
+                        </tr>`;
+                        });
+                        table += '</table>';
+                        userDetailsContainer.innerHTML = table;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching users:', error);
+                    userDetailsContainer.innerHTML = '<p>Error loading users.</p>';
+                });
+        };
 
+        window.deleteUser = function (userId) {
+            if (!confirm("Are you sure you want to delete this user?")) return;
 
-    // Delete Menu Items By Admin
-    function deleteMenuItem(itemId) {
-        if (!confirm("Delete this menu item and related variants/add-ons?")) return;
+            fetch(`../Backend/delete_user.php?id=${userId}`, { method: 'DELETE' })
+                .then(res => res.text())
+                .then(result => {
+                    alert(result);
+                    showUserDetails(); // Refresh
+                })
+                .catch(err => console.error('Delete failed:', err));
+        };
+    });
 
-        fetch(`../Backend/delete_menu_item.php?id=${itemId}`, { method: 'DELETE' })
-            .then(res => res.text())
-            .then(result => {
-                alert(result);
-                displayMenu(); // refresh
-            })
-            .catch(err => console.error('Delete failed:', err));
-    }
 
 
 

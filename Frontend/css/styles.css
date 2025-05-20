@@ -940,8 +940,7 @@ ul.list-payment-icon li {
 
 
 /*Profile Page */
-.profile-sidebar,
-.dashboard-sidebar {
+.profile-sidebar {
     width: 280px;
     height: 100vh;
     background-color: #f8f9fa;
@@ -1109,24 +1108,6 @@ ul.list-payment-icon li {
 }
 
 
-
-
-
-
-
-/* Style for the order cards container */
-#current-orders {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem; /* space between cards */
-}
-
-/* Style for each card */
-#current-orders .card {
-    border: 2px solid orange;
-    border-radius: 10px;
-    padding: 15px;
-}
 
 #form-container {
     display: none;
