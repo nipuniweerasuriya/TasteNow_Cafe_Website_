@@ -135,7 +135,7 @@ if (isset($_GET['load_orders'])) {
 
     <style>
 
-        #admin-page .dashboard-sidebar {
+        .dashboard-sidebar {
             width: 280px;
             height: 100vh;
             background-color: #f8f9fa;
@@ -151,7 +151,7 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Heading */
-        #admin-page .heading-center {
+        .heading-center {
             text-align: center;
             color: #f1cc52;
             font-size: x-large;
@@ -161,16 +161,16 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Base Table Styling */
-        #admin-page table {
+        table {
             width: 100%;
             border: 1px solid #ddd;
             font-family: Arial, sans-serif;
         }
 
         /* Shared Table Styling */
-        #admin-page #menu-section table,
-        #admin-page #userDetailsContainer table,
-        #admin-page #orders-table table {
+        #menu-section table,
+        #userDetailsContainer table,
+        #orders-table table {
             border-collapse: collapse;
             margin: 25px 0;
             font-size: 0.9em;
@@ -182,7 +182,7 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Orders Table Wrapper */
-        #admin-page #orders-table {
+        #orders-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
@@ -194,9 +194,9 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Table Headers */
-        #admin-page #menu-section table thead th,
-        #admin-page #userDetailsContainer table thead th,
-        #admin-page #orders-table thead th {
+        #menu-section table thead th,
+        #userDetailsContainer table thead th,
+        #orders-table thead th {
             background-color: #fac003;
             color: white;
             border: 1px solid white;
@@ -206,12 +206,12 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Table Cells */
-        #admin-page #menu-section table th,
-        #admin-page #menu-section table td,
-        #admin-page #userDetailsContainer table th,
-        #admin-page #userDetailsContainer table td,
-        #admin-page #orders-table th,
-        #admin-page #orders-table td {
+        #menu-section table th,
+        #menu-section table td,
+        #userDetailsContainer table th,
+        #userDetailsContainer table td,
+        #orders-table th,
+        #orders-table td {
             padding: 10px;
             text-align: left;
             font-size: smaller;
@@ -220,21 +220,21 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Last Row - No Bottom Border */
-        #admin-page #menu-section table tr:last-child td,
-        #admin-page #userDetailsContainer table tr:last-child td,
-        #admin-page #orders-table tr:last-child td {
+        #menu-section table tr:last-child td,
+        #userDetailsContainer table tr:last-child td,
+        #orders-table tr:last-child td {
             border-bottom: none;
         }
 
         /* Hover Row Effect */
-        #admin-page #menu-section table tbody tr:hover,
-        #admin-page #userDetailsContainer table tbody tr:hover,
-        #admin-page #orders-table tbody tr:hover {
+        #menu-section table tbody tr:hover,
+        #userDetailsContainer table tbody tr:hover,
+        #orders-table tbody tr:hover {
             background-color: #f6dc88;
         }
 
         /* Menu Section Container */
-        #admin-page #menu-section {
+        #menu-section {
             margin-top: 20px;
             overflow-x: auto;
             background: white;
@@ -242,15 +242,15 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Menu Images */
-        #admin-page #menu-section table img {
+        #menu-section table img {
             max-width: 80px;
             max-height: 80px;
             border-radius: 3px;
         }
 
         /* Buttons in Menu Section */
-        #admin-page #menu-section button,
-        #admin-page #userDetailsContainer button {
+        #menu-section button,
+        #userDetailsContainer button {
             padding: 5px 8px;
             font-size: 13px;
             background-color: #fac003;
@@ -265,16 +265,16 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Hover Effect for Buttons */
-        #admin-page #menu-section button:hover,
-        #admin-page #userDetailsContainer button:hover {
+        #menu-section button:hover,
+        #userDetailsContainer button:hover {
             background-color: white;
             color: #fac003;
             border: 1px solid #fac003;
         }
 
         /* Delete Button Styling */
-        #admin-page #menu-section button[onclick^="deleteMenuItem"],
-        #admin-page #userDetailsContainer button.delete-btn {
+        #menu-section button[onclick^="deleteMenuItem"],
+        #userDetailsContainer button.delete-btn {
             background-color: #fac003 !important;
             color: white !important;
         }
@@ -527,7 +527,6 @@ if (isset($_GET['load_orders'])) {
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
                 <a href="#" class="dashboard-action-item"  style="text-decoration: none" onclick="showTableBooking()">Table Booking</a>
-                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
                 <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 
                 <div class="dropdown-wrapper">
