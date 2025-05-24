@@ -161,48 +161,39 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Base Table Styling */
+        /* Base Table Styling */
         table {
             width: 100%;
             border: 1px solid #ddd;
             font-family: Arial, sans-serif;
         }
 
-        /* Shared Table Styling */
+        /* Shared Table Styling for Sections */
         #menu-section table,
         #userDetailsContainer table,
-        #orders-table table {
+        #orders-table {
             border-collapse: collapse;
             margin: 25px 0;
             font-size: 0.9em;
             font-family: 'Segoe UI', sans-serif;
             min-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
             width: 100%;
             border: 1px solid #ddd;
-        }
-
-        /* Orders Table Wrapper */
-        #orders-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
             background-color: white;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 40px;
-            margin-bottom: 20px;
         }
 
-        /* Table Headers */
+        /* Table Headers (all <th> in <thead> + optional .table-header class) */
         #menu-section table thead th,
         #userDetailsContainer table thead th,
-        #orders-table thead th {
-            background-color: #fac003;
+        #orders-table thead th,
+        .table-header {
+            background-color: #fac003; /* Yellow/Orange */
             color: white;
             border: 1px solid white;
             font-size: small;
             text-align: left;
             padding: 10px;
+            font-weight: bold;
         }
 
         /* Table Cells */
@@ -216,14 +207,7 @@ if (isset($_GET['load_orders'])) {
             text-align: left;
             font-size: smaller;
             vertical-align: top;
-            border: 1px solid #ccc;
-        }
-
-        /* Last Row - No Bottom Border */
-        #menu-section table tr:last-child td,
-        #userDetailsContainer table tr:last-child td,
-        #orders-table tr:last-child td {
-            border-bottom: none;
+            border: 1px solid #fac003;
         }
 
         /* Hover Row Effect */
@@ -233,12 +217,15 @@ if (isset($_GET['load_orders'])) {
             background-color: #f6dc88;
         }
 
-        /* Menu Section Container */
-        #menu-section {
+        /* Section Containers */
+        #menu-section,
+        #ordersContainer,
+        #userDetailsContainer {
             margin-top: 20px;
-            overflow-x: auto;
             background: white;
             padding: 20px;
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
         }
 
         /* Menu Images */
@@ -248,7 +235,7 @@ if (isset($_GET['load_orders'])) {
             border-radius: 3px;
         }
 
-        /* Buttons in Menu Section */
+        /* Buttons (Menu + User Table) */
         #menu-section button,
         #userDetailsContainer button {
             padding: 5px 8px;
@@ -272,7 +259,7 @@ if (isset($_GET['load_orders'])) {
             border: 1px solid #fac003;
         }
 
-        /* Delete Button Styling */
+        /* Delete Button Specific Styling */
         #menu-section button[onclick^="deleteMenuItem"],
         #userDetailsContainer button.delete-btn {
             background-color: #fac003 !important;
@@ -280,13 +267,24 @@ if (isset($_GET['load_orders'])) {
         }
 
         /* Hover Effect for Delete Button */
-        #admin-page #menu-section button[onclick^="deleteMenuItem"]:hover,
-        #admin-page #userDetailsContainer button.delete-btn:hover {
+        #menu-section button[onclick^="deleteMenuItem"]:hover,
+        #userDetailsContainer button.delete-btn:hover {
             background-color: white !important;
             color: #fac003 !important;
-            border: 1px solid white;
+            border: 1px solid #fac003;
         }
 
+
+        /* Hover Effect for Delete Button */
+        #menu-section button[onclick^="deleteMenuItem"]:hover,
+        #userDetailsContainer button.delete-btn:hover {
+            background-color: white !important;
+            color: #fac003 !important;
+            border: 1px solid #fac003;
+        }
+
+
+        /* Search Containers */
         #admin-page .search-container {
             position: relative;
             width: 200%;
@@ -303,19 +301,10 @@ if (isset($_GET['load_orders'])) {
             color: #fac003;
         }
 
-        #admin-page #searchInput {
-            width: 100%;
-            padding: 8px 12px 8px 36px; /* left padding for icon space */
-            font-size: 12px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s ease;
-        }
-
+        #admin-page #searchInput,
         #admin-page #searchBar {
-            width: 50%;
-            padding: 8px 12px 8px 36px; /* left padding for icon space */
+            width: 100%;
+            padding: 8px 12px 8px 36px;
             font-size: 12px;
             border: 1px solid #fac003;
             border-radius: 3px;
@@ -331,12 +320,16 @@ if (isset($_GET['load_orders'])) {
 
 
 
+
+
         /* Container for Add Menu Form */
-        .add-menu-container {
+        #form-container,
+        #userDetailsContainer {
             border: none;
-            padding: 25px;
-            max-width: 900px;
-            margin: 0 auto;
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 3px;
         }
 
         /* Form Title */
@@ -544,26 +537,28 @@ if (isset($_GET['load_orders'])) {
 
         <!-- Orders Display Section -->
         <div class="flex-grow-1">
-            <!-- Processed Orders Display -->
-            <h3 class="mb-4 heading-center">Today's Orders</h3>
-            <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
-                <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Table No</th>
-                    <th>Order Date</th>
-                    <th>Item</th>
-                    <th>Variant</th>
-                    <th>Add-ons</th>
-                    <th>Quantity</th>
-                    <th>Status</th>
-                    <th>Total Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Processed orders will be inserted here -->
-                </tbody>
-            </table>
+           <div class="orders-wrapper" id="ordersContainer">
+               <!-- Processed Orders Display -->
+               <h3 class="mb-4 heading-center">Today's Orders</h3>
+               <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
+                   <thead>
+                   <tr>
+                       <th>Order ID</th>
+                       <th>Table No</th>
+                       <th>Order Date</th>
+                       <th>Item</th>
+                       <th>Variant</th>
+                       <th>Add-ons</th>
+                       <th>Quantity</th>
+                       <th>Status</th>
+                       <th>Total Price</th>
+                   </tr>
+                   </thead>
+                   <tbody>
+                   <!-- Processed orders will be inserted here -->
+                   </tbody>
+               </table>
+           </div>
 
 
 
@@ -578,7 +573,7 @@ if (isset($_GET['load_orders'])) {
 
 
             <!-- Add Menu Form Container -->
-            <div id="form-container" style="display: none; margin-top: 30px;"></div>
+            <div class="form-container" id="form-container" style="display: none; margin-top: 30px;"></div>
 
             <div id="menu-section" style="display: none; margin-top: 20px;"></div>
 
@@ -603,7 +598,7 @@ if (isset($_GET['load_orders'])) {
         // Auto-refresh orders every 10 seconds
         setInterval(() => {
             loadOrders(showingAll ? 'all' : 'today');
-        }, 500);
+        }, 10000);
 
         // Toggle view on button click
         if (historyBtn) {
@@ -719,30 +714,31 @@ if (isset($_GET['load_orders'])) {
 
 
     //Admin Page Drop Down Logic
-    function toggleDropdown(dropdownId) {
-        // Close all dropdowns first
-        const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
-        allDropdowns.forEach(dropdown => {
-            if (dropdown.id !== dropdownId) {
-                dropdown.style.display = 'none';
-            }
-        });
+    function toggleDropdown(id) {
+        const dropdown = document.getElementById(id);
 
-        // Toggle the clicked dropdown
-        const dropdown = document.getElementById(dropdownId);
-        if (dropdown) {
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
+        // Toggle the clicked dropdown visibility
+        const isVisible = dropdown.style.display === 'block';
+        if (isVisible) {
+            dropdown.style.display = 'none'; // close if open
+        } else {
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+            // Open the clicked dropdown
+            dropdown.style.display = 'block';
         }
     }
 
-    // Optional: Close dropdowns if clicking outside
+    // Close dropdowns if clicking outside any .dropdown-wrapper
     document.addEventListener('click', function(event) {
-        const isClickInside = event.target.closest('.dropdown-wrapper');
-        if (!isClickInside) {
-            const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
-            allDropdowns.forEach(dropdown => {
-                dropdown.style.display = 'none';
+        // Check if click was inside any dropdown-wrapper
+        const clickedInside = event.target.closest('.dropdown-wrapper');
+        if (!clickedInside) {
+            // Click outside: close all dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
             });
         }
     });
@@ -754,12 +750,26 @@ if (isset($_GET['load_orders'])) {
         let isFormVisible = false;
         let isMenuVisible = false;
 
-        window.showAddMenuForm = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
+        const formContainer = document.getElementById('form-container');
+        const menuSection = document.getElementById('menu-section');
+        const userDetailsContainer = document.getElementById('userDetailsContainer');
 
-            // Hide other sections
+        // Utility: Add close icon
+        function getCloseButton(targetId) {
+            return `
+            <div class="close-button" onclick="hideSection('${targetId}')">❌</div>
+        `;
+        }
+
+        window.hideSection = function (sectionId) {
+            const section = document.getElementById(sectionId);
+            section.style.display = 'none';
+            section.innerHTML = '';
+            if (sectionId === 'form-container') isFormVisible = false;
+            if (sectionId === 'menu-section') isMenuVisible = false;
+        };
+
+        window.showAddMenuForm = function () {
             menuSection.style.display = 'none';
             menuSection.innerHTML = '';
             isMenuVisible = false;
@@ -767,7 +777,6 @@ if (isset($_GET['load_orders'])) {
             userDetailsContainer.style.display = 'none';
             userDetailsContainer.innerHTML = '';
 
-            // Toggle form
             if (isFormVisible) {
                 formContainer.style.display = 'none';
                 formContainer.innerHTML = '';
@@ -780,8 +789,7 @@ if (isset($_GET['load_orders'])) {
 
             if (formContainer.innerHTML.trim() !== '') return;
 
-            formContainer.innerHTML = `
-        <div class="add-menu-container">
+            formContainer.innerHTML = getCloseButton('form-container') + `
             <h3 class="form-heading">Add New Menu Item</h3>
             <form class="menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
                 <div class="form-row horizontal-group">
@@ -843,13 +851,11 @@ if (isset($_GET['load_orders'])) {
                     <button type="button" onclick="displayMenu()">Display Menu</button>
                 </div>
             </form>
-        </div>
         `;
         };
 
         window.handleFormSubmit = function (event) {
             event.preventDefault();
-
             const form = event.target;
             const formData = new FormData(form);
 
@@ -861,8 +867,8 @@ if (isset($_GET['load_orders'])) {
                 .then(result => {
                     alert(result);
                     form.reset();
-                    document.getElementById('form-container').style.display = 'none';
-                    document.getElementById('form-container').innerHTML = '';
+                    formContainer.style.display = 'none';
+                    formContainer.innerHTML = '';
                     isFormVisible = false;
                 })
                 .catch(error => {
@@ -896,17 +902,11 @@ if (isset($_GET['load_orders'])) {
         };
 
         window.displayMenu = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
-
-            // Hide other sections
             formContainer.style.display = 'none';
             formContainer.innerHTML = '';
             userDetailsContainer.style.display = 'none';
             userDetailsContainer.innerHTML = '';
 
-            // Toggle
             if (menuSection.style.display === 'block') {
                 menuSection.style.display = 'none';
                 menuSection.innerHTML = '';
@@ -916,34 +916,28 @@ if (isset($_GET['load_orders'])) {
             fetch('../Backend/display_menu_items.php')
                 .then(response => response.json())
                 .then(data => {
-                    menuSection.innerHTML = '';
+                    menuSection.innerHTML = getCloseButton('menu-section');
                     menuSection.style.display = 'block';
 
                     if (data.length === 0) {
-                        menuSection.innerHTML = '<p>No menu items found.</p>';
+                        menuSection.innerHTML += '<p>No menu items found.</p>';
                         return;
                     }
 
-                    const searchHTML = `
-                 <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchBar" placeholder="Search by item name..." onkeyup="filterTable()">
-                 </div>`;
-                    menuSection.innerHTML = searchHTML;
-
                     let tableHTML = `
-                <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse;" id="menuTable">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Variants</th>
-                            <th>Add-ons</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="menuTableBody">`;
+                    <h3 class="heading-center">Menu Items</h3>
+                    <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse;" id="menuTable">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Variants</th>
+                                <th>Add-ons</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody">`;
 
                     data.forEach(item => {
                         const variants = item.variants.length
@@ -954,14 +948,14 @@ if (isset($_GET['load_orders'])) {
                             : 'None';
 
                         tableHTML += `
-                    <tr data-item-name="${item.name.toLowerCase()}">
-                        <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
-                        <td>${item.name}</td>
-                        <td>Rs.${item.price}</td>
-                        <td>${variants}</td>
-                        <td>${addons}</td>
-                        <td><button onclick="deleteMenuItem(${item.id})" style="background-color:red;color:white;">Delete</button></td>
-                    </tr>`;
+                        <tr data-item-name="${item.name.toLowerCase()}">
+                            <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
+                            <td>${item.name}</td>
+                            <td>Rs.${item.price}</td>
+                            <td>${variants}</td>
+                            <td>${addons}</td>
+                            <td><button onclick="deleteMenuItem(${item.id})">Delete</button></td>
+                        </tr>`;
                     });
 
                     tableHTML += '</tbody></table>';
@@ -991,7 +985,6 @@ if (isset($_GET['load_orders'])) {
             });
 
             const allRows = [...matchingRows, ...nonMatchingRows];
-
             tableBody.innerHTML = '';
             allRows.forEach(row => {
                 tableBody.appendChild(row);
@@ -1011,11 +1004,6 @@ if (isset($_GET['load_orders'])) {
         };
 
         window.showUserDetails = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
-
-            // Hide other sections
             formContainer.style.display = 'none';
             formContainer.innerHTML = '';
             menuSection.style.display = 'none';
@@ -1024,33 +1012,37 @@ if (isset($_GET['load_orders'])) {
             fetch('../Backend/get-users.php')
                 .then(response => response.json())
                 .then(data => {
-                    userDetailsContainer.innerHTML = '';
+                    userDetailsContainer.innerHTML = getCloseButton('userDetailsContainer');
                     userDetailsContainer.style.display = 'block';
 
                     if (data.length === 0) {
-                        userDetailsContainer.innerHTML = '<p>No users found.</p>';
+                        userDetailsContainer.innerHTML += '<p>No users found.</p>';
                     } else {
                         let table = `
-                    <table border="1" cellpadding="8" cellspacing="0">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                        </tr>`;
+                        <h3 class="heading-center">User's Details</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="table-header">ID</th>
+                                    <th class="table-header">Name</th>
+                                    <th class="table-header">Email</th>
+                                    <th class="table-header">Role</th>
+                                    <th class="table-header">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
                         data.forEach(user => {
                             table += `
-                        <tr>
-                            <td>${user.id}</td>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.role}</td>
-                            <td><button onclick="deleteUser(${user.id})">Delete</button></td>
-                        </tr>`;
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.name}</td>
+                                <td>${user.email}</td>
+                                <td>${user.role}</td>
+                                <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
+                            </tr>`;
                         });
-                        table += '</table>';
-                        userDetailsContainer.innerHTML = table;
+                        table += `</tbody></table>`;
+                        userDetailsContainer.innerHTML += table;
                     }
                 })
                 .catch(error => {
@@ -1070,8 +1062,24 @@ if (isset($_GET['load_orders'])) {
                 })
                 .catch(err => console.error('Delete failed:', err));
         };
-    });
 
+        // Close sections when clicking outside
+        document.addEventListener('click', function (event) {
+            const containers = [formContainer, menuSection, userDetailsContainer];
+            containers.forEach(container => {
+                if (
+                    container.style.display === 'block' &&
+                    !container.contains(event.target) &&
+                    !event.target.closest('button') // allow toggling via buttons
+                ) {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            });
+            isFormVisible = false;
+            isMenuVisible = false;
+        });
+    });
 
 
 
