@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_item_id'])) {
     $stmt->bind_param('i', $order_item_id);
 
     if ($stmt->execute()) {
-        header("Location: ../Frontend/profile.php");
+        header("Location: ../Backend/profile.php");
         exit();
     } else {
         echo "Error canceling item: " . $stmt->error;

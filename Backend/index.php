@@ -30,6 +30,110 @@ session_start();
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+    <style>
+        /* Table Booking Section */
+        .booking-container {
+            background-color: #f1cc52;
+            padding: 30px;
+            width: 100%;
+        }
+
+        .form-heading {
+            text-align: center;
+            font-size: x-large;
+            margin-bottom: 20px;
+            color: black;
+            font-family: 'Playfair Display', ui-sans-serif;
+            font-style: italic;
+        }
+
+        .booking-form .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .booking-form .form-row > * {
+            flex: 1; /* Ensures all inputs in a row have equal width */
+        }
+
+        .booking-form .form-row.single-column {
+            flex-direction: column;
+        }
+
+        .booking-form input,
+        .booking-form textarea,
+        .booking-form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid white;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #f1cc52;
+            color: white;
+            opacity: 0.8;
+            box-sizing: border-box;
+        }
+
+        /* Placeholder text color for inputs and textarea */
+        .booking-form input::placeholder,
+        .booking-form textarea::placeholder {
+            color: white;
+            opacity: 0.8;
+        }
+
+        /* For date and time inputs text color and opacity */
+        input[type="date"],
+        input[type="time"] {
+            color: white;
+            opacity: 0.8;
+        }
+
+        .booking-form select option {
+            padding: 10px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            width: 100%;
+            background-color: white;
+            color: black;
+            font-size: 1rem;
+        }
+
+        .booking-form select option :focus {
+            border-color: #fac003;
+            outline: none;
+        }
+
+        .booking-form select option {
+            background-color: white;
+            color: #fac003;
+        }
+
+        /* Button styling */
+        .booking-form button {
+            border-radius: 3px;
+            border: 3px solid white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s ease;
+            background-color: #f1cc52;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .booking-form button:hover {
+            background-color: white;
+            color: #f1cc52;
+        }
+
+    </style>
+
 </head>
 
 
@@ -245,10 +349,20 @@ session_start();
             <input type="date" name="booking_date" required/>
             <input type="time" name="booking_time" required/>
         </div>
+        <div class="form-row">
+            <select name="duration" required>
+                <option value="" disabled selected>Duration (hours)</option>
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="4">4 Hours</option>
+            </select>
+        </div>
         <textarea name="special_request" placeholder="Special Request" rows="4"></textarea>
         <button type="submit">Book Now</button>
     </form>
 </div>
+
 
 
 <!-- Section: Footer -->

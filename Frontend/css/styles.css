@@ -765,76 +765,7 @@ select {
 }
 
 
-/* Table Booking Section */
-.booking-container {
-    background-color: #f1cc52;
-    padding: 30px;
-    width: 100%;
-}
 
-.form-heading {
-    text-align: center;
-    font-size: x-large;
-    margin-bottom: 20px;
-    color: black;
-    font-family: 'Playfair Display', ui-sans-serif;
-    font-style: italic;
-}
-
-.booking-form .form-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.booking-form .form-row > * {
-    flex: 1; /* Ensures all inputs in a row have equal width */
-}
-
-.booking-form .form-row.single-column {
-    flex-direction: column;
-}
-
-.booking-form input,
-.booking-form textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid white;
-    border-radius: 3px;
-    font-size: 16px;
-    background-color: #f1cc52;
-}
-
-.booking-form input::placeholder,
-.booking-form textarea::placeholder {
-    color: white;
-    opacity: 0.8;
-}
-
-input[type="date"],
-input[type="time"] {
-    color: white;
-    opacity: 0.8;
-}
-
-.booking-form button {
-    border-radius: 3px;
-    border: 3px solid white;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    color: white;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    transition: background-color 0.3s ease;
-    background-color: #f1cc52;
-    cursor: pointer;
-    width: 100%;
-}
-
-.booking-form button:hover {
-    background-color: white;
-    color: #f1cc52;
-}
 
 
 /* footer */
@@ -944,7 +875,12 @@ ul.list-payment-icon li {
     width: 280px;
     height: 100vh;
     background-color: #f8f9fa;
+    border-right: 1px solid #e4e4e4;
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
     padding: 1.5rem;
+    margin-bottom: 1rem;
     display: flex;
     margin-top: 1rem;
     flex-direction: column;
