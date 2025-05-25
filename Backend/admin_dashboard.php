@@ -1,19 +1,17 @@
 <?php
-session_start(); // Start the session to access session data
+session_start();
 
-// Check if the user is logged in and has a valid user ID in the session
+// Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if the user is not logged in
     header('Location: login.php');
     exit();
 }
 
-$user_id = $_SESSION['user_id']; // Get user ID from the session
-
-// Connect to the database
 include '../Backend/db_connect.php';
 
-// Fetch the user details from the database using the user ID
+$user_id = $_SESSION['user_id'];
+
+// Fetch user details
 $query = "SELECT name, email FROM users WHERE id = ?";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, 'i', $user_id);
@@ -21,18 +19,17 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
 if (mysqli_num_rows($result) > 0) {
-    $user = mysqli_fetch_assoc($result); // Fetch the user details
+    $user = mysqli_fetch_assoc($result);
 } else {
-    // Handle the case where the user is not found
     echo "User not found!";
     exit();
 }
 
-// Extract initials from the user's name (first letters of the first and last name)
-$names = explode(' ', $user['name']); // Split name into parts (e.g., 'Nipuni Weerasuriya')
-$initials = strtoupper(substr($names[0], 0, 1) . substr(end($names), 0, 1)); // "NW"
+// Extract initials
+$names = explode(' ', $user['name']);
+$initials = strtoupper(substr($names[0], 0, 1) . substr(end($names), 0, 1));
 
-// Check if we need to load orders
+// ===================== HANDLE AJAX REQUESTS ===================== //
 if (isset($_GET['load_orders'])) {
     $status = $_GET['status'] ?? 'all';
     $query = "SELECT 
@@ -49,9 +46,8 @@ if (isset($_GET['load_orders'])) {
               FROM processed_order_items poi
               JOIN cart_items ci ON poi.cart_item_id = ci.id
               LEFT JOIN menu_variants mv ON ci.item_id = mv.item_id
-              LEFT JOIN menu_items mi ON ci.item_id = mi.id"; // Join with menu_items to get the image_url
+              LEFT JOIN menu_items mi ON ci.item_id = mi.id";
 
-    // Filter by order status
     if ($status == 'pending') {
         $query .= " WHERE poi.status = 'Pending'";
     } elseif ($status == 'prepared') {
@@ -63,20 +59,16 @@ if (isset($_GET['load_orders'])) {
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        // Display User Information (Avatar, Name, and Email)
         echo "<div class='d-flex align-items-center mb-4'>";
-        echo "<div class='text-white d-flex justify-content-center align-items-center dashboard-avatar me-3'>";
+        echo "<div class='text-white d-flex justify-content-center align-items-center dashboard-avatar me-3' style='width:50px;height:50px;background:#6c757d;border-radius:50%;'>";
         echo $initials;
         echo "</div>";
         echo "<div>";
         echo "<h6 class='mb-0'>" . htmlspecialchars($user['name']) . "</h6>";
         echo "<small class='text-muted'>" . htmlspecialchars($user['email']) . "</small>";
-        echo "</div>";
-        echo "</div>";
+        echo "</div></div>";
 
-        // Display Orders
         while ($row = mysqli_fetch_assoc($result)) {
-            // Output the order details with an image
             echo "<div class='card p-3 mb-2'>";
             echo "<strong>Order Item ID:</strong> " . htmlspecialchars($row['order_item_id']) . "<br>";
             echo "<strong>Order ID:</strong> " . htmlspecialchars($row['order_id']) . "<br>";
@@ -86,26 +78,74 @@ if (isset($_GET['load_orders'])) {
             echo "<strong>Total Price:</strong> $" . number_format($row['total_price'], 2) . "<br>";
             echo "<strong>Status:</strong> " . htmlspecialchars($row['status']) . "<br>";
 
-            // Display image if available
             if ($row['item_image']) {
-                echo "<img src='../Backend/uploads/" . htmlspecialchars($row['item_image']) . "' alt='" . htmlspecialchars($row['item_name']) . "' class='item-image' style='width: 100px; height: 100px;'><br>";
+                echo "<img src='../Backend/uploads/" . htmlspecialchars($row['item_image']) . "' alt='" . htmlspecialchars($row['item_name']) . "' style='width:100px;height:100px;'><br>";
             }
 
-            // Display variant details if available
             if ($row['variant_name']) {
                 echo "<strong>Variant:</strong> " . htmlspecialchars($row['variant_name']) . "<br>";
                 echo "<strong>Variant Price:</strong> $" . number_format($row['variant_price'], 2) . "<br>";
             }
+
             echo "</div>";
         }
     } else {
         echo "<div class='text-muted'>No orders found for <strong>" . htmlspecialchars($status) . "</strong>.</div>";
     }
+    exit();
+}
 
-    exit; // Prevent the rest of the page from rendering
+if (isset($_GET['load_bookings'])) {
+    $query = "SELECT * FROM table_bookings ORDER BY booking_date DESC, booking_time DESC";
+    $result = mysqli_query($conn, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        echo "<div class='booking-table-container' id='booking-table-container'>";
+        echo "<span class='close-icon' onclick='closeBookingContainer()'>&times;</span>";
+        echo "<h3 class='mb-4 heading-center'>Table Booking Details</h3>";
+        echo "<table id='booking-table' cellspacing='0' cellpadding='10'>"; // ✅ Added ID
+        echo "<thead><tr>
+        <th>Booking ID</th>
+        <th>Table Num</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>People</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Duration</th>
+        <th>Special Request</th>
+        <th>Booked At</th>
+        <th>Status</th>
+    </tr></thead><tbody>";
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . htmlspecialchars($row['booking_id']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['table_number']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['number_of_people']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['booking_date']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['booking_time']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['duration']) . " hrs</td>";
+            echo "<td>" . nl2br(htmlspecialchars($row['special_request'])) . "</td>";
+            echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+            echo "</tr>";
+        }
+
+        echo "</tbody></table>";
+        echo "</div>";
+    } else {
+        echo "<div class='text-muted'>No bookings found.</div>";
+    }
+
+    exit(); // ✅ Moved outside the if-else
+
 }
 ?>
-
 
 <!doctype html>
 <html lang="en">
@@ -137,7 +177,7 @@ if (isset($_GET['load_orders'])) {
 
         .dashboard-sidebar {
             width: 280px;
-            height: 100vh;
+            height: auto;
             background-color: #f8f9fa;
             border-right: 1px solid #e4e4e4;
             border-left: none;
@@ -149,6 +189,74 @@ if (isset($_GET['load_orders'])) {
             margin-top: 1rem;
             flex-direction: column;
         }
+
+
+
+
+
+
+        .summary-container {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .summary-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .summary-card {
+            flex: 1 1 calc(33.333% - 20px);
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .summary-card h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .summary-card p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .summary-card.full-width {
+            flex: 1 1 100%;
+        }
+
+        .popular-items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .popular-items-list li {
+            padding: 6px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
 
         /* Heading */
         .heading-center {
@@ -164,13 +272,14 @@ if (isset($_GET['load_orders'])) {
         /* Base Table Styling */
         table {
             width: 100%;
-            border: 1px solid #ddd;
+            border: 1px solid white;
             font-family: Arial, sans-serif;
         }
 
         /* Shared Table Styling for Sections */
         #menu-section table,
         #userDetailsContainer table,
+        #booking-table-container table,
         #orders-table {
             border-collapse: collapse;
             margin: 25px 0;
@@ -178,7 +287,7 @@ if (isset($_GET['load_orders'])) {
             font-family: 'Segoe UI', sans-serif;
             min-width: 400px;
             width: 100%;
-            border: 1px solid #ddd;
+            border: 1px solid white;
             background-color: white;
         }
 
@@ -186,6 +295,7 @@ if (isset($_GET['load_orders'])) {
         #menu-section table thead th,
         #userDetailsContainer table thead th,
         #orders-table thead th,
+        #booking-table-container table thead th,
         .table-header {
             background-color: #fac003; /* Yellow/Orange */
             color: white;
@@ -201,6 +311,8 @@ if (isset($_GET['load_orders'])) {
         #menu-section table td,
         #userDetailsContainer table th,
         #userDetailsContainer table td,
+        #booking-table-container table th,
+        #booking-table-container table td,
         #orders-table th,
         #orders-table td {
             padding: 10px;
@@ -213,15 +325,20 @@ if (isset($_GET['load_orders'])) {
         /* Hover Row Effect */
         #menu-section table tbody tr:hover,
         #userDetailsContainer table tbody tr:hover,
+        #booking-table-container table tbody tr:hover,
         #orders-table tbody tr:hover {
             background-color: #f6dc88;
         }
 
         /* Section Containers */
         #menu-section,
+        #form-container,
         #ordersContainer,
-        #userDetailsContainer {
+        #userDetailsContainer,
+        #booking-table-container {
             margin-top: 20px;
+            margin-bottom: 20px;
+            max-width: 900px;
             background: white;
             padding: 20px;
             border-radius: 3px;
@@ -463,6 +580,13 @@ if (isset($_GET['load_orders'])) {
         }
 
 
+        .close-icon {
+            float: right;
+            font-size: 16px;
+            cursor: pointer;
+            color: #fac003;
+            margin: 10px;
+        }
 
 
 
@@ -519,7 +643,8 @@ if (isset($_GET['load_orders'])) {
                 <a href="index.php" class="dashboard-action-item" style="text-decoration: none"><small>Home</small></a>
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
-                <a href="#" class="dashboard-action-item"  style="text-decoration: none" onclick="showTableBooking()">Table Booking</a>
+                <a href="summary_history.php" class="dashboard-action-item" style="text-decoration: none;">Summary</a>
+                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
                 <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 
                 <div class="dropdown-wrapper">
@@ -535,9 +660,37 @@ if (isset($_GET['load_orders'])) {
             </div>
         </div>
 
+
+
+
+
+
+
         <!-- Orders Display Section -->
         <div class="flex-grow-1">
            <div class="orders-wrapper" id="ordersContainer">
+
+               <!-- ✅ Summary Container at the Top -->
+               <div class="summary-grid">
+                   <div class="summary-card">
+                       <h3>Total Orders Today</h3>
+                       <p id="ordersCount">0</p>
+                   </div>
+
+                   <div class="summary-card">
+                       <h3>Total Revenue</h3>
+                       <p>Rs. <span id="totalRevenue">0.00</span></p>
+                   </div>
+
+                   <div class="summary-card">
+                       <h3>Total Bookings Today</h3>
+                       <p id="bookingsCount">0</p>
+                   </div>
+
+               </div>
+
+
+
                <!-- Processed Orders Display -->
                <h3 class="mb-4 heading-center">Today's Orders</h3>
                <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
@@ -562,9 +715,10 @@ if (isset($_GET['load_orders'])) {
 
 
 
-            <div id="tableBookingContainer" style="display:none;">
-                <!-- Tabele Booking Details -->
+            <div id="bookingContainer" style="margin-top: 30px;">
+
             </div>
+
 
 
             <div id="userDetailsContainer" style="display: none;">
@@ -776,6 +930,7 @@ if (isset($_GET['load_orders'])) {
             if (formContainer.innerHTML.trim() !== '') return;
 
             formContainer.innerHTML = `
+            <span class="close-icon" onclick="closeFormContainer()">&times;</span>
             <h3 class="form-heading">Add New Menu Item</h3>
             <form class="menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
                 <div class="form-row horizontal-group">
@@ -909,7 +1064,7 @@ if (isset($_GET['load_orders'])) {
             fetch('../Backend/display_menu_items.php')
                 .then(response => response.json())
                 .then(data => {
-                    menuSection.innerHTML = '';
+                    menuSection.innerHTML += `<span class="close-icon" onclick="closeMenuSection()" style="float:right;cursor:pointer;font-size:24px;">&times;</span>`;
                     menuSection.style.display = 'block';
 
                     if (data.length === 0) {
@@ -1015,44 +1170,48 @@ if (isset($_GET['load_orders'])) {
                     userDetailsContainer.innerHTML = '';
                     userDetailsContainer.style.display = 'block';
 
+                    // Add close icon
+                    userDetailsContainer.innerHTML += `<span class="close-icon" onclick="closeUserDetails()" style="float:right;cursor:pointer;font-size:24px;">&times;</span>`;
+
                     if (data.length === 0) {
-                        userDetailsContainer.innerHTML = '<p>No users found.</p>';
+                        userDetailsContainer.innerHTML += '<p>No users found.</p>';
                     } else {
                         let table = `
-                        <h3 class="heading-center">User's Details</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="table-header">ID</th>
-                                    <th class="table-header">Name</th>
-                                    <th class="table-header">Email</th>
-                                    <th class="table-header">Role</th>
-                                    <th class="table-header">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-                                            data.forEach(user => {
-                                                table += `
+                    <h3 class="heading-center">User's Details</h3>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>${user.id}</td>
-                                <td>${user.name}</td>
-                                <td>${user.email}</td>
-                                <td>${user.role}</td>
-                                <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
-                            </tr>`;
-                                            });
-                                            table += `
-                            </tbody>
-                        </table>`;
+                                <th class="table-header">ID</th>
+                                <th class="table-header">Name</th>
+                                <th class="table-header">Email</th>
+                                <th class="table-header">Role</th>
+                                <th class="table-header">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        data.forEach(user => {
+                            table += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
+                        </tr>`;
+                        });
+                        table += `
+                        </tbody>
+                    </table>`;
 
-                        userDetailsContainer.innerHTML = table;
+                        userDetailsContainer.innerHTML += table;
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching users:', error);
-                    userDetailsContainer.innerHTML = '<p>Error loading users.</p>';
+                    userDetailsContainer.innerHTML += '<p>Error loading users.</p>';
                 });
         };
+
 
         window.deleteUser = function (userId) {
             if (!confirm("Are you sure you want to delete this user?")) return;
@@ -1070,45 +1229,124 @@ if (isset($_GET['load_orders'])) {
 
 
 
-    // Table Bookings
+
+
     function showTableBooking() {
-        // Use Fetch to get table booking details from the server
-        fetch('../Backend/get_table_bookings.php')
-            .then(response => response.json())
+        fetch('admin_dashboard.php?load_bookings=true')
+            .then(response => response.text())
             .then(data => {
-                let tableBookingContainer = document.getElementById('tableBookingContainer');
-                tableBookingContainer.innerHTML = ''; // Clear any existing content
-
-                // Create table to display booking details
-                let table = document.createElement('table');
-                table.innerHTML = `
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Customer Name</th>
-                    <th>Table Number</th>
-                    <th>Booking Time</th>
-                    <th>Status</th>
-                </tr>
-            `;
-
-                data.forEach(booking => {
-                    let row = table.insertRow();
-                    row.innerHTML = `
-                    <td>${booking.booking_id}</td>
-                    <td>${booking.customer_name}</td>
-                    <td>${booking.table_number}</td>
-                    <td>${booking.booking_time}</td>
-                    <td>${booking.status}</td>
-                `;
-                });
-
-                tableBookingContainer.appendChild(table);
-                tableBookingContainer.style.display = 'block'; // Show the container
+                document.getElementById('bookingContainer').innerHTML = data;
             })
-            .catch(error => console.log('Error loading table bookings:', error));
+            .catch(error => {
+                console.error('Error loading bookings:', error);
+            });
     }
 
+
+    function closeBookingContainer() {
+        const container = document.getElementById('booking-table-container');
+        if (container) {
+            container.remove(); // or use container.style.display = 'none';
+        }
+    }
+
+    window.closeFormContainer = function () {
+        const formContainer = document.getElementById('form-container');
+        formContainer.style.display = 'none';
+        formContainer.innerHTML = '';
+    };
+
+    window.closeMenuSection = function () {
+        const menuSection = document.getElementById('menu-section');
+        menuSection.style.display = 'none';
+        menuSection.innerHTML = '';
+    };
+
+    window.closeUserDetails = function () {
+        const userDetailsContainer = document.getElementById('userDetailsContainer');
+        userDetailsContainer.style.display = 'none';
+        userDetailsContainer.innerHTML = '';
+    };
+
+
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+
+        function filterTable(table, columnsToCheck) {
+            if (!table) return;
+            Array.from(table.tBodies[0].rows).forEach(row => {
+                const matches = columnsToCheck.some(colIndex => {
+                    const cellText = row.cells[colIndex]?.textContent.toLowerCase() || '';
+                    return cellText.includes(searchTerm);
+                });
+                row.style.display = matches ? '' : 'none';
+            });
+        }
+
+        // Filter Orders table: Order ID(0), Table No(1), Order Date(2), Status(7)
+        const ordersTable = document.querySelector('#ordersContainer table');
+        filterTable(ordersTable, [0, 1, 2, 7]);
+
+        // Filter Booking table: Booking ID(0), Status(11)
+        const bookingTable = document.querySelector('#bookingContainer table');
+        filterTable(bookingTable, [0, 11]);
+
+        // Filter Menu table: Item Name(0)
+        const menuTable = document.querySelector('#menu-section table');
+        filterTable(menuTable, [1]);
+
+        // Filter User Details table: User ID(0), User Role(3)
+        const userTable = document.querySelector('#userDetailsContainer table');
+        filterTable(userTable, [0, 3]);
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+        async function fetchDailySummary() {
+        try {
+        const response = await fetch('get_daily_summary.php');
+        if (!response.ok) throw new Error('Network error');
+
+        const data = await response.json();
+
+        document.getElementById('ordersCount').textContent = data.total_orders;
+        document.getElementById('totalRevenue').textContent = data.total_revenue.toFixed(2);
+        document.getElementById('bookingsCount').textContent = data.total_bookings;
+        document.getElementById('servedCount').textContent = data.served_items;
+        document.getElementById('canceledCount').textContent = data.canceled_items;
+
+        const topItemsList = document.getElementById('topItemsList');
+        topItemsList.innerHTML = '';
+        if (data.popular_items.length === 0) {
+        topItemsList.innerHTML = '<li>No orders yet</li>';
+    } else {
+        data.popular_items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} — ${item.quantity} sold`;
+        topItemsList.appendChild(li);
+    });
+    }
+    } catch (err) {
+        console.error('Error fetching daily summary:', err);
+    }
+    }
+
+        // Load data on page load
+        fetchDailySummary();
 </script>
+
+
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

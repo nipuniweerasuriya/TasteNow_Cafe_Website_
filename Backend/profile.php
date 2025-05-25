@@ -29,7 +29,8 @@ if (!$name || !$email) {
 }
 
 // Get initials from the user's name
-$initials = strtoupper(substr($name, 0, 1) . substr(strrchr($name, ' '), 1, 1));
+$nameParts = explode(' ', $name);
+$initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
 
 // Determine filter
 $filter = $_GET['filter'] ?? 'today';
@@ -91,7 +92,7 @@ $tab = $_GET['tab'] ?? '';
 
 $bookings = [];
 if ($tab === 'bookings') {
-    $booking_sql = "SELECT booking_id, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, created_at FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, booking_time DESC";
+    $booking_sql = "SELECT booking_id, table_number, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, created_at FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, booking_time DESC";
     $booking_stmt = $conn->prepare($booking_sql);
     $booking_stmt->bind_param('i', $user_id);
     $booking_stmt->execute();
@@ -110,11 +111,24 @@ if ($tab === 'bookings') {
     <meta charset="UTF-8">
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
     <style>
         /* Search Containers */
         .search-container {
@@ -318,7 +332,7 @@ if ($tab === 'bookings') {
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p>No orders found for this user.</p>
+                    <p>Not have today orders.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -338,6 +352,7 @@ if ($tab === 'bookings') {
                     <thead>
                     <tr>
                         <th>Booking ID</th>
+                        <th>Table Number</th>
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Email</th>
@@ -354,6 +369,7 @@ if ($tab === 'bookings') {
                     <?php foreach ($bookings as $booking): ?>
                         <tr id="booking-row-<?= $booking['booking_id'] ?>">
                             <td><?= htmlspecialchars($booking['booking_id']) ?></td>
+                            <td><?= htmlspecialchars($booking['table_number']) ?></td>
                             <td><?= htmlspecialchars($booking['name']) ?></td>
                             <td><?= htmlspecialchars($booking['phone']) ?></td>
                             <td><?= htmlspecialchars($booking['email']) ?></td>

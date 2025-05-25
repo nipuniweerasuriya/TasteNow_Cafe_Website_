@@ -28,21 +28,22 @@ $stmt->close();
 
 if (!$owner_id || $owner_id != $user_id) {
     http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Not allowed to delete this booking']);
+    echo json_encode(['status' => 'error', 'message' => 'Not allowed to cancel this booking']);
     exit();
 }
 
-// Delete booking
-$del_sql = "DELETE FROM table_bookings WHERE booking_id = ?";
-$del_stmt = $conn->prepare($del_sql);
-$del_stmt->bind_param('i', $booking_id);
+// Update booking status to 'cancelled'
+$update_sql = "UPDATE table_bookings SET status = 'cancelled' WHERE booking_id = ?";
+$update_stmt = $conn->prepare($update_sql);
+$update_stmt->bind_param('i', $booking_id);
 
-if ($del_stmt->execute()) {
+if ($update_stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Booking cancelled']);
 } else {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Failed to cancel booking']);
 }
-$del_stmt->close();
+
+$update_stmt->close();
 $conn->close();
 

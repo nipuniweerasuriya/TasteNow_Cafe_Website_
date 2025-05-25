@@ -660,6 +660,31 @@ session_start();
         }
     }
 
+    // Set minimum date to today
+    const dateInput = document.querySelector('input[name="booking_date"]');
+    const timeInput = document.querySelector('input[name="booking_time"]');
+
+    function setMinDateTime() {
+        const now = new Date();
+        const today = now.toISOString().split('T')[0];
+        dateInput.min = today;
+
+        // If selected date is today, limit time
+        dateInput.addEventListener('change', () => {
+            const selectedDate = new Date(dateInput.value);
+            const isToday = dateInput.value === today;
+
+            if (isToday) {
+                const currentTime = now.toTimeString().slice(0,5); // "HH:MM"
+                timeInput.min = currentTime;
+            } else {
+                timeInput.removeAttribute('min');
+            }
+        });
+    }
+
+    setMinDateTime();
+
 
 </script>
 
