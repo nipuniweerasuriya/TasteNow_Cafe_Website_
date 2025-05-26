@@ -1,84 +1,45 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+include 'db_connect.php';
+session_start();
+
 header('Content-Type: application/json');
 
-session_start(); // Start the session to access user_id
-
-include 'db_connect.php';
-
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["status" => "error", "message" => "User not logged in."]);
+    echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
     exit;
 }
 
-$userId = $_SESSION['user_id']; // Get logged-in user's ID
-
-// Decode incoming JSON data
+$user_id = $_SESSION['user_id'];
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Extract and validate input
-$itemId = isset($data['itemId']) ? intval($data['itemId']) : 0;
-$variantIds = $data['variantIds'] ?? [];
-$addOnIds = $data['addOnIds'] ?? [];
-$quantity = 1; // default quantity
-
-if ($itemId === 0 || empty($variantIds)) {
-    echo json_encode(["status" => "error", "message" => "Invalid item or no variants selected."]);
+if (!isset($data['itemId'], $data['itemName'], $data['price'], $data['image'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid input']);
     exit;
 }
 
-// Get item details from database
-$itemStmt = $conn->prepare("SELECT name, price FROM menu_items WHERE id = ?");
-$itemStmt->bind_param("i", $itemId);
-$itemStmt->execute();
-$itemResult = $itemStmt->get_result();
-$item = $itemResult->fetch_assoc();
-$itemStmt->close();
+$item_id = intval($data['itemId']);
+$item_name = $data['itemName'];
+$price = floatval($data['price']);
+$image_url = $data['image'];
+$quantity = 1;
 
-if (!$item) {
-    echo json_encode(["status" => "error", "message" => "Item not found."]);
-    exit;
+// Check if the item already exists in the cart — optional
+$check_stmt = $conn->prepare("SELECT id, quantity FROM cart_items WHERE user_id = ? AND item_id = ?");
+$check_stmt->bind_param("ii", $user_id, $item_id);
+$check_stmt->execute();
+$result = $check_stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    // If already in cart, just update quantity
+    $new_quantity = $row['quantity'] + 1;
+    $update_stmt = $conn->prepare("UPDATE cart_items SET quantity = ? WHERE id = ?");
+    $update_stmt->bind_param("ii", $new_quantity, $row['id']);
+    $update_stmt->execute();
+} else {
+    // Insert new item into cart
+    $insert_stmt = $conn->prepare("INSERT INTO cart_items (user_id, item_id, item_name, price, quantity, image_url) VALUES (?, ?, ?, ?, ?, ?)");
+    $insert_stmt->bind_param("iisdis", $user_id, $item_id, $item_name, $price, $quantity, $image_url);
+    $insert_stmt->execute();
 }
 
-$itemName = $item['name'];
-$itemPrice = $item['price'];
-
-// Prepare insert query for cart items (with user_id)
-$insertCartSql = "INSERT INTO cart_items (item_id, name, price, quantity, variant, user_id) VALUES (?, ?, ?, ?, ?, ?)";
-$cartStmt = $conn->prepare($insertCartSql);
-
-// Loop through each selected variant
-foreach ($variantIds as $variantId) {
-    // Get the name of the variant
-    $variantStmt = $conn->prepare("SELECT variant_name FROM menu_variants WHERE id = ?");
-    $variantStmt->bind_param("i", $variantId);
-    $variantStmt->execute();
-    $variantResult = $variantStmt->get_result();
-    $variant = $variantResult->fetch_assoc();
-    $variantStmt->close();
-
-    $variantName = $variant ? $variant['variant_name'] : 'No Variant';
-
-    // Insert into cart_items with user_id
-    $cartStmt->bind_param("isdisi", $itemId, $itemName, $itemPrice, $quantity, $variantName, $userId);
-    $cartStmt->execute();
-    $cartItemId = $cartStmt->insert_id;
-
-    // Insert selected add-ons for this cart item
-    if (!empty($addOnIds)) {
-        $addonStmt = $conn->prepare("INSERT INTO cart_item_addons (cart_item_id, addon_id) VALUES (?, ?)");
-        foreach ($addOnIds as $addonId) {
-            $addonStmt->bind_param("ii", $cartItemId, $addonId);
-            $addonStmt->execute();
-        }
-        $addonStmt->close();
-    }
-}
-
-$cartStmt->close();
-$conn->close();
-
-echo json_encode(["status" => "success", "message" => "Item added to cart"]);
-?>
+echo json_encode(['status' => 'success']);

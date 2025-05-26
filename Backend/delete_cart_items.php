@@ -1,33 +1,38 @@
 <?php
-// Include your database connection file
+session_start();
+header('Content-Type: application/json');
 include('../Backend/db_connect.php');
 
-// Check if the 'cart_item_ids' POST data exists
-if (isset($_POST['cart_item_ids'])) {
-    $cart_item_ids = json_decode($_POST['cart_item_ids']);  // Decode the cart item IDs
-
-    if (!empty($cart_item_ids)) {
-        // Debugging: Check if the item IDs are passed correctly
-        error_log("Deleting items: " . implode(',', $cart_item_ids));
-
-        // Prepare the SQL query to delete the selected items
-        $ids = implode(',', array_map('intval', $cart_item_ids));  // Convert array to comma-separated values
-        $query = "DELETE FROM cart_items WHERE id IN ($ids)";
-
-        if (mysqli_query($conn, $query)) {
-            // Return success response
-            echo json_encode(['success' => true]);
-        } else {
-            // Return error response
-            echo json_encode(['success' => false, 'message' => 'Error deleting items.']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'No items to delete.']);
-    }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'error' => 'Not logged in']);
+    exit();
 }
 
-mysqli_close($conn);  // Close the database connection
-?>
+$user_id = $_SESSION['user_id'];
 
+// Get item_ids from POST
+$data = json_decode(file_get_contents('php://input'), true);
+$item_ids = $data['item_ids'] ?? [];
+
+if (empty($item_ids)) {
+    echo json_encode(['success' => false, 'error' => 'No items selected']);
+    exit();
+}
+
+$placeholders = implode(',', array_fill(0, count($item_ids), '?'));
+$types = str_repeat('i', count($item_ids) + 1);
+$params = array_merge([$user_id], $item_ids);
+
+$stmt = $conn->prepare("DELETE FROM cart_items WHERE user_id = ? AND id IN ($placeholders)");
+$stmt->bind_param($types, ...$params);
+$success = $stmt->execute();
+
+if ($success) {
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false, 'error' => $stmt->error]);
+}
+
+$stmt->close();
+$conn->close();
+?>

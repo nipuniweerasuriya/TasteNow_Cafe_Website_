@@ -1,6 +1,6 @@
 <?php
-// get-users.php
-include '../Backend/db_connect.php'; // Adjust this path if needed
+//Display Users In the Admin DashBoard Table
+include '../Backend/db_connect.php';
 
 
 if ($conn->connect_error) {

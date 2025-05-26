@@ -1,10 +1,7 @@
 <?php
-// Start the session to manage user login information
 session_start();
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to the login page if the user is not logged in
     header("Location: login.php");
     exit();
 }
@@ -12,63 +9,47 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'] ?? 'Guest';
 
-// Include your database connection file
 include('../Backend/db_connect.php');
 
-// Query to fetch cart items only for the logged-in user
+// Fetch only cart items for the current user
 $query = "
     SELECT 
-        ci.id AS cart_item_id,
-        ci.name AS item_name,
-        ci.price AS item_price,
-        ci.quantity AS item_quantity,
-        ci.variant AS item_variant,
-        GROUP_CONCAT(ma.addon_name) AS addon_names,
-        GROUP_CONCAT(ma.addon_price) AS addon_prices
+        id AS cart_item_id,
+        item_id,
+        item_name,
+        price,
+        quantity,
+        image_url
     FROM 
-        cart_items ci
-    LEFT JOIN 
-        cart_item_addons cia ON ci.id = cia.cart_item_id
-    LEFT JOIN 
-        menu_add_ons ma ON cia.addon_id = ma.id
+        cart_items
     WHERE 
-        ci.user_id = ?
-    GROUP BY 
-        ci.id
+        user_id = ?
 ";
 
-// Prepare and execute the query
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Array to store cart items
 $cart_items = [];
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $addon_names = isset($row['addon_names']) ? explode(',', $row['addon_names']) : [];
-        $addon_prices = isset($row['addon_prices']) ? array_map('floatval', explode(',', $row['addon_prices'])) : [];
-
-        // Add the cart item to the array
         $cart_items[] = [
             'cart_item_id' => $row['cart_item_id'],
+            'item_id' => $row['item_id'],
             'item_name' => $row['item_name'],
-            'item_price' => (float)$row['item_price'],
-            'item_quantity' => (int)$row['item_quantity'],
-            'item_variant' => $row['item_variant'],
-            'addon_names' => $addon_names,
-            'addon_prices' => $addon_prices,
+            'price' => (float)$row['price'],
+            'quantity' => (int)$row['quantity'],
+            'image_url' => $row['image_url'] ?? './assets/images/Menu/default.jpg', // fallback image
         ];
     }
-} else {
-    echo "Error retrieving cart items.";
 }
 
 $stmt->close();
 $conn->close();
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -120,76 +101,52 @@ $conn->close();
                 <div class="col-lg-8">
                     <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <input type="checkbox" class="form-check-input me-2">
-                            <label>SELECT ALL (<?php echo count($cart_items); ?> ITEM(S))</label>
+                            <input type="checkbox" id="select-all" class="form-check-input me-2">
+                            <label for="select-all">SELECT ALL (<?php echo count($cart_items); ?> ITEM(S))</label>
                         </div>
                         <button class="btn btn-sm btn-delete">DELETE</button>
                     </div>
 
+
                     <!-- Cart Items -->
-                    <?php
-                    // Cart Items Loop
-                    foreach ($cart_items as $item) {
-                        $cart_item_id = $item['cart_item_id'];
-                        $item_name = $item['item_name'];
-                        $item_price = $item['item_price'];
-                        $item_quantity = $item['item_quantity'];
-                        $item_variant = $item['item_variant'];
-                        $addon_names = $item['addon_names'];
-                        $addon_prices = $item['addon_prices'];
+                    <?php foreach ($cart_items as $item):
+                        $id = $item['cart_item_id'];
+                        $name = htmlspecialchars($item['item_name']);
+                        $price = $item['price'];
+                        $qty = $item['quantity'];
+                        $img = htmlspecialchars($item['image_url']);
+                        $total = $price * $qty;
+                        ?>
+                        <div class='cart-items-container bg-white p-3 mb-3'>
+                            <div class='d-flex align-items-start gap-3 cart-item' data-item-id='<?= $id ?>'>
+                                <input type='checkbox' class='mt-2 item-select' value="1" data-item-id='<?= $id ?>'>
+                                <img src='<?= $img ?>' alt='Product' width='80' height='80'>
+                                <div class='flex-grow-1'>
+                                    <p class='item-title'><?= $name ?></p>
+                                </div>
+                                <div>
+                                    <div class='item-price'>
+                                        <span class='price' id='total-<?= $id ?>'>Rs. <?= number_format($total, 2) ?></span>
+                                    </div>
+                                    <div class='quantity-control d-flex align-items-center gap-2 mt-2'>
+                                        <button class='btn btn-outline-secondary btn-sm btn-decrease' data-item-id='<?= $id ?>'>−</button>
+                                        <span class='item-qty' id='qty-<?= $id ?>'><?= $qty ?></span>
+                                        <button class='btn btn-outline-secondary btn-sm btn-increase' data-item-id='<?= $id ?>'>+</button>
+                                        <input type='hidden' id='price-<?= $id ?>' value='<?= $price ?>'>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
 
-                        // Calculate total price (base price + addon prices)
-                        $addon_total = array_sum($addon_prices);
-                        $total_item_price = ($item_price + $addon_total) * $item_quantity;
-
-                        echo "
-        <div class='cart-items-container bg-white p-3 mb-3'>
-            <div class='d-flex align-items-start gap-3 cart-item' data-item-id='$cart_item_id'>
-                <input type='checkbox' class='mt-2 item-select' data-item-id='$cart_item_id'>
-                <img src='./assets/images/Menu/$item_name.jpg' alt='Product'>
-                <div class='flex-grow-1'>
-                    <p class='item-title'>$item_name</p>
-                    <p class='custom-text-danger'>Only 7 item(s) we have now</p>
-                    <div class='customizations'>
-                        <p><span>Variant:</span> $item_variant</p>";
-                        if (!empty($addon_names)) {
-                            echo "<p><span>Add-ons:</span> ";
-                            foreach ($addon_names as $index => $addon_name) {
-                                echo "$addon_name (+Rs.$addon_prices[$index])";
-                                if ($index < count($addon_names) - 1) {
-                                    echo ", ";
-                                }
-                            }
-                            echo "</p>";
-                        }
-
-                        echo "
-                    </div>
-                </div>
-                <div>
-                    <div class='item-price'>
-                        <span class='price' id='total-$cart_item_id'>Rs. $total_item_price</span>
-                    </div>
-                    <div class='quantity-control d-flex align-items-center gap-2 mt-2'>
-                        <button class='btn btn-outline-secondary btn-sm btn-decrease' data-item-id='$cart_item_id'>−</button>
-                        <span class='item-qty' id='qty-$cart_item_id'>$item_quantity</span>
-                        <button class='btn btn-outline-secondary btn-sm btn-increase' data-item-id='$cart_item_id'>+</button>
-                        <input type='hidden' id='price-$cart_item_id' value='$item_price'>
-                        <input type='hidden' id='addons-total-$cart_item_id' value='$addon_total'>
-                    </div>
-                </div>
-            </div>
-        </div>";
-                    }
-                    ?>
                 </div>
                 <!-- Cart Order Summary -->
                 <div class="col-lg-4">
                     <div class="order-summary-container">
                         <h5>Order Summary</h5>
-                        <p class="mb-2">Total (<?php echo count($cart_items); ?>): <span class="price fw-bold" id="order-total">Rs. 0</span></p>
-                        <input type="text" class="custom-form-control mb-3" placeholder="Enter Your Table Number">
-                        <button class="payment-btn w-100" id="checkout-btn">
+                        <p class="mb-2">Total  <span class="price fw-bold" id="order-total">Rs. 0</span></p>
+                        <input type="text" id="tableNumber"  class="custom-form-control mb-3" placeholder="Enter Your Table Number">
+                        <button class="payment-btn w-100" id="checkoutBtn">
                             PROCEED TO CHECKOUT
                         </button>
                     </div>
@@ -198,6 +155,205 @@ $conn->close();
         </div>
     </div>
 </div>
+
+
+
+
+<script>
+    // Update Total Price And Qty
+    document.addEventListener('DOMContentLoaded', function () {
+        const itemCheckboxes = document.querySelectorAll('.item-select');
+        const orderTotalElement = document.getElementById('order-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const selectAllCheckbox = document.getElementById('select-all');
+
+        // ✅ Automatically check all items on page load
+        itemCheckboxes.forEach(cb => cb.checked = true);
+        if (selectAllCheckbox) selectAllCheckbox.checked = true;
+
+        // ✅ Update total function
+        function updateOrderTotal() {
+            let total = 0;
+            let allSelected = true;
+            let anySelected = false;
+
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    anySelected = true;
+                    const itemId = checkbox.getAttribute('data-item-id');
+                    const qty = parseInt(document.getElementById(`qty-${itemId}`).textContent);
+                    const price = parseFloat(document.getElementById(`price-${itemId}`).value);
+                    total += qty * price;
+                } else {
+                    allSelected = false;
+                }
+            });
+
+            orderTotalElement.textContent = `Rs. ${total.toFixed(2)}`;
+            checkoutBtn.disabled = !anySelected;
+
+            // ✅ Sync "select all" checkbox state
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allSelected;
+            }
+        }
+
+        // ✅ Select All checkbox toggle
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                const isChecked = this.checked;
+                itemCheckboxes.forEach(cb => cb.checked = isChecked);
+                updateOrderTotal();
+            });
+        }
+
+        // ✅ Bind individual item checkbox changes
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateOrderTotal);
+        });
+
+        // ✅ Quantity buttons
+        document.querySelectorAll('.btn-increase, .btn-decrease').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const itemId = this.getAttribute('data-item-id');
+                const qtyElement = document.getElementById(`qty-${itemId}`);
+                const priceElement = document.getElementById(`price-${itemId}`);
+                const totalElement = document.getElementById(`total-${itemId}`);
+
+                let qty = parseInt(qtyElement.textContent);
+                const price = parseFloat(priceElement.value);
+
+                if (this.classList.contains('btn-increase')) {
+                    qty += 1;
+                } else {
+                    qty = Math.max(1, qty - 1);
+                }
+
+                qtyElement.textContent = qty;
+                totalElement.textContent = `Rs. ${(qty * price).toFixed(2)}`;
+
+                // Auto-check item
+                const checkbox = document.querySelector(`.item-select[data-item-id="${itemId}"]`);
+                checkbox.checked = true;
+
+                updateOrderTotal();
+            });
+        });
+
+        // ✅ Initial total calculation
+        updateOrderTotal();
+    });
+
+
+
+
+
+    // Delete Cart Items
+    document.addEventListener('DOMContentLoaded', function () {
+        // DELETE button click handler
+        document.querySelector('.btn-delete').addEventListener('click', function () {
+            const selectedCheckboxes = document.querySelectorAll('.item-select:checked');
+            if (selectedCheckboxes.length === 0) {
+                alert("Please select at least one item to delete.");
+                return;
+            }
+
+            // Collect selected item IDs
+            const itemIds = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-item-id'));
+
+            // Send AJAX request
+            fetch('delete_cart_items.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ item_ids: itemIds })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Delete response:', data); // Add this line for debugging
+                    if (data.success) {
+                        // Remove deleted items from DOM
+                        itemIds.forEach(id => {
+                            const itemContainer = document.querySelector(`.cart-item[data-item-id='${id}']`);
+                            if (itemContainer) itemContainer.closest('.cart-items-container').remove();
+                        });
+                        updateOrderSummary();
+                    } else {
+                        alert('Failed to delete items: ' + (data.error || 'Unknown error'));
+                    }
+                })
+
+                    .catch(err => {
+                    console.error('Error:', err);
+                    alert('Error deleting items.');
+                });
+        });
+
+        // Recalculate total
+        function updateOrderSummary() {
+            let total = 0;
+            document.querySelectorAll('.item-select:checked').forEach(cb => {
+                const id = cb.getAttribute('data-item-id');
+                const qty = parseInt(document.getElementById(`qty-${id}`).textContent);
+                const price = parseFloat(document.getElementById(`price-${id}`).value);
+                total += qty * price;
+            });
+            document.getElementById('order-total').textContent = `Rs. ${total.toFixed(2)}`;
+        }
+
+        // Update total on checkbox change
+        document.querySelectorAll('.item-select').forEach(cb => {
+            cb.addEventListener('change', updateOrderSummary);
+        });
+    });
+
+
+
+
+    // Checkout Orders
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+        const tableNumber = document.getElementById('tableNumber').value.trim();
+        const userId = 1; // Replace with session user ID if needed
+
+        const checkedBoxes = document.querySelectorAll('.item-select:checked');
+
+        const cartItemIds = Array.from(checkedBoxes).map(cb => cb.dataset.itemId).join(',');
+
+        if (!cartItemIds) {
+            alert('Select items to checkout');
+            return;
+        }
+
+        if (!tableNumber) {
+            alert('Enter table number');
+            return;
+        }
+
+        console.log("Selected cart items:", cartItemIds);
+        console.log("Table number:", tableNumber);
+
+        fetch('process_checkout.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `user_id=${userId}&table_number=${encodeURIComponent(tableNumber)}&cart_item_ids=${cartItemIds}`
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Checkout successful! Order ID: ' + data.order_id);
+                    location.reload();
+                } else {
+                    alert('Checkout failed: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('An error occurred');
+            });
+    });
+</script>
+
 
 <script src="../Frontend/js/script.js"></script>
 

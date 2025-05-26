@@ -1,4 +1,5 @@
 <?php
+// Get Daily Summary for the Admin DashBoard
 header('Content-Type: application/json');
 include '../Backend/db_connect.php';
 

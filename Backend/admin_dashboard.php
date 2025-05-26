@@ -172,7 +172,6 @@ if (isset($_GET['load_bookings'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
-
     <style>
 
         .dashboard-sidebar {
@@ -191,15 +190,11 @@ if (isset($_GET['load_bookings'])) {
         }
 
 
-
-
-
-
         .summary-container {
             background-color: #ffffff;
             padding: 20px 30px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
             max-width: 600px;
         }
@@ -435,10 +430,6 @@ if (isset($_GET['load_bookings'])) {
         }
 
 
-
-
-
-
         /* Container for Add Menu Form */
         #form-container,
         #userDetailsContainer {
@@ -589,11 +580,6 @@ if (isset($_GET['load_bookings'])) {
         }
 
 
-
-
-
-
-
     </style>
 
 
@@ -644,8 +630,10 @@ if (isset($_GET['load_bookings'])) {
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
                 <a href="summary_history.php" class="dashboard-action-item" style="text-decoration: none;">Summary</a>
-                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
-                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
+                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table
+                    Booking</a>
+                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order
+                        History</small></a>
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('paidDropdown')">
@@ -661,64 +649,56 @@ if (isset($_GET['load_bookings'])) {
         </div>
 
 
-
-
-
-
-
         <!-- Orders Display Section -->
         <div class="flex-grow-1">
-           <div class="orders-wrapper" id="ordersContainer">
+            <div class="orders-wrapper" id="ordersContainer">
 
-               <!-- ✅ Summary Container at the Top -->
-               <div class="summary-grid">
-                   <div class="summary-card">
-                       <h3>Total Orders Today</h3>
-                       <p id="ordersCount">0</p>
-                   </div>
+                <!-- ✅ Summary Container at the Top -->
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <h3>Total Orders Today</h3>
+                        <p id="ordersCount">0</p>
+                    </div>
 
-                   <div class="summary-card">
-                       <h3>Total Revenue</h3>
-                       <p>Rs. <span id="totalRevenue">0.00</span></p>
-                   </div>
+                    <div class="summary-card">
+                        <h3>Total Revenue</h3>
+                        <p>Rs. <span id="totalRevenue">0.00</span></p>
+                    </div>
 
-                   <div class="summary-card">
-                       <h3>Total Bookings Today</h3>
-                       <p id="bookingsCount">0</p>
-                   </div>
+                    <div class="summary-card">
+                        <h3>Total Bookings Today</h3>
+                        <p id="bookingsCount">0</p>
+                    </div>
 
-               </div>
+                </div>
 
 
-
-               <!-- Processed Orders Display -->
-               <h3 class="mb-4 heading-center">Today's Orders</h3>
-               <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
-                   <thead>
-                   <tr>
-                       <th>Order ID</th>
-                       <th>Table No</th>
-                       <th>Order Date</th>
-                       <th>Item</th>
-                       <th>Variant</th>
-                       <th>Add-ons</th>
-                       <th>Quantity</th>
-                       <th>Status</th>
-                       <th>Total Price</th>
-                   </tr>
-                   </thead>
-                   <tbody>
-                   <!-- Processed orders will be inserted here -->
-                   </tbody>
-               </table>
-           </div>
-
+                <!-- Processed Orders Display -->
+                <h3 class="mb-4 heading-center">Today's Orders</h3>
+                <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
+                    <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Table No</th>
+                        <th>Order Date</th>
+                        <th>Item</th>
+                        <th>Variant</th>
+                        <th>Add-ons</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Total Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Processed orders will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
 
 
             <div id="bookingContainer" style="margin-top: 30px;">
 
             </div>
-
 
 
             <div id="userDetailsContainer" style="display: none;">
@@ -811,38 +791,33 @@ if (isset($_GET['load_bookings'])) {
     });
 
 
-
-
-
     // Search Prosecced orders
-        document.getElementById('searchInput').addEventListener('keyup', function () {
-            const searchTerm = this.value.toLowerCase();
-            const table = document.getElementById('orders-table');
-            const rows = table.tBodies[0].rows;
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const table = document.getElementById('orders-table');
+        const rows = table.tBodies[0].rows;
 
-            for (let row of rows) {
-                const orderId = row.cells[0].textContent.toLowerCase();
-                const tableNumber = row.cells[1].textContent.toLowerCase();
-                const orderDate = row.cells[2].textContent.toLowerCase();
-                const status = row.cells[7].textContent.toLowerCase();
+        for (let row of rows) {
+            const orderId = row.cells[0].textContent.toLowerCase();
+            const tableNumber = row.cells[1].textContent.toLowerCase();
+            const orderDate = row.cells[2].textContent.toLowerCase();
+            const status = row.cells[7].textContent.toLowerCase();
 
-                if (
-                    orderId.includes(searchTerm) ||
-                    tableNumber.includes(searchTerm) ||
-                    orderDate.includes(searchTerm) ||
-                    status.includes(searchTerm)
-                ) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            if (
+                orderId.includes(searchTerm) ||
+                tableNumber.includes(searchTerm) ||
+                orderDate.includes(searchTerm) ||
+                status.includes(searchTerm)
+            ) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
-        });
+        }
+    });
 
 
-
-
-        function toggleDropdown(id) {
+    function toggleDropdown(id) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             if (menu.id !== id) menu.style.display = 'none';
         });
@@ -864,9 +839,6 @@ if (isset($_GET['load_bookings'])) {
     }
 
 
-
-
-
     //Admin Page Drop Down Logic
     function toggleDropdown(dropdownId) {
         // Close all dropdowns first
@@ -886,7 +858,7 @@ if (isset($_GET['load_bookings'])) {
     }
 
     // Optional: Close dropdowns if clicking outside
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         const isClickInside = event.target.closest('.dropdown-wrapper');
         if (!isClickInside) {
             const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
@@ -895,7 +867,6 @@ if (isset($_GET['load_bookings'])) {
             });
         }
     });
-
 
 
     // Add Menu Items
@@ -961,30 +932,6 @@ if (isset($_GET['load_bookings'])) {
                     </select>
                   </div>
                 </div>
-                <div class="form-row horizontal-group">
-                  <div class="form-group">
-                    <label>Variants:</label>
-                    <div id="variants-container">
-                      <div class="form-subrow">
-                        <input type="text" name="variants[]" placeholder="Variant Name" />
-                        <input type="number" name="variant_prices[]" placeholder="Extra Price" step="0.01" min="0" />
-                      </div>
-                    </div>
-                    <button type="button" onclick="addVariant()">+ Add Variant</button>
-                  </div>
-                </div>
-                <div class="form-row horizontal-group">
-                  <div class="form-group">
-                    <label>Add-ons:</label>
-                    <div id="addons-container">
-                      <div class="form-subrow">
-                        <input type="text" name="addons[]" placeholder="Add-on Name" />
-                        <input type="number" name="addon_prices[]" placeholder="Add-on Price" step="0.01" min="0" />
-                      </div>
-                    </div>
-                    <button type="button" onclick="addAddon()">+ Add Add-on</button>
-                  </div>
-                </div>
                 <div class="form-row">
                     <button type="submit">Add Item</button>
                 </div>
@@ -1019,28 +966,6 @@ if (isset($_GET['load_bookings'])) {
                 });
 
             return false;
-        };
-
-        window.addVariant = function () {
-            const container = document.getElementById('variants-container');
-            const div = document.createElement('div');
-            div.className = "form-subrow";
-            div.innerHTML = `
-            <input type="text" name="variants[]" placeholder="Variant Name" />
-            <input type="number" name="variant_prices[]" placeholder="Extra Price" step="0.01" min="0" />
-        `;
-            container.appendChild(div);
-        };
-
-        window.addAddon = function () {
-            const container = document.getElementById('addons-container');
-            const div = document.createElement('div');
-            div.className = "form-subrow";
-            div.innerHTML = `
-            <input type="text" name="addons[]" placeholder="Add-on Name" />
-            <input type="number" name="addon_prices[]" placeholder="Add-on Price" step="0.01" min="0" />
-        `;
-            container.appendChild(div);
         };
 
         window.displayMenu = function () {
@@ -1081,29 +1006,18 @@ if (isset($_GET['load_bookings'])) {
                             <th>Image</th>
                             <th>Name</th>
                             <th>Price</th>
-                            <th>Variants</th>
-                            <th>Add-ons</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="menuTableBody">`;
 
                     data.forEach(item => {
-                        const variants = item.variants.length
-                            ? item.variants.map(v => `${v.variant_name} (+Rs.${v.price})`).join('<br>')
-                            : 'None';
-                        const addons = item.addons.length
-                            ? item.addons.map(a => `${a.addon_name} (+Rs.${a.addon_price})`).join('<br>')
-                            : 'None';
-
                         tableHTML += `
                     <tr data-item-name="${item.name.toLowerCase()}">
                         <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
                         <td>Rs.${item.price}</td>
-                        <td>${variants}</td>
-                        <td>${addons}</td>
-                        <td><button onclick="deleteMenuItem(${item.id})" style="background-color:red;color:white;">Delete</button></td>
+                        <td><button onclick="deleteMenuItem(${item.id})">Delete</button></td>
                     </tr>`;
                     });
 
@@ -1144,7 +1058,7 @@ if (isset($_GET['load_bookings'])) {
         window.deleteMenuItem = function (itemId) {
             if (!confirm("Delete this menu item and related variants/add-ons?")) return;
 
-            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, { method: 'DELETE' })
+            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, {method: 'DELETE'})
                 .then(res => res.text())
                 .then(result => {
                     alert(result);
@@ -1164,7 +1078,7 @@ if (isset($_GET['load_bookings'])) {
             menuSection.style.display = 'none';
             menuSection.innerHTML = '';
 
-            fetch('../Backend/get-users.php')
+            fetch('../Backend/display-users.php')
                 .then(response => response.json())
                 .then(data => {
                     userDetailsContainer.innerHTML = '';
@@ -1216,7 +1130,7 @@ if (isset($_GET['load_bookings'])) {
         window.deleteUser = function (userId) {
             if (!confirm("Are you sure you want to delete this user?")) return;
 
-            fetch(`../Backend/delete_user.php?id=${userId}`, { method: 'DELETE' })
+            fetch(`../Backend/delete_user.php?id=${userId}`, {method: 'DELETE'})
                 .then(res => res.text())
                 .then(result => {
                     alert(result);
@@ -1225,10 +1139,6 @@ if (isset($_GET['load_bookings'])) {
                 .catch(err => console.error('Delete failed:', err));
         };
     });
-
-
-
-
 
 
     function showTableBooking() {
@@ -1242,7 +1152,7 @@ if (isset($_GET['load_bookings'])) {
             });
     }
 
-
+    // Close Form Container, Menu Section, User Details Container, Booking Container
     function closeBookingContainer() {
         const container = document.getElementById('booking-table-container');
         if (container) {
@@ -1268,7 +1178,7 @@ if (isset($_GET['load_bookings'])) {
         userDetailsContainer.innerHTML = '';
     };
 
-
+    // Search Bookings, Users, Orders, Menu Items
     document.getElementById('searchInput').addEventListener('keyup', function () {
         const searchTerm = this.value.toLowerCase();
 
@@ -1283,70 +1193,53 @@ if (isset($_GET['load_bookings'])) {
             });
         }
 
-        // Filter Orders table: Order ID(0), Table No(1), Order Date(2), Status(7)
+
         const ordersTable = document.querySelector('#ordersContainer table');
         filterTable(ordersTable, [0, 1, 2, 7]);
 
-        // Filter Booking table: Booking ID(0), Status(11)
+
         const bookingTable = document.querySelector('#bookingContainer table');
         filterTable(bookingTable, [0, 11]);
 
-        // Filter Menu table: Item Name(0)
+
         const menuTable = document.querySelector('#menu-section table');
         filterTable(menuTable, [1]);
 
-        // Filter User Details table: User ID(0), User Role(3)
+
         const userTable = document.querySelector('#userDetailsContainer table');
         filterTable(userTable, [0, 3]);
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-        async function fetchDailySummary() {
+    // Display Daily Summary
+    async function fetchDailySummary() {
         try {
-        const response = await fetch('get_daily_summary.php');
-        if (!response.ok) throw new Error('Network error');
+            const response = await fetch('get_daily_summary.php');
+            if (!response.ok) throw new Error('Network error');
 
-        const data = await response.json();
+            const data = await response.json();
 
-        document.getElementById('ordersCount').textContent = data.total_orders;
-        document.getElementById('totalRevenue').textContent = data.total_revenue.toFixed(2);
-        document.getElementById('bookingsCount').textContent = data.total_bookings;
-        document.getElementById('servedCount').textContent = data.served_items;
-        document.getElementById('canceledCount').textContent = data.canceled_items;
+            document.getElementById('ordersCount').textContent = data.total_orders;
+            document.getElementById('totalRevenue').textContent = data.total_revenue.toFixed(2);
+            document.getElementById('bookingsCount').textContent = data.total_bookings;
 
-        const topItemsList = document.getElementById('topItemsList');
-        topItemsList.innerHTML = '';
-        if (data.popular_items.length === 0) {
-        topItemsList.innerHTML = '<li>No orders yet</li>';
-    } else {
-        data.popular_items.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} — ${item.quantity} sold`;
-        topItemsList.appendChild(li);
-    });
-    }
-    } catch (err) {
-        console.error('Error fetching daily summary:', err);
-    }
+            const topItemsList = document.getElementById('topItemsList');
+            topItemsList.innerHTML = '';
+            if (data.popular_items.length === 0) {
+                topItemsList.innerHTML = '<li>No orders yet</li>';
+            } else {
+                data.popular_items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.name} — ${item.quantity} sold`;
+                    topItemsList.appendChild(li);
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching daily summary:', err);
+        }
     }
 
-        // Load data on page load
-        fetchDailySummary();
+    fetchDailySummary();
 </script>
-
-
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

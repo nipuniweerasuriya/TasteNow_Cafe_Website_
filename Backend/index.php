@@ -423,268 +423,152 @@ session_start();
 
 <!-- Section: Js Link-->
 <script>
-    // Navbar Fixed Top
-    window.addEventListener('scroll', function () {
-        const navbar = document.getElementById('navbar');
-        const topBarHeight = document.querySelector('.top-bar')?.offsetHeight || 0;
-
-        if (window.scrollY > topBarHeight) {
-            navbar?.classList.add('fixed-top', 'navbar-scrolled');
-            document.body.classList.add('fixed-nav-padding');
-        } else {
-            navbar?.classList.remove('fixed-top', 'navbar-scrolled');
-            document.body.classList.remove('fixed-nav-padding');
-        }
-    });
-
-
-    // Sign In and Sign Up Toggle Logic
-    const signinBtn = document.getElementById('signing-btn');
-    const dropdown = document.getElementById('form-dropdown');
-    const signinForm = document.getElementById('signing-form');
-    const signupForm = document.getElementById('signup-form');
-    const switchToSignup = document.getElementById('switch-to-signup');
-    const switchToSignin = document.getElementById('switch-to-signin');
-
-    // Toggle dropdown visibility
-    signinBtn?.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent event bubbling
-        const isVisible = dropdown.style.display === "block";
-        dropdown.style.display = isVisible ? "none" : "block";
-        signinForm.style.display = "block";
-        signupForm.style.display = "none";
-    });
-
-    // Switch to the SignUp form
-    switchToSignup?.addEventListener('click', (e) => {
-        e.preventDefault();
-        signinForm.style.display = "none";
-        signupForm.style.display = "block";
-    });
-
-    // Switch to Sign In form
-    switchToSignin?.addEventListener('click', (e) => {
-        e.preventDefault();
-        signupForm.style.display = "none";
-        signinForm.style.display = "block";
-    });
-
-    // Optional: Close dropdown if clicked outside
-    window.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== signinBtn) {
-            dropdown.style.display = "none";
-        }
-    });
-
-
-    // Menu See More Btn
     document.addEventListener("DOMContentLoaded", function () {
-        const menuItems = document.querySelectorAll(".menu-item");
-        const seeMoreBtn = document.getElementById("see-more-btn");
+        // Navbar Fixed Top
+        window.addEventListener('scroll', function () {
+            const navbar = document.getElementById('navbar');
+            const topBarHeight = document.querySelector('.top-bar')?.offsetHeight || 0;
 
-        const initiallyVisible = 8;
-
-        menuItems.forEach((item, index) => {
-            if (index < initiallyVisible) {
-                item.classList.add("visible");
+            if (window.scrollY > topBarHeight) {
+                navbar?.classList.add('fixed-top', 'navbar-scrolled');
+                document.body.classList.add('fixed-nav-padding');
+            } else {
+                navbar?.classList.remove('fixed-top', 'navbar-scrolled');
+                document.body.classList.remove('fixed-nav-padding');
             }
         });
 
-        seeMoreBtn?.addEventListener("click", function () {
-            menuItems.forEach(item => item.classList.add("visible"));
-            seeMoreBtn.style.display = "none";
+        // Sign In and Sign Up Toggle Logic
+        const signinBtn = document.getElementById('signing-btn');
+        const dropdown = document.getElementById('form-dropdown');
+        const signinForm = document.getElementById('signing-form');
+        const signupForm = document.getElementById('signup-form');
+        const switchToSignup = document.getElementById('switch-to-signup');
+        const switchToSignin = document.getElementById('switch-to-signin');
+
+        signinBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = dropdown.style.display === "block";
+            dropdown.style.display = isVisible ? "none" : "block";
+            signinForm.style.display = "block";
+            signupForm.style.display = "none";
         });
-    });
 
-    //Menu Display Logic
-    document.addEventListener('DOMContentLoaded', function () {
-        const menuItems = document.querySelectorAll('.menu-item');
-        const seeMoreBtn = document.getElementById('see-more-btn');
+        switchToSignup?.addEventListener('click', (e) => {
+            e.preventDefault();
+            signinForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
 
-        // Hide all items after the first 4
+        switchToSignin?.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.style.display = "none";
+            signinForm.style.display = "block";
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target) && e.target !== signinBtn) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        // Menu See More Btn
+        const menuItems = document.querySelectorAll(".menu-item");
+        const seeMoreBtn = document.getElementById("see-more-btn");
+        const initiallyVisible = 8;
+
         menuItems.forEach((item, index) => {
-            if (index >= 4) {
+            if (index >= initiallyVisible) {
                 item.style.display = 'none';
             }
         });
 
-        // Show all when See More is clicked
-        seeMoreBtn.addEventListener('click', () => {
-            menuItems.forEach(item => {
-                item.style.display = 'block';
-            });
-            seeMoreBtn.style.display = 'none'; // Hide button after clicked
+        seeMoreBtn?.addEventListener("click", function () {
+            menuItems.forEach(item => item.style.display = "block");
+            seeMoreBtn.style.display = "none";
         });
-    });
 
-
-    // Category Filtering
-    document.addEventListener('DOMContentLoaded', () => {
+        // Category Filtering
         const buttons = document.querySelectorAll('.category-button');
-
         buttons.forEach(button => {
             button.addEventListener('click', () => {
                 const category = button.getAttribute('data-category').toLowerCase();
-                const items = document.querySelectorAll('.menu-item');
-
-                items.forEach(item => {
+                menuItems.forEach(item => {
                     const itemCategory = item.getAttribute('data-category').toLowerCase();
                     item.style.display = (category === 'all' || itemCategory === category) ? 'block' : 'none';
                 });
-
-                // Highlight active button
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
             });
         });
 
-        // Add To Cart Button
+        // Add Item to Cart
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
                 const itemId = this.getAttribute('data-id');
-                const itemDiv = this.closest('.menu-item');
-                const variants = JSON.parse(itemDiv.getAttribute('data-variants'));
-                const addOns = JSON.parse(itemDiv.getAttribute('data-addons'));
+                const itemName = this.getAttribute('data-name');
+                const itemPrice = this.getAttribute('data-price');
+                const itemImage = this.getAttribute('data-image');
 
-                openModal(itemId, variants, addOns);
+                const cartData = {
+                    itemId: parseInt(itemId),
+                    itemName: itemName,
+                    price: parseFloat(itemPrice),
+                    image: itemImage
+                };
+
+                fetch('add_to_cart.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cartData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('Item added to cart!');
+                        } else {
+                            alert(data.message || 'Failed to add item.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding to cart:', error);
+                        alert('Something went wrong.');
+                    });
             });
         });
 
-        // Add Item To Cart With Variants
-        document.getElementById('addToCartWithOptions').addEventListener('click', () => {
-            const modal = document.getElementById("menu-options-modal");
 
-            // Get All Selected Variants
-            const variantOptions = document.querySelectorAll('#variantsDropdown option:checked');
-            const variantIds = Array.from(variantOptions).map(opt => parseInt(opt.value));
 
-            if (variantIds.length === 0) {
-                alert("Please select at least one variant.");
-                return;
-            }
-
-            const addOnCheckboxes = document.querySelectorAll('#addOnsContainer input[type="checkbox"]:checked');
-            const addOnIds = Array.from(addOnCheckboxes).map(cb => parseInt(cb.value));
-
-            const itemId = parseInt(modal.getAttribute('data-item-id'));
-
-            const cartData = {
-                itemId: itemId,
-                variantIds: variantIds,
-                addOnIds: addOnIds
-            };
-
-            // Send to Server
-            fetch('../Backend/add_to_cart.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(cartData)
-            })
-                .then(async response => {
-                    const text = await response.text();
-                    try {
-                        const data = JSON.parse(text);
-                        if (data.status === 'success') {
-                            alert('Item added to cart!');
-                            modal.style.display = "none";
-                        } else {
-                            alert(data.message || 'Failed to add to cart.');
-                        }
-                    } catch (e) {
-                        console.error('Non-JSON response from server:', text);
-                        alert('Unexpected server response. Check console.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    alert('Server error. Check console for details.');
-                });
-        });
-    });
-
-    // Modal Handling
-    function openModal(itemId, variants, addOns) {
-        const modal = document.getElementById("menu-options-modal");
-        modal.style.display = "block";
-        modal.setAttribute('data-item-id', itemId);
-
-        // Populate variant dropdown (multi-select)
-        const variantsDropdown = document.getElementById('variantsDropdown');
-        variantsDropdown.innerHTML = '';
-        variantsDropdown.multiple = true; // ensure it's multiple
-
-        variants.forEach(variant => {
-            let option = document.createElement('option');
-            option.value = variant.id;
-            option.textContent = `${variant.variant_name} - Rs. ${variant.price}`;
-            variantsDropdown.appendChild(option);
-        });
-
-        // Populate add-ons
-        const addOnsContainer = document.getElementById('addOnsContainer');
-        addOnsContainer.innerHTML = '';
-        addOns.forEach(addOn => {
-            let checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `addon-${addOn.id}`;
-            checkbox.value = addOn.id;
-
-            let label = document.createElement('label');
-            label.setAttribute('for', `addon-${addOn.id}`);
-            label.textContent = `${addOn.addon_name} - Rs. ${addOn.addon_price}`;
-
-            addOnsContainer.appendChild(checkbox);
-            addOnsContainer.appendChild(label);
-            addOnsContainer.appendChild(document.createElement('br'));
-        });
-
-        // Close modal
-        document.getElementById('close-modal').onclick = () => {
-            modal.style.display = "none";
+        // Category Toggler
+        window.toggleCategories = function () {
+            const categoryContainer = document.getElementById('category-container');
+            const isVisible = categoryContainer.classList.toggle('show');
+            document.body.classList.toggle('category-open', isVisible);
         };
-    }
 
+        // Set minimum date to today
+        const dateInput = document.querySelector('input[name="booking_date"]');
+        const timeInput = document.querySelector('input[name="booking_time"]');
 
-    // Category Toggler
-    function toggleCategories() {
-        const categoryContainer = document.getElementById('category-container');
-        const isVisible = categoryContainer.classList.toggle('show');
+        function setMinDateTime() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            dateInput.min = today;
 
-        // Lock or unlock page scroll
-        if (isVisible) {
-            document.body.classList.add('category-open');
-        } else {
-            document.body.classList.remove('category-open');
+            dateInput.addEventListener('change', () => {
+                const isToday = dateInput.value === today;
+                if (isToday) {
+                    const currentTime = now.toTimeString().slice(0, 5);
+                    timeInput.min = currentTime;
+                } else {
+                    timeInput.removeAttribute('min');
+                }
+            });
         }
-    }
 
-    // Set minimum date to today
-    const dateInput = document.querySelector('input[name="booking_date"]');
-    const timeInput = document.querySelector('input[name="booking_time"]');
-
-    function setMinDateTime() {
-        const now = new Date();
-        const today = now.toISOString().split('T')[0];
-        dateInput.min = today;
-
-        // If selected date is today, limit time
-        dateInput.addEventListener('change', () => {
-            const selectedDate = new Date(dateInput.value);
-            const isToday = dateInput.value === today;
-
-            if (isToday) {
-                const currentTime = now.toTimeString().slice(0,5); // "HH:MM"
-                timeInput.min = currentTime;
-            } else {
-                timeInput.removeAttribute('min');
-            }
-        });
-    }
-
-    setMinDateTime();
-
+        if (dateInput && timeInput) setMinDateTime();
+    });
 
 </script>
 

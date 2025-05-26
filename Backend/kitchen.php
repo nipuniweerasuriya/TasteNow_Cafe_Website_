@@ -86,10 +86,7 @@ $result = $conn->query($sql);
 
 
 
-<!-- Display Menu Button -->
-<div class="mb-3 text-end">
-    <button class="btn btn-dark" onclick="displayMenu()">Display Menu</button>
-</div>
+
 
 <!-- Menu Section (Populated by JS) -->
 <div id="menu-section" style="display: none;"></div>
@@ -102,12 +99,44 @@ $result = $conn->query($sql);
     <div class="profile-layout">
         <div class="order-container w-100">
             <h4 class="mb-3">Kitchen Orders</h4>
+            <!-- Display Menu Button -->
+            <div class="mb-3 text-end">
+                <button class="btn btn-dark" onclick="displayMenu()">Menu</button>
+            </div>
+
+
+            <!-- Menu Items Table (Initially Hidden) -->
+            <div class="menu-items-container bg-white p-3 mb-4" id="menuTableContainer" style="display: none;">
+                <h5>Available Menu Items</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Variants</th>
+                            <th>Add-ons</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="menuItemsTableBody">
+                        <!-- Rows will be inserted here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
             <div class="order-items-container bg-white p-3 mb-3">
                 <?php if ($result && $result->num_rows > 0): ?>
                     <?php while ($order = $result->fetch_assoc()): ?>
                         <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
                             <input type="checkbox" class="mt-2">
-                            <img src="../Backend/uploads<?php echo htmlspecialchars($order['item_image']); ?>" alt="Item" style="width: 100px; height: auto;">
+                            <img src="../../Backend/uploads/<?php echo htmlspecialchars($order['item_image']); ?>" alt="Item" style="width: 100px; height: auto;">
                             <div class="flex-grow-1">
                                 <p class="item-title mb-1"><?php echo htmlspecialchars($order['item_name']); ?></p>
                                 <div class="customizations">
@@ -200,6 +229,74 @@ $result = $conn->query($sql);
             });
         });
     });
+
+
+
+    function displayMenu() {
+        fetch('display_menu_items.php') // Update path as needed
+            .then(response => response.json())
+            .then(data => {
+                const tableContainer = document.getElementById('menuTableContainer');
+                const tableBody = document.getElementById('menuItemsTableBody');
+
+                tableBody.innerHTML = ''; // Clear previous content
+
+                if (!data.length) {
+                    tableBody.innerHTML = '<tr><td colspan="5">No menu items available.</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td><img src="../../Backend/uploads/${item.item_image}" alt="${item.item_name}" style="width: 80px; height: auto;"></td>
+                        <td>${item.item_name}</td>
+                        <td>Rs. ${item.base_price}</td>
+                        <td>${item.variants.length ? item.variants.map(v => `${v.variant_name} (Rs.${v.price})`).join('<br>') : '—'}</td>
+                        <td>${item.addons.length ? item.addons.map(a => `${a.addon_name} (Rs.${a.addon_price})`).join('<br>') : '—'}</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">Delete</button></td>
+
+                    `;
+                        tableBody.appendChild(row);
+                    });
+                }
+
+                tableContainer.style.display = 'block'; // Show the section
+            })
+            .catch(error => {
+                console.error('Error fetching menu items:', error);
+                const tableBody = document.getElementById('menuItemsTableBody');
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-danger">Failed to load menu items.</td></tr>';
+                document.getElementById('menuTableContainer').style.display = 'block';
+            });
+    }
+
+
+    function deleteMenuItem(itemId) {
+        if (confirm("Are you sure you want to delete this menu item and its related data?")) {
+            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete');
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    alert(message);
+
+                    // Also remove from kitchen table if it's present
+                    const kitchenRow = document.getElementById(`kitchen-menu-item-${itemId}`);
+                    if (kitchenRow) kitchenRow.remove();
+
+                })
+                .catch(error => {
+                    alert("Error deleting item: " + error.message);
+                });
+        }
+    }
+
+
+
 </script>
 
 
