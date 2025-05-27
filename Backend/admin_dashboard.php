@@ -30,23 +30,23 @@ $names = explode(' ', $user['name']);
 $initials = strtoupper(substr($names[0], 0, 1) . substr(end($names), 0, 1));
 
 // ===================== HANDLE AJAX REQUESTS ===================== //
+
 if (isset($_GET['load_orders'])) {
+    header('Content-Type: application/json');
     $status = $_GET['status'] ?? 'all';
+
     $query = "SELECT 
-                poi.id AS order_item_id, 
-                poi.order_id, 
-                ci.name AS item_name, 
-                ci.price AS item_price, 
-                poi.quantity, 
-                poi.total_price, 
+                poi.id AS order_item_id,
+                poi.order_id,
+                poi.item_name,
+                poi.price,
+                poi.quantity,
                 poi.status,
-                mv.variant_name, 
-                mv.price AS variant_price,
-                mi.image_url AS item_image
+                poi.image_url,
+                po.table_number,
+                po.created_at
               FROM processed_order_items poi
-              JOIN cart_items ci ON poi.cart_item_id = ci.id
-              LEFT JOIN menu_variants mv ON ci.item_id = mv.item_id
-              LEFT JOIN menu_items mi ON ci.item_id = mi.id";
+              JOIN processed_order po ON poi.order_id = po.id";
 
     if ($status == 'pending') {
         $query .= " WHERE poi.status = 'Pending'";
@@ -58,42 +58,17 @@ if (isset($_GET['load_orders'])) {
 
     $result = mysqli_query($conn, $query);
 
-    if (mysqli_num_rows($result) > 0) {
-        echo "<div class='d-flex align-items-center mb-4'>";
-        echo "<div class='text-white d-flex justify-content-center align-items-center dashboard-avatar me-3' style='width:50px;height:50px;background:#6c757d;border-radius:50%;'>";
-        echo $initials;
-        echo "</div>";
-        echo "<div>";
-        echo "<h6 class='mb-0'>" . htmlspecialchars($user['name']) . "</h6>";
-        echo "<small class='text-muted'>" . htmlspecialchars($user['email']) . "</small>";
-        echo "</div></div>";
-
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='card p-3 mb-2'>";
-            echo "<strong>Order Item ID:</strong> " . htmlspecialchars($row['order_item_id']) . "<br>";
-            echo "<strong>Order ID:</strong> " . htmlspecialchars($row['order_id']) . "<br>";
-            echo "<strong>Item:</strong> " . htmlspecialchars($row['item_name']) . "<br>";
-            echo "<strong>Price:</strong> $" . number_format($row['item_price'], 2) . "<br>";
-            echo "<strong>Quantity:</strong> " . htmlspecialchars($row['quantity']) . "<br>";
-            echo "<strong>Total Price:</strong> $" . number_format($row['total_price'], 2) . "<br>";
-            echo "<strong>Status:</strong> " . htmlspecialchars($row['status']) . "<br>";
-
-            if ($row['item_image']) {
-                echo "<img src='../Backend/uploads/" . htmlspecialchars($row['item_image']) . "' alt='" . htmlspecialchars($row['item_name']) . "' style='width:100px;height:100px;'><br>";
-            }
-
-            if ($row['variant_name']) {
-                echo "<strong>Variant:</strong> " . htmlspecialchars($row['variant_name']) . "<br>";
-                echo "<strong>Variant Price:</strong> $" . number_format($row['variant_price'], 2) . "<br>";
-            }
-
-            echo "</div>";
-        }
-    } else {
-        echo "<div class='text-muted'>No orders found for <strong>" . htmlspecialchars($status) . "</strong>.</div>";
+    $orders = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $orders[] = $row;
     }
+
+    echo json_encode($orders);
     exit();
 }
+
+
+
 
 if (isset($_GET['load_bookings'])) {
     $query = "SELECT * FROM table_bookings ORDER BY booking_date DESC, booking_time DESC";
@@ -682,8 +657,6 @@ if (isset($_GET['load_bookings'])) {
                         <th>Table No</th>
                         <th>Order Date</th>
                         <th>Item</th>
-                        <th>Variant</th>
-                        <th>Add-ons</th>
                         <th>Quantity</th>
                         <th>Status</th>
                         <th>Total Price</th>
@@ -723,62 +696,67 @@ if (isset($_GET['load_bookings'])) {
         const tbody = document.querySelector("#orders-table tbody");
         const historyBtn = document.getElementById('orderHistoryBtn');
 
-        // Keep track of current view
+        // Track if currently showing all orders or only today's
         let showingAll = false;
 
-        // Load today's orders on page load
+        // Load today's orders initially
         loadOrders();
 
-        // Auto-refresh orders every 10 seconds
+        // Auto-refresh every 10 seconds (adjust timing as needed)
         setInterval(() => {
             loadOrders(showingAll ? 'all' : 'today');
-        }, 500);
+        }, 10000);
 
-        // Toggle view on button click
+        // Toggle between all orders and today's orders on button click
         if (historyBtn) {
             historyBtn.addEventListener('click', function (e) {
-                e.preventDefault(); // prevent link behavior
-
+                e.preventDefault();
                 if (showingAll) {
-                    loadOrders(); // load today's orders
+                    loadOrders('today');
                     historyBtn.innerHTML = '<small>Order History</small>';
                     showingAll = false;
                 } else {
-                    loadOrders('all'); // load all orders
+                    loadOrders('all');
                     historyBtn.innerHTML = '<small>Today\'s Orders</small>';
                     showingAll = true;
                 }
             });
         }
 
-        // Load orders function
+        // Function to load orders with filter 'today' or 'all'
         function loadOrders(filter = 'today') {
-            const url = filter === 'all'
-                ? '../Backend/get_processed_orders.php?filter=all'
-                : '../Backend/get_processed_orders.php';
+            // Use current page URL with query params for AJAX
+            let url = window.location.pathname + '?load_orders=1';
+            if (filter === 'all') url += '&status=all';
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    tbody.innerHTML = ''; // clear table
+                    tbody.innerHTML = '';
 
                     if (!data || data.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="9">No processed orders found.</td></tr>';
                         return;
                     }
 
+                    const todayDate = new Date().toISOString().slice(0, 10);
+
                     data.forEach(order => {
+                        // If filtering today's orders, skip non-today orders
+                        if (filter === 'today' && order.created_at.slice(0, 10) !== todayDate) return;
+
+                        const totalPrice = (parseFloat(order.price) * parseInt(order.quantity)).toFixed(2);
+                        const orderDateFormatted = new Date(order.created_at).toLocaleString();
+
                         const row = document.createElement('tr');
                         row.innerHTML = `
                         <td>${order.order_id}</td>
-                        <td>${order.table_number}</td>
-                        <td>${order.order_date}</td>
+                        <td>${order.table_number || 'N/A'}</td>
+                        <td>${orderDateFormatted}</td>
                         <td>${order.item_name}</td>
-                        <td>${order.variant}</td>
-                        <td>${order.addons || 'None'}</td>
                         <td>${order.quantity}</td>
                         <td>${order.status}</td>
-                        <td>Rs. ${order.total_price}</td>
+                        <td>Rs. ${totalPrice}</td>
                     `;
                         tbody.appendChild(row);
                     });
@@ -789,6 +767,7 @@ if (isset($_GET['load_bookings'])) {
                 });
         }
     });
+
 
 
     // Search Prosecced orders
