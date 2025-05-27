@@ -1,51 +1,27 @@
 <?php
-global $conn;
-require_once 'db_connect.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $itemId = $_POST['item_id'] ?? null;
-    $status = $_POST['status'] ?? null;
-
-    if ($itemId && in_array($status, ['Pending', 'Prepared', 'Served'])) {
-        $stmt = $conn->prepare("UPDATE processed_order_items SET status = ? WHERE id = ?");
-        $stmt->bind_param("si", $status, $itemId);
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true]);
-        } else {
-            echo json_encode(["success" => false, "error" => "DB update failed"]);
-        }
-        $stmt->close();
-    } else {
-        echo json_encode(["success" => false, "error" => "Invalid input"]);
-    }
-} else {
-    echo json_encode(["success" => false, "error" => "Invalid request method"]);
-}
-?><?php
 require_once '../Backend/db_connect.php';  // Include your database connection
 
 // SQL Query to fetch all processed orders and related data
+
 $sql = "
     SELECT
         poi.id AS item_id,
-        po.id AS order_id,
-        poi.quantity,
-        poi.total_price,
+        poi.order_id,
+        poi.item_name,
         poi.status,
-        mi.name AS item_name,
-        mi.image_url AS item_image,
-        ci.variant AS variant_name,
-        ma.addon_name AS addon_name,
-        ma.addon_price AS addon_price,
+        poi.price,
+        poi.quantity,
+        poi.image_url,
         po.table_number,
-        po.order_date
-    FROM processed_order po
-    JOIN processed_order_items poi ON po.id = poi.order_id
-    JOIN cart_items ci ON poi.cart_item_id = ci.id
-    JOIN menu_items mi ON ci.item_id = mi.id
-    LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
-    LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
-    ORDER BY po.order_date DESC";
+        po.total_price,
+        po.created_at
+    FROM processed_order_items poi
+    JOIN processed_order po ON poi.order_id = po.id
+    WHERE DATE(po.created_at) = CURDATE()
+    ORDER BY po.created_at DESC, poi.id ASC
+";
+
+
 
 
 $result = $conn->query($sql);
@@ -61,11 +37,61 @@ $result = $conn->query($sql);
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+
+
+    <style>
+        /* Search Containers */
+        .search-container {
+            position: relative;
+            width: 200%;
+            margin-top: 0.1rem;
+            margin-bottom: 0.1rem;
+            font-size: 12px;
+        }
+
+        .search-container i {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #fac003;
+        }
+
+        #searchInput,
+        #searchBar {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            font-size: 12px;
+            border: 1px solid #fac003;
+            border-radius: 3px;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        #searchInput::placeholder,
+        #searchBar::placeholder {
+            color: #fac003;
+        }
+
+
+    </style>
+
+
 </head>
 <body class="common-page" id="kitchen-page">
 
@@ -75,6 +101,13 @@ $result = $conn->query($sql);
         <div class="navbar-brand">
             <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
         </div>
+
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Date, or Status">
+        </div>
+
+
         <div class="d-flex align-items-center ms-3">
             <a href="../Backend/logout.php" class="text-decoration-none text-dark d-flex align-items-center">
                 <span class="material-symbols-outlined icon-logout me-2">logout</span>
@@ -88,216 +121,245 @@ $result = $conn->query($sql);
 
 
 
-<!-- Menu Section (Populated by JS) -->
-<div id="menu-section" style="display: none;"></div>
 
 
 
 
-<!-- Kitchen Orders -->
-<div class="container">
-    <div class="profile-layout">
-        <div class="order-container w-100">
-            <h4 class="mb-3">Kitchen Orders</h4>
-            <!-- Display Menu Button -->
-            <div class="mb-3 text-end">
-                <button class="btn btn-dark" onclick="displayMenu()">Menu</button>
-            </div>
 
 
-            <!-- Menu Items Table (Initially Hidden) -->
-            <div class="menu-items-container bg-white p-3 mb-4" id="menuTableContainer" style="display: none;">
-                <h5>Available Menu Items</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped align-middle text-center">
-                        <thead class="table-dark">
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Variants</th>
-                            <th>Add-ons</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody id="menuItemsTableBody">
-                        <!-- Rows will be inserted here dynamically -->
-                        </tbody>
-                    </table>
+            <?php
+            $orders = [];
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $orderId = $row['order_id'];
+                    if (!isset($orders[$orderId])) {
+                        $orders[$orderId] = [
+                            'order_id' => $orderId,
+                            'table_number' => $row['table_number'],
+                            'created_at' => $row['created_at'],
+                            'total_price' => $row['total_price'],
+                            'items' => []
+                        ];
+                    }
+                    $orders[$orderId]['items'][] = $row;
+                }
+            }
+            ?>
+
+            <div class="container">
+
+                <div class="menu-container" style="background-color: white">
+                    <!-- Display Menu Button -->
+                    <div class="mb-3 text-end">
+                        <button class="btn btn-dark" onclick="displayMenu()">Menu</button>
+                    </div>
+
+                    <!-- Menu Section (Initially Hidden) - Will show below the button -->
+                    <div id="menu-section" style="display: none;"></div>
+
+                </div>
+
+
+
+
+                <div class="profile-layout">
+                    <div class="order-container w-100">
+                        <h4 class="mb-4">Today Orders</h4>
+
+                        <div class="order-items-container bg-white p-3 mb-3">
+                            <?php if (!empty($orders)): ?>
+                                <?php foreach ($orders as $order): ?>
+                                    <div class="border rounded p-3 mb-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <strong>Order ID:</strong> #<?php echo $order['order_id']; ?><br>
+                                                <strong>Table:</strong> <?php echo $order['table_number']; ?><br>
+                                                <strong>Date:</strong> <?php echo date('Y-m-d H:i', strtotime($order['created_at'])); ?>
+                                            </div>
+                                            <div class="text-end">
+                                                <strong>Total Price:</strong><br>
+                                                <span class="fs-5 text-success">Rs. <?php echo number_format($order['total_price'], 2); ?></span>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <?php foreach ($order['items'] as $item): ?>
+                                            <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
+                                                <img src="../../Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
+                                                <div class="flex-grow-1">
+                                                    <p class="item-title mb-1"><?php echo htmlspecialchars($item['item_name']); ?></p>
+                                                    <div>Qty: <?php echo $item['quantity']; ?> | Rs. <?php echo number_format($item['price'], 2); ?></div>
+                                                </div>
+                                                <div class="btn-group status-btn-group" data-item-id="<?php echo $item['item_id']; ?>">
+                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
+                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Preparing') ? 'btn-info active' : 'btn-outline-info'; ?>" data-status="Preparing">Preparing</button>
+                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
+                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p>No processed orders found.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
+            <script>
+     document.addEventListener('DOMContentLoaded', function () {
+         document.querySelectorAll('.status-btn-group').forEach(group => {
+             group.addEventListener('click', function (e) {
+                 if (e.target.classList.contains('status-btn')) {
+                     const button = e.target;
+                     const newStatus = button.getAttribute('data-status');
+                     const itemId = group.getAttribute('data-item-id');
+
+                     fetch('../Backend/update_order_status.php', {
+                         method: 'POST',
+                         headers: {
+                             'Content-Type': 'application/x-www-form-urlencoded'
+                         },
+                         body: `item_id=${itemId}&status=${newStatus}`
+                     })
+                         .then(res => res.json())
+                         .then(data => {
+                             if (data.success) {
+                                 group.querySelectorAll('.status-btn').forEach(btn => {
+                                     btn.classList.remove('btn-warning', 'btn-outline-warning', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success', 'active');
+                                     const status = btn.getAttribute('data-status');
+                                     if (status === 'Pending') btn.classList.add('btn-outline-warning');
+                                     if (status === 'Preparing') btn.classList.add('btn-outline-warning');
+                                     if (status === 'Prepared') btn.classList.add('btn-outline-primary');
+                                     if (status === 'Served') btn.classList.add('btn-outline-success');
+                                 });
+
+                                 button.classList.remove('btn-outline-warning', 'btn-outline-primary', 'btn-outline-success');
+                                 button.classList.add('active');
+                                 if (newStatus === 'Pending') button.classList.add('btn-warning');
+                                 if (newStatus === 'Preparing') button.classList.add('btn-outline-warning');
+                                 if (newStatus === 'Prepared') button.classList.add('btn-primary');
+                                 if (newStatus === 'Served') button.classList.add('btn-success');
+                             } else {
+                                 alert('Failed to update status: ' + data.message);
+                             }
+                         })
+                         .catch(err => {
+                             console.error(err);
+                             alert('An error occurred.');
+                         });
+                 }
+             });
+         });
+     });
 
 
+         function displayMenu() {
+         fetch('display_menu_items.php')
+             .then(response => response.json())
+             .then(data => {
+                 const menuSection = document.getElementById('menu-section');
 
-            <div class="order-items-container bg-white p-3 mb-3">
-                <?php if ($result && $result->num_rows > 0): ?>
-                    <?php while ($order = $result->fetch_assoc()): ?>
-                        <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
-                            <input type="checkbox" class="mt-2">
-                            <img src="../../Backend/uploads/<?php echo htmlspecialchars($order['item_image']); ?>" alt="Item" style="width: 100px; height: auto;">
-                            <div class="flex-grow-1">
-                                <p class="item-title mb-1"><?php echo htmlspecialchars($order['item_name']); ?></p>
-                                <div class="customizations">
-                                    <?php if (!empty($order['variant_name'])): ?>
-                                        <p><span>Variant:</span> <?php echo htmlspecialchars($order['variant_name']); ?></p>
-                                    <?php endif; ?>
-                                    <?php if (!empty($order['addon_name'])): ?>
-                                        <p><span>Add-on:</span> <?php echo htmlspecialchars($order['addon_name']); ?> (+Rs.<?php echo $order['addon_price']; ?>)</p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <div class="order-id text-muted small mb-2">
-                                    <span>Order ID: #<?php echo $order['order_id']; ?></span>
-                                </div>
-                                <div class="item-price mb-2">
-                                    <span class="price">Rs. <?php echo $order['total_price']; ?></span>
-                                </div>
-                                <div class="table-number">
-                                    <span>Table <?php echo $order['table_number']; ?></span>
-                                </div>
-                                <div class="qty mb-2">
-                                    <span>Qty: <?php echo $order['quantity']; ?></span>
-                                </div>
-                                <div class="order-date text-muted small mb-2">
-                                    <span><?php echo date('Y-m-d H:i', strtotime($order['order_date'])); ?></span>
-                                </div>
-                                <!-- Status Buttons -->
-                                <div class="btn-group status-btn-group" data-item-id="<?php echo $order['item_id']; ?>">
-                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
-                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
-                                    <button class="btn btn-sm status-btn <?php echo ($order['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
-                                </div>
+                 // Create a table if it doesn't exist
+                 menuSection.innerHTML = `
+                <h4 class="mt-4 mb-3">Menu Items</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="menuTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuItemsTableBody">
+                            <!-- Items will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            `;
 
+                 const tableBody = document.getElementById('menuItemsTableBody');
+                 tableBody.innerHTML = ''; // Clear old rows
 
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p>No orders found.</p>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.status-btn-group').forEach(group => {
-            group.addEventListener('click', function (e) {
-                if (e.target.classList.contains('status-btn')) {
-                    const button = e.target;
-                    const newStatus = button.getAttribute('data-status');
-                    const itemId = group.getAttribute('data-item-id');
-
-                    fetch('../Backend/update_order_status.php', {  // Changed path
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `item_id=${itemId}&status=${newStatus}`
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                group.querySelectorAll('.status-btn').forEach(btn => {
-                                    btn.classList.remove('btn-warning', 'btn-outline-warning', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success', 'active');
-                                    if (btn.getAttribute('data-status') === 'Pending') {
-                                        btn.classList.add('btn-outline-warning');
-                                    } else if (btn.getAttribute('data-status') === 'Prepared') {
-                                        btn.classList.add('btn-outline-primary');
-                                    } else if (btn.getAttribute('data-status') === 'Served') {
-                                        btn.classList.add('btn-outline-success');
-                                    }
-                                });
-
-                                button.classList.remove('btn-outline-warning', 'btn-outline-primary', 'btn-outline-success');
-                                button.classList.add('active');
-                                if (newStatus === 'Pending') button.classList.add('btn-warning');
-                                if (newStatus === 'Prepared') button.classList.add('btn-primary');
-                                if (newStatus === 'Served') button.classList.add('btn-success');
-                            } else {
-                                alert('Failed to update status: ' + data.error);
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert('An error occurred.');
-                        });
-                }
-            });
-        });
-    });
-
-
-
-    function displayMenu() {
-        fetch('display_menu_items.php') // Update path as needed
-            .then(response => response.json())
-            .then(data => {
-                const tableContainer = document.getElementById('menuTableContainer');
-                const tableBody = document.getElementById('menuItemsTableBody');
-
-                tableBody.innerHTML = ''; // Clear previous content
-
-                if (!data.length) {
-                    tableBody.innerHTML = '<tr><td colspan="5">No menu items available.</td></tr>';
-                } else {
-                    data.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                        <td><img src="../../Backend/uploads/${item.item_image}" alt="${item.item_name}" style="width: 80px; height: auto;"></td>
-                        <td>${item.item_name}</td>
-                        <td>Rs. ${item.base_price}</td>
-                        <td>${item.variants.length ? item.variants.map(v => `${v.variant_name} (Rs.${v.price})`).join('<br>') : '—'}</td>
-                        <td>${item.addons.length ? item.addons.map(a => `${a.addon_name} (Rs.${a.addon_price})`).join('<br>') : '—'}</td>
+                 if (data.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="6">No menu items found.</td></tr>';
+                 } else {
+                     data.forEach(item => {
+                         const row = document.createElement('tr');
+                         row.innerHTML = `
+                        <td><img src="../../Backend/uploads/${item.image_url}" alt="${item.name}" style="width: 80px; height: auto;"></td>
+                        <td>${item.name}</td>
+                        <td>Rs. ${item.price}</td>
                         <td><button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">Delete</button></td>
-
                     `;
-                        tableBody.appendChild(row);
-                    });
-                }
+                         tableBody.appendChild(row);
+                     });
+                 }
 
-                tableContainer.style.display = 'block'; // Show the section
-            })
-            .catch(error => {
-                console.error('Error fetching menu items:', error);
-                const tableBody = document.getElementById('menuItemsTableBody');
-                tableBody.innerHTML = '<tr><td colspan="5" class="text-danger">Failed to load menu items.</td></tr>';
-                document.getElementById('menuTableContainer').style.display = 'block';
-            });
-    }
-
-
-    function deleteMenuItem(itemId) {
-        if (confirm("Are you sure you want to delete this menu item and its related data?")) {
-            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete');
-                    }
-                    return response.text();
-                })
-                .then(message => {
-                    alert(message);
-
-                    // Also remove from kitchen table if it's present
-                    const kitchenRow = document.getElementById(`kitchen-menu-item-${itemId}`);
-                    if (kitchenRow) kitchenRow.remove();
-
-                })
-                .catch(error => {
-                    alert("Error deleting item: " + error.message);
-                });
-        }
-    }
+                 menuSection.style.display = 'block'; // Show the section
+             })
+             .catch(error => {
+                 console.error('Error fetching menu items:', error);
+                 const menuSection = document.getElementById('menu-section');
+                 menuSection.innerHTML = `<div class="alert alert-danger">Failed to load menu items.</div>`;
+                 menuSection.style.display = 'block';
+             });
+     }
 
 
 
-</script>
+
+     function deleteMenuItem(id) {
+         if (confirm('Are you sure you want to delete this menu item?')) {
+             fetch('delete_menu_item.php', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                 body: 'id=' + encodeURIComponent(id)
+             })
+                 .then(response => response.json())
+                 .then(result => {
+                     if (result.success) {
+                         alert('Menu item deleted successfully.');
+                         displayMenu(); // Refresh the table
+                     } else {
+                         alert('Failed to delete: ' + (result.message || 'Unknown error.'));
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error:', error);
+                     alert('An error occurred while deleting the menu item.');
+                 });
+         }
+     }
+
+
+
+
+     document.getElementById('searchInput').addEventListener('input', function () {
+         const searchValue = this.value.toLowerCase().trim();
+
+         // Filter orders
+         document.querySelectorAll('.order-items-container .border.rounded').forEach(orderCard => {
+             const text = orderCard.innerText.toLowerCase();
+             orderCard.style.display = text.includes(searchValue) ? 'block' : 'none';
+         });
+
+         // Filter menu items (if visible)
+         const menuTable = document.getElementById('menuItemsTableBody');
+         if (menuTable) {
+             menuTable.querySelectorAll('tr').forEach(row => {
+                 const rowText = row.innerText.toLowerCase();
+                 row.style.display = rowText.includes(searchValue) ? '' : 'none';
+             });
+         }
+     });
+
+            </script>
+
 
 
 <!-- JS -->

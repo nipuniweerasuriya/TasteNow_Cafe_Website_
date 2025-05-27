@@ -1,31 +1,24 @@
 <?php
-require_once 'db_connect.php'; // adjust path as needed
+require_once 'db_connect.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && isset($_GET['id'])) {
-    $itemId = intval($_GET['id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = intval($_POST['id']);
 
-    // Start transaction
-    $conn->begin_transaction();
+    // Optional: Delete associated image file if needed (only if storing image path)
 
-    try {
-        // Delete related add-ons
-        $conn->query("DELETE FROM menu_add_ons WHERE item_id = $itemId");
+    // Delete the menu item from the database
+    $stmt = $conn->prepare("DELETE FROM menu_items WHERE id = ?");
+    $stmt->bind_param("i", $id);
 
-        // Delete related variants
-        $conn->query("DELETE FROM menu_variants WHERE item_id = $itemId");
-
-        // Delete the main menu item
-        $conn->query("DELETE FROM menu_items WHERE id = $itemId");
-
-        $conn->commit();
-        echo "Menu item and related data deleted successfully.";
-    } catch (Exception $e) {
-        $conn->rollback();
-        http_response_code(500);
-        echo "Error deleting menu item: " . $e->getMessage();
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Deletion failed.']);
     }
-} else {
-    http_response_code(400);
-    echo "Invalid request.";
-}
 
+    $stmt->close();
+    $conn->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+}
+?>

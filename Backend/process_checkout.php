@@ -1,21 +1,18 @@
 <?php
 include 'db_connect.php';
 
-if (isset($_POST['user_id'], $_POST['table_number'], $_POST['cart_item_ids'])) {
-    $userId = intval($_POST['user_id']);
-    $tableNumber = $_POST['table_number'];
-    $cartItemIds = $_POST['cart_item_ids']; // should be a comma-separated string
+$data = json_decode(file_get_contents("php://input"), true);
 
-    // Get cart items
-    $ids = implode(',', array_map('intval', explode(',', $cartItemIds)));
-    $cartItemsQuery = $conn->query("SELECT * FROM cart_items WHERE id IN ($ids)");
+if (isset($data['user_id'], $data['table_number'], $data['cart_items']) && is_array($data['cart_items'])) {
+    $userId = intval($data['user_id']);
+    $tableNumber = $data['table_number'];
+    $cartItems = $data['cart_items'];
 
     $totalPrice = 0;
-    $cartItems = [];
 
-    while ($row = $cartItemsQuery->fetch_assoc()) {
-        $totalPrice += $row['price'] * $row['quantity'];
-        $cartItems[] = $row;
+    // Calculate total
+    foreach ($cartItems as $item) {
+        $totalPrice += floatval($item['price']) * intval($item['quantity']);
     }
 
     // Insert into processed_order
@@ -26,15 +23,29 @@ if (isset($_POST['user_id'], $_POST['table_number'], $_POST['cart_item_ids'])) {
     $stmt->close();
 
     // Insert into processed_order_items
-    $stmt = $conn->prepare("INSERT INTO processed_order_items (order_id, item_id, item_name, price, quantity, image_url) VALUES (?, ?, ?, ?, ?, ?)");
-    foreach ($cartItems as $item) {
-        $stmt->bind_param("iisdis", $orderId, $item['item_id'], $item['item_name'], $item['price'], $item['quantity'], $item['image_url']);
-        $stmt->execute();
-    }
-    $stmt->close();
+    $stmt = $conn->prepare("SELECT * FROM cart_items WHERE id = ?");
+    $insertStmt = $conn->prepare("INSERT INTO processed_order_items (order_id, item_id, item_name, price, quantity, image_url) VALUES (?, ?, ?, ?, ?, ?)");
 
+    foreach ($cartItems as $ci) {
+        $cartItemId = intval($ci['cart_item_id']);
+        $qty = intval($ci['quantity']);
+        $price = floatval($ci['price']);
+
+        // Fetch full cart item data
+        $stmt->bind_param("i", $cartItemId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $insertStmt->bind_param("iisdis", $orderId, $row['item_id'], $row['item_name'], $price, $qty, $row['image_url']);
+            $insertStmt->execute();
+        }
+    }
+
+    $stmt->close();
+    $insertStmt->close();
 
     echo json_encode(["success" => true, "order_id" => $orderId]);
 } else {
-    echo json_encode(["success" => false, "message" => "Missing data"]);
+    echo json_encode(["success" => false, "message" => "Missing or invalid data"]);
 }
+?>

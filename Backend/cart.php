@@ -312,15 +312,13 @@ $conn->close();
 
 
     // Checkout Orders
+    // ✅ Checkout Orders (UPDATED)
     document.getElementById('checkoutBtn').addEventListener('click', () => {
         const tableNumber = document.getElementById('tableNumber').value.trim();
         const userId = 1; // Replace with session user ID if needed
 
         const checkedBoxes = document.querySelectorAll('.item-select:checked');
-
-        const cartItemIds = Array.from(checkedBoxes).map(cb => cb.dataset.itemId).join(',');
-
-        if (!cartItemIds) {
+        if (checkedBoxes.length === 0) {
             alert('Select items to checkout');
             return;
         }
@@ -330,13 +328,26 @@ $conn->close();
             return;
         }
 
-        console.log("Selected cart items:", cartItemIds);
-        console.log("Table number:", tableNumber);
+        // Prepare items with updated quantity and prices
+        const cartItems = Array.from(checkedBoxes).map(cb => {
+            const itemId = cb.getAttribute('data-item-id');
+            const qty = parseInt(document.getElementById(`qty-${itemId}`).textContent);
+            const price = parseFloat(document.getElementById(`price-${itemId}`).value);
+            return { cart_item_id: itemId, quantity: qty, price: price };
+        });
+
+        const payload = {
+            user_id: userId,
+            table_number: tableNumber,
+            cart_items: cartItems
+        };
 
         fetch('process_checkout.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}&table_number=${encodeURIComponent(tableNumber)}&cart_item_ids=${cartItemIds}`
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         })
             .then(res => res.json())
             .then(data => {
@@ -352,6 +363,7 @@ $conn->close();
                 alert('An error occurred');
             });
     });
+
 </script>
 
 
