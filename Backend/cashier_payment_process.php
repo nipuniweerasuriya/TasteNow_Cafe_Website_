@@ -1,30 +1,32 @@
 <?php
+
+session_start();
 include '../Backend/db_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $order_item_id = $_POST['order_item_id'];
-    $paid_amount = $_POST['paid_amount'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $order_id = $_POST['order_id'];
+    $given_money = floatval($_POST['given_money']);
+    $total_amount = floatval($_POST['total_amount']);
 
-    // Record the payment
-    $insert = "INSERT INTO payments (order_item_id, paid_amount, paid_at) VALUES (?, ?, NOW())";
-    $stmt = $conn->prepare($insert);
-    $stmt->bind_param("id", $order_item_id, $paid_amount);
-
-    if ($stmt->execute()) {
-        // Mark the order item as Paid
-        $update = "UPDATE processed_order_items SET status = 'Paid' WHERE id = ?";
-        $updateStmt = $conn->prepare($update);
-        $updateStmt->bind_param("i", $order_item_id);
-        $updateStmt->execute();
-
-        // Redirect back to cashier page
-        header("Location: cashier.php?success=1");
-        exit;
-    } else {
-        echo "Error: " . $conn->error;
+    if ($given_money < $total_amount) {
+        $_SESSION['error'] = "Insufficient amount";
+        header("Location: cashier.php");
+        exit();
     }
-} else {
-    echo "Invalid request method.";
+
+    $balance = $given_money - $total_amount;
+
+    // Save to payments table
+    $stmt = $conn->prepare("INSERT INTO payments (order_id, amount_paid, given_money, balance) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iddd", $order_id, $total_amount, $given_money, $balance);
+    $stmt->execute();
+
+    // Update payment status
+    $conn->query("UPDATE processed_order SET payment_status = 'Paid' WHERE id = $order_id");
+
+    // Store success in session
+    $_SESSION['success'] = "Payment processed successfully! Balance to return: Rs. " . number_format($balance, 2);
+
+    header("Location: cashier.php");
+    exit();
 }
-
-

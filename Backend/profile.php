@@ -35,62 +35,63 @@ $initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? sub
 // Determine filter
 $filter = $_GET['filter'] ?? 'today';
 
+// Build the SQL query to get order details
 $sql = "
     SELECT
         po.id AS order_id,
         poi.id AS order_item_id,
         poi.status AS item_status,
         poi.quantity,
-        poi.total_price,
-        mi.name AS item_name,
-        mi.image_url AS item_image,
-        mv.variant_name AS variant_name,
-        ma.addon_name AS addon_name,
-        ma.addon_price AS addon_price,
+        poi.price AS total_price,
+        poi.item_name,
+        poi.image_url AS item_image,
         po.table_number,
-        po.order_date
+        po.created_at AS order_date,
+        po.payment_status
     FROM processed_order po
     JOIN processed_order_items poi ON po.id = poi.order_id
-    JOIN cart_items ci ON poi.cart_item_id = ci.id
-    JOIN menu_items mi ON ci.item_id = mi.id
-    LEFT JOIN menu_variants mv ON ci.variant = mv.id
-    LEFT JOIN cart_item_addons cia ON ci.id = cia.cart_item_id
-    LEFT JOIN menu_add_ons ma ON cia.addon_id = ma.id
     WHERE po.user_id = ?
 ";
 
-// Apply filter logic
+// Apply filter
 if ($filter === 'history') {
-    // Order History = past orders
-    $sql .= " AND DATE(po.order_date) < CURDATE()";
+    $sql .= " AND DATE(po.created_at) < CURDATE()";  // Past orders
 } elseif ($filter === 'canceled') {
-    // Canceled = only canceled orders
     $sql .= " AND poi.status = 'Canceled'";
-} else {
-    // Default or reset = today's orders
-    $sql .= " AND DATE(po.order_date) = CURDATE()";
+} else {  // today or default
+    $sql .= " AND DATE(po.created_at) = CURDATE()";
 }
 
-$sql .= " ORDER BY po.order_date DESC";
+$sql .= " ORDER BY po.created_at DESC";
 
-
-
+// Prepare and execute the statement
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Prepare failed: " . $conn->error);
+}
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Handle SQL errors
-if ($stmt->error) {
-    echo "SQL Error: " . $stmt->error;
+// ✅ GROUP ORDER ITEMS BY ORDER ID
+$ordersGrouped = [];
+while ($order = $result->fetch_assoc()) {
+    $orderId = $order['order_id'];
+    if (!isset($ordersGrouped[$orderId])) {
+        $ordersGrouped[$orderId] = [
+            'order_date' => $order['order_date'],
+            'table_number' => $order['table_number'],
+            'payment_status' => $order['payment_status'],
+            'items' => []
+        ];
+    }
+    $ordersGrouped[$orderId]['items'][] = $order;
 }
 
-
-
-
+// Check if tab is for bookings
 $tab = $_GET['tab'] ?? '';
-
 $bookings = [];
+
 if ($tab === 'bookings') {
     $booking_sql = "SELECT booking_id, table_number, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, created_at FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, booking_time DESC";
     $booking_stmt = $conn->prepare($booking_sql);
@@ -102,8 +103,8 @@ if ($tab === 'bookings') {
     }
     $booking_stmt->close();
 }
-
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -251,91 +252,61 @@ if ($tab === 'bookings') {
         <div class="order-container">
             <div class="order-items-container bg-white p-3 mb-3">
                 <?php if ($result->num_rows > 0): ?>
-                    <?php while ($order = $result->fetch_assoc()): ?>
-                        <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
-                            <input type="checkbox" class="mt-2">
-                            <img src="../Backend/uploads<?php echo $order['item_image']; ?>" alt="Product" style="width: 100px; height: auto;">
-                            <div class="flex-grow-1">
-                                <p class="item-title"><?php echo $order['item_name']; ?></p>
-                                <div class="customizations">
-                                    <?php if (!empty($order['variant_name'])): ?>
-                                        <p><span>Variant:</span> <?php echo $order['variant_name']; ?></p>
-                                    <?php else: ?>
-                                        <p><span>Variant:</span> No variant selected</p>
-                                    <?php endif; ?>
-                                    <?php if ($order['addon_name']): ?>
-                                        <p><span>Add-ons:</span> <?php echo $order['addon_name']; ?> (+Rs.<?php echo $order['addon_price']; ?>)</p>
-                                    <?php endif; ?>
-                                </div>
+                    <?php if (!empty($ordersGrouped)): ?>
+                        <?php foreach ($ordersGrouped as $orderId => $order): ?>
+                            <div class="order-section" style="border: 1px solid #ccc; margin: 15px 0; padding: 10px;">
+                                <h3>Order #<?= $orderId ?> (<?= $order['order_date'] ?>)</h3>
+                                <p><strong>Table:</strong> <?= $order['table_number'] ?> | <strong>Payment:</strong> <?= $order['payment_status'] ?></p>
+                                <ul style="list-style: none; padding-left: 0;">
+                                    <?php foreach ($order['items'] as $item): ?>
+                                        <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">
+                                            <div style="display: flex; align-items: center;">
+                                                <img src="<?= $item['item_image'] ?>" alt="<?= $item['item_name'] ?>" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;">
+                                                <div>
+                                                    <strong><?= $item['item_name'] ?></strong><br>
+                                                    Quantity: <?= $item['quantity'] ?> | ₹<?= $item['total_price'] ?><br>
+                                                    Status: <span style="font-weight: bold; color: <?= $item['item_status'] === 'Pending' ? 'orange' : ($item['item_status'] === 'Prepared' ? 'blue' : ($item['item_status'] === 'Served' ? 'green' : 'red')) ?>;">
+                                <?= $item['item_status'] ?>
+                            </span>
+                                                    <br>
+
+                                                    <?php if ($item['item_status'] == 'Pending'): ?>
+                                                        <!-- Cancel Button -->
+                                                        <form action="../Backend/cancel-order-item.php" method="post" style="display: inline-block; margin-top: 5px;">
+                                                            <input type="hidden" name="order_item_id" value="<?= $item['order_item_id'] ?>">
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to cancel this item?');">Cancel</button>
+                                                        </form>
+
+                                                        <!-- Update Button -->
+                                                        <!-- Update Button -->
+                                                        <form action="../Backend/update-order-item.php" method="get" style="display: inline-block; margin-left: 5px; margin-top: 5px;">
+                                                            <input type="hidden" name="item_id" value="<?= $item['order_item_id'] ?>">
+                                                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                                                        </form>
+
+                                                    <?php else: ?>
+                                                        <!-- Show disabled buttons or none -->
+                                                        <span style="color: gray; font-size: 12px;">No actions available</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
-                            <div class="text-end">
-                                <div class="order-date">
-                                    <span><?php echo $order['order_date']; ?></span>
-                                </div>
-                                <div class="item-price mb-2">
-                                    <span class="price">Rs. <?php echo $order['total_price']; ?></span>
-                                </div>
-                                <div class="order-id">
-                                    <span>Order Id <?php echo $order['order_id']; ?></span>
-                                </div>
-                                <div class="table-number">
-                                    <span>Table <?php echo $order['table_number']; ?></span>
-                                </div>
-                                <div class="qty mb-2">
-                                    <span>Qty: <?php echo $order['quantity']; ?></span>
-                                </div>
-                                <div class="mb-2">
-                                    <?php
-                                    // Use 'item_status' to access the status from the query result
-                                    $status = $order['item_status'] ?? 'Unknown';
-                                    $statusClass = strtolower($status);
+                        <?php endforeach; ?>
 
-                                    // Display different status badge based on the status
-                                    if ($status == 'Pending') {
-                                        $statusClass = 'pending';
-                                    } elseif ($status == 'Prepared') {
-                                        $statusClass = 'prepared';
-                                    } elseif ($status == 'Served') {
-                                        $statusClass = 'served';
-                                    } elseif ($status == 'Canceled') {
-                                        $statusClass = 'canceled';
-                                    }
-                                    echo '<span class="status-badge status-' . $statusClass . '">' . $status . '</span>';
-                                    ?>
-                                </div>
+                    <?php else: ?>
+                        <p>No orders found for the selected filter.</p>
+                    <?php endif; ?>
 
-                                <!-- ✅ Conditional buttons for 'Pending' status -->
-                                <?php if (strtolower($order['item_status']) === 'pending'): ?>
-                                    <div class="mb-2 d-flex gap-2">
-                                        <!-- Update Button -->
-                                        <a href="update-order-item.php?item_id=<?php echo $order['order_item_id']; ?>" class="btn btn-sm btn-outline-primary">
-                                            Update
-                                        </a>
-
-
-                                        <!-- Cancel Button -->
-                                        <form method="POST" action="cancel-order-item.php" style="display:inline;">
-                                            <input type="hidden" name="order_item_id" value="<?php echo $order['order_item_id']; ?>"> <!-- ✅ FIXED -->
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Are you sure you want to cancel this item?');">
-                                                Cancel
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                <?php else: ?>
-                                    <div class="text-muted small">
-                                        <em>Cannot update or cancel this item (status: <?php echo $order['item_status']; ?>)</em>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
                 <?php else: ?>
-                    <p>Not have today orders.</p>
+                    <p>No orders found for the selected filter.</p>
                 <?php endif; ?>
             </div>
         </div>
+
+
     </div>
 
     <div class="booking-table-container bg-white p-3 mb-3" id="booking-table-container">
@@ -402,47 +373,34 @@ if ($tab === 'bookings') {
 
 <script>
     document.getElementById('searchInput').addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
+        const searchQuery = this.value.toLowerCase();
+        const orderSections = document.querySelectorAll('.order-section');
 
-        // -------- Handle Order Items --------
-        const orderContainer = document.querySelector('.order-items-container');
-        if (orderContainer) {
-            const orderItems = Array.from(orderContainer.querySelectorAll('.cart-item'));
+        orderSections.forEach(section => {
+            const textContent = section.textContent.toLowerCase();
+            if (textContent.includes(searchQuery)) {
+                section.style.display = '';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+    });
 
-            const matchedOrders = [];
-            const unmatchedOrders = [];
 
-            orderItems.forEach(item => {
-                const table = item.querySelector('.table-number')?.innerText.toLowerCase() || '';
-                const orderId = item.querySelector('.order-id')?.innerText.toLowerCase() || '';
-                const status = item.querySelector('.status-badge')?.innerText.toLowerCase() || '';
-                const content = item.innerText.toLowerCase(); // Fallback for date match
+    document.getElementById('bookingSearchInput').addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#bookingTable tbody tr');
 
-                const isMatch = table.includes(searchTerm) || orderId.includes(searchTerm) || status.includes(searchTerm) || content.includes(searchTerm);
+        rows.forEach(row => {
+            const bookingId = row.cells[0].textContent.toLowerCase();
+            const tableNo = row.cells[1].textContent.toLowerCase();
 
-                if (isMatch) {
-                    item.style.display = '';
-                    matchedOrders.push(item);
-                } else {
-                    item.style.display = searchTerm ? 'none' : '';
-                    unmatchedOrders.push(item);
-                }
-            });
-
-            orderContainer.innerHTML = '';
-            matchedOrders.concat(unmatchedOrders).forEach(item => orderContainer.appendChild(item));
-        }
-
-        // -------- Handle Booking Rows --------
-        const bookingTableBody = document.querySelector('#booking-table-container tbody');
-        if (bookingTableBody) {
-            const rows = Array.from(bookingTableBody.querySelectorAll('tr'));
-            rows.forEach(row => {
-                const bookingId = row.cells[0]?.innerText.toLowerCase() || '';
-                const isMatch = bookingId.includes(searchTerm);
-                row.style.display = isMatch || searchTerm === '' ? '' : 'none';
-            });
-        }
+            if (bookingId.includes(filter) || tableNo.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
     });
 
 
@@ -454,6 +412,7 @@ if ($tab === 'bookings') {
 
                 const bookingId = this.getAttribute('data-id');
                 const row = document.getElementById('booking-row-' + bookingId);
+                const cancelButton = this;
 
                 fetch('cancel_booking.php', {
                     method: 'POST',
@@ -465,24 +424,34 @@ if ($tab === 'bookings') {
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'success') {
-                            // Remove row from table
-                            if (row) row.remove();
+                            // Option 1: Change button text and disable it
+                            cancelButton.textContent = 'Cancelled';
+                            cancelButton.disabled = true;
+                            cancelButton.classList.remove('btn-danger'); // if using Bootstrap or similar
+                            cancelButton.classList.add('btn-secondary'); // optional styling change
+
+                            // Option 2: Or replace button completely with a non-clickable label
+                            // const cancelledLabel = document.createElement('span');
+                            // cancelledLabel.textContent = 'Cancelled';
+                            // cancelledLabel.className = 'badge bg-secondary';
+                            // cancelButton.replaceWith(cancelledLabel);
+
                             alert('Booking cancelled successfully.');
                         } else {
                             alert('Error: ' + data.message);
                         }
                     })
-                    .catch(() => alert('An error occurred while cancelling booking.'));
+                    .catch(() => alert('An error occurred while cancelling the booking.'));
             });
+        });
+
+        document.getElementById('close-booking-table')?.addEventListener('click', function () {
+            const container = document.getElementById('booking-table-container');
+            if (container) container.remove();
         });
     });
 
-    document.getElementById('close-booking-table').addEventListener('click', function () {
-        const container = document.getElementById('booking-table-container');
-        if (container) {
-            container.remove(); // Completely removes the booking-table-container from DOM
-        }
-    });
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
