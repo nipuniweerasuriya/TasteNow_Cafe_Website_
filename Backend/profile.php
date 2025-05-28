@@ -124,6 +124,8 @@ if ($tab === 'bookings') {
     <!-- Bootstrap and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
@@ -249,7 +251,12 @@ if ($tab === 'bookings') {
             </div>
         </div>
 
-        <div class="order-container">
+        <?php
+        $tab = $_GET['tab'] ?? '';
+        ?>
+
+        <!-- Orders Section -->
+        <div class="order-container mb-4" style="<?= $tab === 'bookings' ? 'display:block;' : 'display:block;' ?>">
             <div class="order-items-container bg-white p-3 mb-3">
                 <?php if ($result->num_rows > 0): ?>
                     <?php if (!empty($ordersGrouped)): ?>
@@ -266,26 +273,21 @@ if ($tab === 'bookings') {
                                                     <strong><?= $item['item_name'] ?></strong><br>
                                                     Quantity: <?= $item['quantity'] ?> | ₹<?= $item['total_price'] ?><br>
                                                     Status: <span style="font-weight: bold; color: <?= $item['item_status'] === 'Pending' ? 'orange' : ($item['item_status'] === 'Prepared' ? 'blue' : ($item['item_status'] === 'Served' ? 'green' : 'red')) ?>;">
-                                <?= $item['item_status'] ?>
-                            </span>
+                                                <?= $item['item_status'] ?>
+                                            </span>
                                                     <br>
 
                                                     <?php if ($item['item_status'] == 'Pending'): ?>
-                                                        <!-- Cancel Button -->
+                                                        <!-- Cancel and Update buttons -->
                                                         <form action="../Backend/cancel-order-item.php" method="post" style="display: inline-block; margin-top: 5px;">
                                                             <input type="hidden" name="order_item_id" value="<?= $item['order_item_id'] ?>">
                                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to cancel this item?');">Cancel</button>
                                                         </form>
-
-                                                        <!-- Update Button -->
-                                                        <!-- Update Button -->
                                                         <form action="../Backend/update-order-item.php" method="get" style="display: inline-block; margin-left: 5px; margin-top: 5px;">
                                                             <input type="hidden" name="item_id" value="<?= $item['order_item_id'] ?>">
                                                             <button type="submit" class="btn btn-primary btn-sm">Update</button>
                                                         </form>
-
                                                     <?php else: ?>
-                                                        <!-- Show disabled buttons or none -->
                                                         <span style="color: gray; font-size: 12px;">No actions available</span>
                                                     <?php endif; ?>
                                                 </div>
@@ -295,117 +297,120 @@ if ($tab === 'bookings') {
                                 </ul>
                             </div>
                         <?php endforeach; ?>
-
                     <?php else: ?>
                         <p>No orders found for the selected filter.</p>
                     <?php endif; ?>
-
                 <?php else: ?>
                     <p>No orders found for the selected filter.</p>
                 <?php endif; ?>
             </div>
+
+
+            <!-- Bookings Section -->
+            <div class="container my-4" id="bookingContainer" style="<?= $tab === 'bookings' ? 'display:block;' : 'display:none;' ?>">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Your Table Bookings</h5>
+                        <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="window.location='profile.php';"></button>
+                    </div>
+
+                    <div class="card-body p-3">
+                        <?php if (count($bookings) > 0): ?>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped align-middle text-center">
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Table No</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>No. of People</th>
+                                        <th>Special Request</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($bookings as $booking): ?>
+                                        <tr>
+                                            <td><?= $booking['booking_id'] ?></td>
+                                            <td><?= $booking['table_number'] ?></td>
+                                            <td><?= $booking['booking_date'] ?></td>
+                                            <td><?= $booking['booking_time'] ?></td>
+                                            <td><?= $booking['number_of_people'] ?></td>
+                                            <td><?= $booking['special_request'] ?: 'None' ?></td>
+                                            <td>
+                                                <?php
+                                                $bookingDateTime = strtotime($booking['booking_date'] . ' ' . $booking['booking_time']);
+                                                $now = time();
+                                                if ($bookingDateTime > $now):
+                                                    ?>
+                                                    <form action="../Backend/cancel_booking.php" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                                        <input type="hidden" name="booking_id" value="<?= $booking['booking_id'] ?>">
+                                                        <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Cancel Booking">
+                                                            <i class="bi bi-x-circle"></i> Cancel
+                                                        </button>
+                                                    </form>
+                                                <?php else: ?>
+                                                    <span class="text-muted small">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-info mb-0" role="alert">
+                                No table bookings found.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
 
 
-    </div>
-
-    <div class="booking-table-container bg-white p-3 mb-3" id="booking-table-container">
-        <?php if ($tab === 'bookings'): ?>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">Your Table Bookings</h4>
-                <button class="btn btn-sm btn-outline-secondary" id="close-booking-table" title="Close">
-                    <i class="bi bi-x-lg"></i> <!-- Bootstrap icon -->
-                </button>
-            </div>
-
-            <?php if (count($bookings) > 0): ?>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Table Number</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>People</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Duration (hrs)</th>
-                        <th>Special Request</th>
-                        <th>Booked At</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($bookings as $booking): ?>
-                        <tr id="booking-row-<?= $booking['booking_id'] ?>">
-                            <td><?= htmlspecialchars($booking['booking_id']) ?></td>
-                            <td><?= htmlspecialchars($booking['table_number']) ?></td>
-                            <td><?= htmlspecialchars($booking['name']) ?></td>
-                            <td><?= htmlspecialchars($booking['phone']) ?></td>
-                            <td><?= htmlspecialchars($booking['email']) ?></td>
-                            <td><?= htmlspecialchars($booking['number_of_people']) ?></td>
-                            <td><?= htmlspecialchars($booking['booking_date']) ?></td>
-                            <td><?= htmlspecialchars(substr($booking['booking_time'], 0, 5)) ?></td>
-                            <td><?= htmlspecialchars($booking['duration']) ?></td>
-                            <td><?= htmlspecialchars($booking['special_request']) ?></td>
-                            <td><?= htmlspecialchars($booking['created_at']) ?></td>
-                            <td>
-                                <button class="btn btn-sm btn-danger cancel-booking-btn" data-id="<?= $booking['booking_id'] ?>">
-                                    Cancel
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p>No table bookings found.</p>
-            <?php endif; ?>
-
-        <?php else: ?>
-        <?php endif; ?>
-    </div>
-</div>
 
 
 
 
-<script>
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const searchQuery = this.value.toLowerCase();
-        const orderSections = document.querySelectorAll('.order-section');
-
-        orderSections.forEach(section => {
-            const textContent = section.textContent.toLowerCase();
-            if (textContent.includes(searchQuery)) {
-                section.style.display = '';
-            } else {
-                section.style.display = 'none';
-            }
-        });
-    });
 
 
-    document.getElementById('bookingSearchInput').addEventListener('input', function () {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#bookingTable tbody tr');
+        <script>
+            document.getElementById('searchInput').addEventListener('input', function () {
+                const searchQuery = this.value.trim().toLowerCase();
+                const orderSections = document.querySelectorAll('.order-section');
 
-        rows.forEach(row => {
-            const bookingId = row.cells[0].textContent.toLowerCase();
-            const tableNo = row.cells[1].textContent.toLowerCase();
+                orderSections.forEach(section => {
+                    // Get relevant searchable text from the section:
+                    // - Order header (h3)
+                    // - Paragraph (table and payment info)
+                    // - All item names within the section
 
-            if (bookingId.includes(filter) || tableNo.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
+                    const orderHeader = section.querySelector('h3')?.textContent.toLowerCase() || '';
+                    const orderInfo = section.querySelector('p')?.textContent.toLowerCase() || '';
+
+                    // Collect all item names inside this order section
+                    const itemNames = Array.from(section.querySelectorAll('strong')).map(el => el.textContent.toLowerCase()).join(' ');
+
+                    const combinedText = orderHeader + ' ' + orderInfo + ' ' + itemNames;
+
+                    if (combinedText.includes(searchQuery)) {
+                        section.style.display = '';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
 
 
 
-    document.addEventListener('DOMContentLoaded', function() {
+
+
+
+            document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.cancel-booking-btn').forEach(function(button) {
             button.addEventListener('click', function() {
                 if (!confirm('Are you sure you want to cancel this booking?')) return;
@@ -445,14 +450,10 @@ if ($tab === 'bookings') {
             });
         });
 
-        document.getElementById('close-booking-table')?.addEventListener('click', function () {
-            const container = document.getElementById('booking-table-container');
-            if (container) container.remove();
-        });
-    });
 
 
-</script>
+
+    </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../Frontend/js/script.js"></script>
