@@ -75,24 +75,28 @@ if (isset($_GET['load_bookings'])) {
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        echo "<div class='booking-table-container' id='booking-table-container'>";
-        echo "<span class='close-icon' onclick='closeBookingContainer()'>&times;</span>";
-        echo "<h3 class='mb-4 heading-center'>Table Booking Details</h3>";
-        echo "<table id='booking-table' cellspacing='0' cellpadding='10'>"; // ✅ Added ID
+        echo "<div class=' p-4 mb-5' id='booking-table-container'>";
+        echo "<div class='d-flex justify-content-between align-items-center mb-3'>";
+        echo "<h3 class='text-center flex-grow-1 mb-0'>Table Booking Details</h3>";
+        echo "<button class='btn-close' onclick='closeBookingContainer()' aria-label='Close'></button>";
+        echo "</div>";
+        echo "<div class='table-responsive'>";
+        echo "<table id='booking-table' class='table table-bordered table-hover table-striped align-middle text-center'>";
         echo "<thead><tr>
-        <th>Booking ID</th>
-        <th>Table Num</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th>People</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Duration</th>
-        <th>Special Request</th>
-        <th>Booked At</th>
-        <th>Status</th>
-    </tr></thead><tbody>";
+                <th>Booking ID</th>
+                <th>Table Num</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>People</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Booked At</th>
+                <th>Duration</th>
+                <th>Special Request</th>
+                <th>Created At</th>
+                <th>Status</th>
+            </tr></thead><tbody>";
 
         while ($row = mysqli_fetch_assoc($result)) {
             echo "<tr>";
@@ -108,18 +112,23 @@ if (isset($_GET['load_bookings'])) {
             echo "<td>" . nl2br(htmlspecialchars($row['special_request'])) . "</td>";
             echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
             echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+
+            echo "<td><span class='badge bg-" .
+                ($row['status'] === 'Approved' ? 'success' :
+                    ($row['status'] === 'Pending' ? 'warning' : 'secondary')) .
+                "'>" . htmlspecialchars($row['status']) . "</span></td>";
             echo "</tr>";
         }
 
         echo "</tbody></table>";
-        echo "</div>";
+        echo "</div></div>";
     } else {
-        echo "<div class='text-muted'>No bookings found.</div>";
+        echo "<div class='alert alert-info text-center'>No bookings found.</div>";
     }
 
-    exit(); // ✅ Moved outside the if-else
-
+    exit();
 }
+
 ?>
 
 <!doctype html>
@@ -141,6 +150,9 @@ if (isset($_GET['load_bookings'])) {
     <!-- Bootstrap and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
@@ -149,410 +161,7 @@ if (isset($_GET['load_bookings'])) {
 
     <style>
 
-        .dashboard-sidebar {
-            width: 280px;
-            height: auto;
-            background-color: #f8f9fa;
-            border-right: 1px solid #e4e4e4;
-            border-left: none;
-            border-top: none;
-            border-bottom: none;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            margin-top: 1rem;
-            flex-direction: column;
-        }
 
-
-        .summary-container {
-            background-color: #ffffff;
-            padding: 20px 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            max-width: 600px;
-        }
-
-        .summary-container h2 {
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-        }
-
-        .summary-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1000px;
-            margin: 20px auto;
-            font-family: Arial, sans-serif;
-        }
-
-        .summary-card {
-            flex: 1 1 calc(33.333% - 20px);
-            background-color: #f9f9f9;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            min-width: 200px;
-        }
-
-        .summary-card h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .summary-card p {
-            font-size: 22px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .summary-card.full-width {
-            flex: 1 1 100%;
-        }
-
-        .popular-items-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .popular-items-list li {
-            padding: 6px 0;
-            font-size: 16px;
-            color: #555;
-        }
-
-
-        /* Heading */
-        .heading-center {
-            text-align: center;
-            color: #f1cc52;
-            font-size: x-large;
-            margin-top: 2rem;
-            font-style: italic;
-            font-family: 'Playfair Display', ui-sans-serif;
-        }
-
-        /* Base Table Styling */
-        /* Base Table Styling */
-        table {
-            width: 100%;
-            border: 1px solid white;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Shared Table Styling for Sections */
-        #menu-section table,
-        #userDetailsContainer table,
-        #booking-table-container table,
-        #orders-table {
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: 'Segoe UI', sans-serif;
-            min-width: 400px;
-            width: 100%;
-            border: 1px solid white;
-            background-color: white;
-        }
-
-        /* Table Headers (all <th> in <thead> + optional .table-header class) */
-        #menu-section table thead th,
-        #userDetailsContainer table thead th,
-        #orders-table thead th,
-        #booking-table-container table thead th,
-        .table-header {
-            background-color: #fac003; /* Yellow/Orange */
-            color: white;
-            border: 1px solid white;
-            font-size: small;
-            text-align: left;
-            padding: 10px;
-            font-weight: bold;
-        }
-
-        /* Table Cells */
-        #menu-section table th,
-        #menu-section table td,
-        #userDetailsContainer table th,
-        #userDetailsContainer table td,
-        #booking-table-container table th,
-        #booking-table-container table td,
-        #orders-table th,
-        #orders-table td {
-            padding: 10px;
-            text-align: left;
-            font-size: smaller;
-            vertical-align: top;
-            border: 1px solid #fac003;
-        }
-
-        /* Hover Row Effect */
-        #menu-section table tbody tr:hover,
-        #userDetailsContainer table tbody tr:hover,
-        #booking-table-container table tbody tr:hover,
-        #orders-table tbody tr:hover {
-            background-color: #f6dc88;
-        }
-
-        /* Section Containers */
-        #menu-section,
-        #form-container,
-        #ordersContainer,
-        #userDetailsContainer,
-        #booking-table-container {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            max-width: 900px;
-            background: white;
-            padding: 20px;
-            border-radius: 3px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Menu Images */
-        #menu-section table img {
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 3px;
-        }
-
-        /* Buttons (Menu + User Table) */
-        #menu-section button,
-        #userDetailsContainer button {
-            padding: 5px 8px;
-            font-size: 13px;
-            background-color: #fac003;
-            color: white;
-            width: 100%;
-            border: 1px solid white;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-        }
-
-        /* Hover Effect for Buttons */
-        #menu-section button:hover,
-        #userDetailsContainer button:hover {
-            background-color: white;
-            color: #fac003;
-            border: 1px solid #fac003;
-        }
-
-        /* Delete Button Specific Styling */
-        #menu-section button[onclick^="deleteMenuItem"],
-        #userDetailsContainer button.delete-btn {
-            background-color: #fac003 !important;
-            color: white !important;
-        }
-
-        /* Hover Effect for Delete Button */
-        #menu-section button[onclick^="deleteMenuItem"]:hover,
-        #userDetailsContainer button.delete-btn:hover {
-            background-color: white !important;
-            color: #fac003 !important;
-            border: 1px solid #fac003;
-        }
-
-
-        /* Hover Effect for Delete Button */
-        #menu-section button[onclick^="deleteMenuItem"]:hover,
-        #userDetailsContainer button.delete-btn:hover {
-            background-color: white !important;
-            color: #fac003 !important;
-            border: 1px solid #fac003;
-        }
-
-
-        /* Search Containers */
-        #admin-page .search-container {
-            position: relative;
-            width: 200%;
-            margin-top: 0.1rem;
-            margin-bottom: 0.1rem;
-            font-size: 12px;
-        }
-
-        #admin-page .search-container i {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            color: #fac003;
-        }
-
-        #admin-page #searchInput,
-        #admin-page #searchBar {
-            width: 100%;
-            padding: 8px 12px 8px 36px;
-            font-size: 12px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s ease;
-        }
-
-        #admin-page #searchInput::placeholder,
-        #admin-page #searchBar::placeholder {
-            color: #fac003;
-        }
-
-
-        /* Container for Add Menu Form */
-        #form-container,
-        #userDetailsContainer {
-            border: none;
-            margin-top: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 3px;
-        }
-
-        /* Form Title */
-        .form-heading {
-            text-align: center;
-            color: #f1cc52;
-            font-size: x-large;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-            font-style: italic;
-            font-family: 'Playfair Display', ui-sans-serif;
-        }
-
-        /* Form labels */
-        .form-row label {
-            display: block;
-            color: black;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        /* Inputs, selects, and textareas */
-        .form-row input,
-        .form-row select,
-        .form-row textarea,
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            margin-bottom: 10px;
-            background-color: white;
-            color: black;
-            font-size: 1rem;
-        }
-
-        /* Placeholders */
-        #admin-page .form-row input::placeholder,
-        #admin-page .form-row textarea::placeholder,
-        #admin-page.form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #f1d476;
-            font-size: 0.9rem;
-        }
-
-        /* Submit and Add buttons */
-        #admin-page .form-row button,
-        #admin-page .form-group button {
-            padding: 10px;
-            background-color: #fac003;
-            color: white;
-            width: 100%;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-        }
-
-        /* Hover effect for submit buttons */
-        #admin-page .form-row button[type="submit"]:hover,
-        #admin-page .form-group button[type="submit"]:hover {
-            background-color: white;
-            color: #fac003;
-            border: 3px solid #fac003;
-        }
-
-        /* Add buttons (e.g., + Add Variant, + Add Add-on) */
-        #admin-page .form-group button[type="button"],
-        #admin-page .form-row button[type="button"] {
-            background-color: white;
-            height: 2rem;
-            color: #fac003;
-            font-size: 14px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-            padding: 2px 10px;
-        }
-
-        /* Section title */
-        #admin-page #add-menu-form h3 {
-            font-size: 24px;
-            color: #fac003;
-            text-align: center;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        /* NEW: Horizontal layout for grouped fields */
-        #admin-page .horizontal-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        /* NEW: Form group blocks inside horizontal rows */
-        #admin-page .form-group {
-            flex: 1;
-            min-width: 280px;
-        }
-
-        /* NEW: Variant inputs in one row */
-        #admin-page .form-subrow {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        #admin-page .form-subrow input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            background-color: white;
-            color: black;
-            font-size: 1rem;
-        }
-
-        #admin-page .form-subrow input::placeholder {
-            color: #f1d476;
-            font-size: 0.9rem;
-        }
-
-
-        .close-icon {
-            float: right;
-            font-size: 16px;
-            cursor: pointer;
-            color: #fac003;
-            margin: 10px;
-        }
 
 
     </style>
@@ -585,18 +194,31 @@ if (isset($_GET['load_bookings'])) {
 
 <!-- Dashboard content -->
 <div class="container">
+    <!-- Header Section: Profile + Toggler -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <!-- Left: Avatar + Name + Email -->
+        <div class="d-flex align-items-center">
+            <div class="text-white d-flex justify-content-center align-items-center dashboard-avatar me-3">
+                <?php echo $initials; ?>
+            </div>
+            <div>
+                <h6 class="mb-0"><?php echo $user['name']; ?></h6>
+                <small class="text-muted"><?php echo $user['email']; ?></small>
+            </div>
+        </div>
+
+        <!-- Right: Toggler Button (Mobile only) -->
+        <div class="d-md-none">
+            <button onclick="toggleSidebar()" class="btn">
+                ☰
+            </button>
+        </div>
+    </div>
+
+
     <div class="dashboard-layout d-flex">
         <!-- Sidebar -->
-        <div class="dashboard-sidebar me-4">
-            <div class="d-flex align-items-center mb-4">
-                <div class="text-white d-flex justify-content-center align-items-center dashboard-avatar me-3">
-                    <?php echo $initials; ?>
-                </div>
-                <div>
-                    <h6 class="mb-0"><?php echo $user['name']; ?></h6>
-                    <small class="text-muted"><?php echo $user['email']; ?></small>
-                </div>
-            </div>
+        <div id="dashboardSidebar" class="dashboard-sidebar me-4">
 
 
             <!-- Sidebar Menu -->
@@ -605,10 +227,8 @@ if (isset($_GET['load_bookings'])) {
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
                 <a href="summary_history.php" class="dashboard-action-item" style="text-decoration: none;">Summary</a>
-                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table
-                    Booking</a>
-                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order
-                        History</small></a>
+                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
+                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('paidDropdown')">
@@ -618,14 +238,12 @@ if (isset($_GET['load_bookings'])) {
                         <div class="dropdown-item" onclick="showAddMenuForm()">Menu</div>
                         <div class="dropdown-item" onclick="showUserDetails()">User</div>
                     </div>
-
                 </div>
             </div>
         </div>
 
 
-        <!-- Orders Display Section -->
-        <div class="flex-grow-1">
+        <div class="details-container flex-grow-1">
             <div class="orders-wrapper" id="ordersContainer">
 
                 <!-- ✅ Summary Container at the Top -->
@@ -644,49 +262,35 @@ if (isset($_GET['load_bookings'])) {
                         <h3>Total Bookings Today</h3>
                         <p id="bookingsCount">0</p>
                     </div>
-
                 </div>
 
-
                 <!-- Processed Orders Display -->
-                <h3 class="mb-4 heading-center">Today's Orders</h3>
-                <table id="orders-table" border="3" cellspacing="0" cellpadding="10">
-                    <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Table No</th>
-                        <th>Order Date</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Status</th>
-                        <th>Total Price</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- Processed orders will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-
-
-            <div id="bookingContainer" style="margin-top: 30px;">
-
-            </div>
-
-
-            <div id="userDetailsContainer" style="display: none;">
-                <!-- User details will be inserted here -->
-            </div>
-
-
-            <!-- Add Menu Form Container -->
-            <div class="form-container" id="form-container" style="display: none; margin-top: 30px;"></div>
-
-            <div id="menu-section" style="display: none; margin-top: 20px;"></div>
-
-
+                <div class="container my-4" id="ordersTableContainer">
+                    <h3 class="mb-4 text-center">Today's Orders</h3>
+                    <div class="table-responsive">
+                        <table id="orders-table" class="table table-bordered table-striped table-hover align-middle text-center">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Table No</th>
+                                <th>Order Date</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Total Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Processed orders will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                    <div id="bookingContainer"></div>
+                    <div id="userDetailsContainer" style="display: none;"></div>
+                    <div class="form-container" id="form-container" style="display: none; margin-top: 30px;"></div>
+                    <div id="menu-section" style="display: none; margin-top: 20px;"></div>
         </div>
-    </div>
 </div>
 
 
@@ -1131,6 +735,10 @@ if (isset($_GET['load_bookings'])) {
             });
     }
 
+    function closeBookingContainer() {
+        document.getElementById('bookingContainer').innerHTML = '';
+    }
+
     // Close Form Container, Menu Section, User Details Container, Booking Container
     function closeBookingContainer() {
         const container = document.getElementById('booking-table-container');
@@ -1218,6 +826,18 @@ if (isset($_GET['load_bookings'])) {
     }
 
     fetchDailySummary();
+
+
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('dashboardSidebar');
+        sidebar.classList.toggle('show-sidebar');
+    }
+
+    function toggleDropdown(id) {
+        const dropdown = document.getElementById(id);
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
 </script>
 
 

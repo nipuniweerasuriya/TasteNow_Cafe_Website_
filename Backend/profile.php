@@ -379,34 +379,52 @@ if ($tab === 'bookings') {
 
 
         <script>
-            document.getElementById('searchInput').addEventListener('input', function () {
-                const searchQuery = this.value.trim().toLowerCase();
-                const orderSections = document.querySelectorAll('.order-section');
+            document.getElementById("searchInput").addEventListener("input", function () {
+                const query = this.value.toLowerCase().trim();
+
+                // === Orders Section ===
+                const orderContainer = document.querySelector(".order-items-container");
+                const orderSections = Array.from(orderContainer.querySelectorAll(".order-section"));
+
+                const matchedOrders = [];
+                const unmatchedOrders = [];
 
                 orderSections.forEach(section => {
-                    // Get relevant searchable text from the section:
-                    // - Order header (h3)
-                    // - Paragraph (table and payment info)
-                    // - All item names within the section
-
-                    const orderHeader = section.querySelector('h3')?.textContent.toLowerCase() || '';
-                    const orderInfo = section.querySelector('p')?.textContent.toLowerCase() || '';
-
-                    // Collect all item names inside this order section
-                    const itemNames = Array.from(section.querySelectorAll('strong')).map(el => el.textContent.toLowerCase()).join(' ');
-
-                    const combinedText = orderHeader + ' ' + orderInfo + ' ' + itemNames;
-
-                    if (combinedText.includes(searchQuery)) {
-                        section.style.display = '';
+                    const text = section.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        matchedOrders.push(section);
                     } else {
-                        section.style.display = 'none';
+                        unmatchedOrders.push(section);
                     }
                 });
+
+                // Clear and re-append in order: matched first
+                orderSections.forEach(section => section.remove());
+                matchedOrders.forEach(section => orderContainer.appendChild(section));
+                unmatchedOrders.forEach(section => orderContainer.appendChild(section));
+
+                // === Bookings Section ===
+                const bookingTableBody = document.querySelector("#bookingContainer tbody");
+                if (bookingTableBody) {
+                    const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));
+
+                    const matchedBookings = [];
+                    const unmatchedBookings = [];
+
+                    bookingRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(query)) {
+                            matchedBookings.push(row);
+                        } else {
+                            unmatchedBookings.push(row);
+                        }
+                    });
+
+                    bookingTableBody.innerHTML = "";
+                    matchedBookings.forEach(row => bookingTableBody.appendChild(row));
+                    unmatchedBookings.forEach(row => bookingTableBody.appendChild(row));
+                }
             });
-
-
-
 
 
 
