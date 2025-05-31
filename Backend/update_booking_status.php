@@ -40,7 +40,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $updateStmt->bind_param("si", $new_status, $booking_id);
 
     if ($updateStmt->execute()) {
-        echo "Booking status successfully updated to $new_status.";
+        header("Location: admin_dashboard.php");
+        exit();
     } else {
         echo "Error updating booking status.";
     }

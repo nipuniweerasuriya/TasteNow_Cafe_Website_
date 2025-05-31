@@ -22,6 +22,8 @@ session_start();
     <!-- Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -132,6 +134,47 @@ session_start();
             color: #f1cc52;
         }
 
+        .back-to-top {
+            position: fixed;
+            bottom: 50px;
+            right: 10px;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            display: none;
+            z-index: 999;
+            cursor: pointer;
+        }
+
+
+
+        .back-to-top .material-icons {
+            font-size: 24px;
+            color: #fac003;
+        }
+
+
+
+        .location-section {
+            text-align: center;
+            margin-top: 0.1rem;
+            background-color: #fefefe;
+        }
+
+        .map-container {
+            width: 100%;
+            margin: 0 auto;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+
     </style>
 
 </head>
@@ -166,10 +209,10 @@ session_start();
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto align-items-lg-center d-flex gap-2">
                     <a class="nav-link active" href="#">Home</a>
-                    <a class="nav-link" href="#">Menu</a>
-                    <a class="nav-link" href="#">About</a>
-                    <a class="nav-link" href="#">Contact</a>
-                    <a class="nav-link" href="#">Feedback</a>
+                    <a class="nav-link" href="#menu">Menu</a>
+                    <a class="nav-link" href="#about">About</a>
+                    <a class="nav-link" href="#footer">Contact</a>
+                    <a class="nav-link" href="#footer">Feedback</a>
 
 
                     <!-- Section: Profile Direction-->
@@ -261,14 +304,14 @@ session_start();
     <div class="container h1-container">
         <h1 class="h1-heading">Welcome to <span>TasteNow</span></h1>
         <p class="p-0">Serving delicious moments for over 18 years!</p>
-        <button class="btn btn-menu">OUR MENU</button>
-        <button class="btn btn-booking">BOOK A TABLE</button>
+        <a href="#menu"><button class="btn btn-menu">OUR MENU</button></a>
+        <a href="#table_booking"><button class="btn btn-booking">BOOK A TABLE</button></a>
     </div>
 </div>
 
 
 <!-- Section: About -->
-<div class="about-us">
+<div class="about-us" id="about">
     <div class="images-grid">
         <div class="image-box"><img src="../Frontend/assets/images/gallery/shop-1.webp" alt="Image 1"></div>
         <div class="image-box"><img src="../Frontend/assets/images/gallery/events-1.webp" alt="Image 2"></div>
@@ -336,7 +379,7 @@ session_start();
 
 
 <!-- Section: Table Booking -->
-<div class="booking-container">
+<div class="booking-container" id="table_booking">
     <h2 class="form-heading">-----Book Your Table-----</h2>
     <form class="booking-form" action="table_booking.php" method="POST">
         <div class="form-row">
@@ -365,8 +408,19 @@ session_start();
 
 
 
+
+<section class="location-section">
+    <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15831.5771470398!2d80.32347147620074!3d7.252871027803606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae317ff06856f21%3A0x2bfab7cb42395899!2sWOW%20Cafe%20Kegalle!5e0!3m2!1ssi!2slk!4v1748712708946!5m2!1ssi!2slk" >
+        </iframe>
+    </div>
+</section>
+
+
+
+
 <!-- Section: Footer -->
-<footer class="footer text-white pt-5 pb-3">
+<footer class="footer text-white pt-5 pb-3" id="footer">
     <div class="container">
         <div class="row">
             <!-- Section: About -->
@@ -384,10 +438,10 @@ session_start();
             <div class="col-md-3 mb-4">
                 <h6 class="footer-sub-headings text-uppercase">Quick Links</h6>
                 <ul class="list-unstyled">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Menu</a></li>
-                    <li><a href="#">Book a Table</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="#home_page">Home</a></li>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#table_booking">Book a Table</a></li>
+                    <li><a href="#footer">Contact</a></li>
                 </ul>
             </div>
 
@@ -408,17 +462,24 @@ session_start();
             <!-- Section: Feedback -->
             <div class="col-md-3 mb-4">
                 <h5 class="footer-sub-headings text-uppercase">Feedback</h5>
-                <form>
-                    <textarea class="feedback-form" rows="3" placeholder="Your feedback..."></textarea>
+                <form action="feedback.php" method="POST">
+                    <textarea class="feedback-form" name="message" rows="3" placeholder="Your feedback..." required></textarea>
                     <button type="submit" class="submit-btn btn-light mt-2">Submit</button>
+                    <div id="feedbackMessage" class="mt-2 text-success"></div>
                 </form>
             </div>
         </div>
     </div>
+    <a href="#" class="back-to-top" id="backToTopBtn">
+        <span class="material-icons">arrow_upward</span>
+    </a>
+
     <div class="footer-bottom-bar text-center py-2 mt-3">
         © 2025 Tastenow. All rights reserved.
     </div>
 </footer>
+
+
 
 
 <!-- Section: Js Link-->
@@ -569,6 +630,26 @@ session_start();
 
         if (dateInput && timeInput) setMinDateTime();
     });
+
+
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", () => {
+        if (document.documentElement.scrollTop > 500) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    });
+
+    backToTopBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+
 
 </script>
 

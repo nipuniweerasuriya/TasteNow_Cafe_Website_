@@ -1,205 +1,136 @@
 <?php
-include '../Backend/db_connect.php';
+include 'db_connect.php';
 
-$result = $conn->query("SELECT * FROM daily_summary_logs ORDER BY summary_date DESC");
+$filterType = $_GET['filter_type'] ?? 'all';
+$filterValue = $_GET['filter_value'] ?? '';
+
+$whereClause = "";
+$params = [];
+$paramTypes = "";
+
+if ($filterType === 'date' && $filterValue) {
+    $whereClause = "WHERE summary_date = ?";
+    $params[] = $filterValue;
+    $paramTypes .= "s";
+} elseif ($filterType === 'month' && $filterValue) {
+    $whereClause = "WHERE MONTH(summary_date) = ?";
+    $params[] = (int)$filterValue;
+    $paramTypes .= "i";
+} elseif ($filterType === 'year' && $filterValue) {
+    $whereClause = "WHERE YEAR(summary_date) = ?";
+    $params[] = (int)$filterValue;
+    $paramTypes .= "i";
+}
+
+$sql = "SELECT * FROM daily_summary $whereClause ORDER BY summary_date DESC";
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($paramTypes, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Totals
 $totalOrders = 0;
 $totalRevenue = 0;
 $totalBookings = 0;
 
-$summaries = [];
+$data = [];
 while ($row = $result->fetch_assoc()) {
-    $summaries[] = $row;
-    $totalOrders += (int)$row['total_orders'];
-    $totalRevenue += (float)$row['total_revenue'];
-    $totalBookings += (int)$row['total_bookings'];
+    $totalOrders += $row['total_orders'];
+    $totalRevenue += $row['total_revenue'];
+    $totalBookings += $row['total_bookings'];
+    $data[] = $row;
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8" />
-    <title>Daily Summary History</title>
-
-
-    <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
-          rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-          rel="stylesheet">
-
-    <!-- Bootstrap and Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-
+    <title>Daily Summary</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-        }
-        a.back-link {
-            margin: 20px;
-            display: inline-block;
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-        }
-        a.back-link:hover {
-            text-decoration: underline;
-        }
-        .filter-container {
-            width: 90%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .filter-container select, .filter-container input {
-            padding: 5px;
-            font-size: 14px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 90%;
-            margin: 0 auto 30px auto;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        tfoot td {
-            font-weight: bold;
-            background-color: #eaeaea;
-        }
+            font-family: Arial, sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #aaa; padding: 10px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .filter-form { margin-bottom: 20px; }
+        .totals { margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<a href="admin_dashboard.php" class="back-link">🔙 Back to Dashboard</a>
-<h2 style="text-align:center;">Past Daily Summaries</h2>
+<h2>📊 Café Daily Summary</h2>
 
-<!-- Filter Toggle Button -->
-<div style="width: 90%; margin: 10px auto; text-align: right;">
-    <button onclick="toggleFilters()" style="background: none; border: none; font-size: 20px; cursor: pointer;">
-<span class="material-symbols-outlined">filter_list</span></button>
-</div>
+<!-- Filter Form -->
+<form method="GET" class="filter-form">
+    <label>Filter Type:
+        <select name="filter_type" onchange="this.form.submit()">
+            <option value="all" <?= $filterType === 'all' ? 'selected' : '' ?>>All</option>
+            <option value="date" <?= $filterType === 'date' ? 'selected' : '' ?>>Date</option>
+            <option value="month" <?= $filterType === 'month' ? 'selected' : '' ?>>Month</option>
+            <option value="year" <?= $filterType === 'year' ? 'selected' : '' ?>>Year</option>
+        </select>
+    </label>
 
-<!-- Hidden Filter Container -->
-<div class="filter-container" id="filterContainer" style="display: none;">
-    <select id="yearFilter">
-        <option value="">Filter by Year</option>
-        <?php
-        $years = array_unique(array_map(fn($s) => date('Y', strtotime($s['summary_date'])), $summaries));
-        rsort($years);
-        foreach ($years as $year) echo "<option value=\"$year\">$year</option>";
-        ?>
-    </select>
+    <?php if ($filterType === 'date'): ?>
+        <input type="date" name="filter_value" value="<?= $filterValue ?>" onchange="this.form.submit()">
+    <?php elseif ($filterType === 'month'): ?>
+        <select name="filter_value" onchange="this.form.submit()">
+            <option value="">-- Select Month --</option>
+            <?php for ($m = 1; $m <= 12; $m++): ?>
+                <option value="<?= $m ?>" <?= $filterValue == $m ? 'selected' : '' ?>>
+                    <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+                </option>
+            <?php endfor; ?>
+        </select>
+    <?php elseif ($filterType === 'year'): ?>
+        <select name="filter_value" onchange="this.form.submit()">
+            <option value="">-- Select Year --</option>
+            <?php
+            $yearStart = 2022;
+            $yearNow = date('Y');
+            for ($y = $yearNow; $y >= $yearStart; $y--): ?>
+                <option value="<?= $y ?>" <?= $filterValue == $y ? 'selected' : '' ?>><?= $y ?></option>
+            <?php endfor; ?>
+        </select>
+    <?php endif; ?>
+</form>
 
-    <select id="monthFilter">
-        <option value="">Filter by Month</option>
-        <?php
-        for ($m = 1; $m <= 12; $m++) {
-            $monthName = date('F', mktime(0, 0, 0, $m, 10));
-            echo "<option value=\"$m\">$monthName</option>";
-        }
-        ?>
-    </select>
-
-    <input type="date" id="dateFilter">
-    <button onclick="clearFilters()">Clear Filters</button>
-</div>
-
-
-<table id="summaryTable">
+<!-- Summary Table -->
+<table>
     <thead>
     <tr>
         <th>Date</th>
         <th>Total Orders</th>
         <th>Total Revenue</th>
         <th>Total Bookings</th>
+        <th>Recorded At</th>
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($summaries as $row): ?>
-        <tr>
-            <td><?= htmlspecialchars($row['summary_date']) ?></td>
-            <td><?= (int)$row['total_orders'] ?></td>
-            <td>Rs. <?= number_format($row['total_revenue'], 2) ?></td>
-            <td><?= (int)$row['total_bookings'] ?></td>
-        </tr>
-    <?php endforeach; ?>
+    <?php if (count($data) > 0): ?>
+        <?php foreach ($data as $row): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['summary_date']) ?></td>
+                <td><?= htmlspecialchars($row['total_orders']) ?></td>
+                <td>Rs. <?= number_format($row['total_revenue'], 2) ?></td>
+                <td><?= htmlspecialchars($row['total_bookings']) ?></td>
+                <td><?= htmlspecialchars($row['created_at']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr><td colspan="5">No summary data found.</td></tr>
+    <?php endif; ?>
     </tbody>
-    <tfoot>
-    <tr>
-        <td>Total</td>
-        <td><?= $totalOrders ?></td>
-        <td>Rs. <?= number_format($totalRevenue, 2) ?></td>
-        <td><?= $totalBookings ?></td>
-    </tr>
-    </tfoot>
 </table>
 
-<script>
-    const yearFilter = document.getElementById('yearFilter');
-    const monthFilter = document.getElementById('monthFilter');
-    const dateFilter = document.getElementById('dateFilter');
-    const rows = document.querySelectorAll('#summaryTable tbody tr');
-
-    function filterTable() {
-        const year = yearFilter.value;
-        const month = monthFilter.value;
-        const date = dateFilter.value;
-
-        rows.forEach(row => {
-            const rowDate = row.children[0].textContent.trim(); // YYYY-MM-DD
-            const [rYear, rMonth, rDay] = rowDate.split('-');
-
-            const matchYear = !year || rYear === year;
-            const matchMonth = !month || parseInt(rMonth) === parseInt(month);
-            const matchDate = !date || rowDate === date;
-
-            if (matchYear && matchMonth && matchDate) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-    function clearFilters() {
-        yearFilter.value = '';
-        monthFilter.value = '';
-        dateFilter.value = '';
-        filterTable();
-    }
-
-    yearFilter.addEventListener('change', filterTable);
-    monthFilter.addEventListener('change', filterTable);
-    dateFilter.addEventListener('change', filterTable);
-
-
-
-    function toggleFilters() {
-        const filterBox = document.getElementById('filterContainer');
-        filterBox.style.display = filterBox.style.display === 'none' ? 'flex' : 'none';
-    }
-
-</script>
+<!-- Totals Display -->
+<div class="totals">
+    Total Orders: <?= $totalOrders ?> |
+    Total Revenue: Rs. <?= number_format($totalRevenue, 2) ?> |
+    Total Bookings: <?= $totalBookings ?>
+</div>
 
 </body>
 </html>
