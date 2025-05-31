@@ -68,39 +68,56 @@ if (isset($_GET['load_orders'])) {
 }
 
 
-
-
 if (isset($_GET['load_bookings'])) {
     $query = "SELECT * FROM table_bookings ORDER BY booking_date DESC, booking_time DESC";
     $result = mysqli_query($conn, $query);
 
     if (mysqli_num_rows($result) > 0) {
-        echo "<div class=' p-4 mb-5' id='booking-table-container'>";
+        echo "<div class='p-4 mb-5' id='booking-table-container' style='max-width: 100%; overflow-x: auto;'>";
         echo "<div class='d-flex justify-content-between align-items-center mb-3'>";
         echo "<h3 class='text-center flex-grow-1 mb-0'>Table Booking Details</h3>";
         echo "<button class='btn-close' onclick='closeBookingContainer()' aria-label='Close'></button>";
         echo "</div>";
+
         echo "<div class='table-responsive'>";
-        echo "<table id='booking-table' class='table table-bordered table-hover table-striped align-middle text-center'>";
+        echo "<table id='booking-table' class='table table-bordered table-hover table-striped align-middle text-center' style='min-width: 900px; table-layout: fixed;'>";
         echo "<thead><tr>
                 <th>Booking ID</th>
-                <th>Table Num</th>
+                <th>User ID</th>
+                <th>Table Number</th>
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Email</th>
                 <th>People</th>
                 <th>Date</th>
                 <th>Time</th>
-                <th>Booked At</th>
-                <th>Duration</th>
+                <th>Duration (hrs)</th>
                 <th>Special Request</th>
                 <th>Created At</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr></thead><tbody>";
 
         while ($row = mysqli_fetch_assoc($result)) {
+            $booking_id = htmlspecialchars($row['booking_id']);
+            $status = htmlspecialchars($row['status']);
+
+            // Determine badge color
+            $badgeClass = 'secondary';
+            if ($status === 'Confirmed') {
+                $badgeClass = 'success';
+            } elseif ($status === 'Canceled') {
+                $badgeClass = 'danger';
+            } elseif ($status === 'Pending') {
+                $badgeClass = 'warning';
+            }
+
+            // Disable buttons if already processed
+            $disabled = ($status === 'Confirmed' || $status === 'Canceled') ? 'disabled' : '';
+
             echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['booking_id']) . "</td>";
+            echo "<td>" . $booking_id . "</td>";
+            echo "<td>" . htmlspecialchars($row['user_id']) . "</td>";
             echo "<td>" . htmlspecialchars($row['table_number']) . "</td>";
             echo "<td>" . htmlspecialchars($row['name']) . "</td>";
             echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
@@ -108,20 +125,22 @@ if (isset($_GET['load_bookings'])) {
             echo "<td>" . htmlspecialchars($row['number_of_people']) . "</td>";
             echo "<td>" . htmlspecialchars($row['booking_date']) . "</td>";
             echo "<td>" . htmlspecialchars($row['booking_time']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['duration']) . " hrs</td>";
+            echo "<td>" . htmlspecialchars($row['duration']) . "</td>";
             echo "<td>" . nl2br(htmlspecialchars($row['special_request'])) . "</td>";
             echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+            echo "<td><span class='badge bg-$badgeClass'>$status</span></td>";
 
-            echo "<td><span class='badge bg-" .
-                ($row['status'] === 'Approved' ? 'success' :
-                    ($row['status'] === 'Pending' ? 'warning' : 'secondary')) .
-                "'>" . htmlspecialchars($row['status']) . "</span></td>";
+            // Action buttons
+            echo "<td>
+                    <button class='btn btn-success btn-sm me-1' onclick='confirmBooking($booking_id)' $disabled>Confirm</button>
+                    <button class='btn btn-danger btn-sm' onclick='cancelBooking($booking_id)' $disabled>Cancel</button>
+                  </td>";
             echo "</tr>";
         }
 
         echo "</tbody></table>";
-        echo "</div></div>";
+        echo "</div>"; // close table-responsive
+        echo "</div>"; // close booking-table-container
     } else {
         echo "<div class='alert alert-info text-center'>No bookings found.</div>";
     }
@@ -582,17 +601,19 @@ if (isset($_GET['load_bookings'])) {
 
 
                     let tableHTML = `
-                <h3 class="heading-center">Menu Items</h3>
-                <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse;" id="menuTable">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="menuTableBody">`;
+                    <h3 class="heading-center">Menu Items</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center" id="menuTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody">`;
+
 
                     data.forEach(item => {
                         tableHTML += `
@@ -604,7 +625,7 @@ if (isset($_GET['load_bookings'])) {
                     </tr>`;
                     });
 
-                    tableHTML += '</tbody></table>';
+                    tableHTML += '</tbody></table></div>';
                     menuSection.innerHTML += tableHTML;
                 })
                 .catch(error => {
@@ -674,18 +695,20 @@ if (isset($_GET['load_bookings'])) {
                         userDetailsContainer.innerHTML += '<p>No users found.</p>';
                     } else {
                         let table = `
-                    <h3 class="heading-center">User's Details</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="table-header">ID</th>
-                                <th class="table-header">Name</th>
-                                <th class="table-header">Email</th>
-                                <th class="table-header">Role</th>
-                                <th class="table-header">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+                        <h3 class="heading-center">User's Details</h3>
+                        <div class="table-responsive">
+                        <table class="table table-striped table-bordered align-middle text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
                         data.forEach(user => {
                             table += `
                         <tr>
@@ -696,9 +719,8 @@ if (isset($_GET['load_bookings'])) {
                             <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
                         </tr>`;
                         });
-                        table += `
-                        </tbody>
-                    </table>`;
+                        table += `</tbody></table></div>`;
+
 
                         userDetailsContainer.innerHTML += table;
                     }
@@ -734,10 +756,19 @@ if (isset($_GET['load_bookings'])) {
                 console.error('Error loading bookings:', error);
             });
     }
-
-    function closeBookingContainer() {
-        document.getElementById('bookingContainer').innerHTML = '';
+    function confirmBooking(id) {
+        if (confirm("Are you sure you want to confirm this booking?")) {
+            window.location.href = 'update_booking_status.php?action=confirm&id=' + id;
+        }
     }
+
+    function cancelBooking(id) {
+        if (confirm("Are you sure you want to cancel this booking?")) {
+            window.location.href = 'update_booking_status.php?action=cancel&id=' + id;
+        }
+    }
+
+
 
     // Close Form Container, Menu Section, User Details Container, Booking Container
     function closeBookingContainer() {

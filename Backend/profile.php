@@ -93,7 +93,7 @@ $tab = $_GET['tab'] ?? '';
 $bookings = [];
 
 if ($tab === 'bookings') {
-    $booking_sql = "SELECT booking_id, table_number, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, created_at FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, booking_time DESC";
+    $booking_sql = "SELECT booking_id, user_id, table_number, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, status FROM table_bookings WHERE user_id = ? ORDER BY booking_date DESC, booking_time DESC";
     $booking_stmt = $conn->prepare($booking_sql);
     $booking_stmt->bind_param('i', $user_id);
     $booking_stmt->execute();
@@ -321,11 +321,17 @@ if ($tab === 'bookings') {
                                     <thead class="table-dark">
                                     <tr>
                                         <th>Booking ID</th>
+                                        <th>User ID</th>
                                         <th>Table No</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
                                         <th>Date</th>
                                         <th>Time</th>
+                                        <th>Duration</th>
                                         <th>No. of People</th>
                                         <th>Special Request</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -333,11 +339,20 @@ if ($tab === 'bookings') {
                                     <?php foreach ($bookings as $booking): ?>
                                         <tr>
                                             <td><?= $booking['booking_id'] ?></td>
+                                            <td><?= $booking['user_id'] ?></td>
                                             <td><?= $booking['table_number'] ?></td>
+                                            <td><?= $booking['name'] ?></td>
+                                            <td><?= $booking['email'] ?></td>
+                                            <td><?= $booking['phone'] ?></td>
                                             <td><?= $booking['booking_date'] ?></td>
                                             <td><?= $booking['booking_time'] ?></td>
+                                            <td><?= $booking['duration'] ?></td>
                                             <td><?= $booking['number_of_people'] ?></td>
                                             <td><?= $booking['special_request'] ?: 'None' ?></td>
+                                            <td><?= $booking['status'] ?></td>
+
+
+
                                             <td>
                                                 <?php
                                                 $bookingDateTime = strtotime($booking['booking_date'] . ' ' . $booking['booking_time']);

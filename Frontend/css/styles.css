@@ -414,6 +414,8 @@ table {
     font-family: Arial, sans-serif;
 }
 
+
+
 /* Shared Table Styling for Sections */
 #menu-section table,
 #userDetailsContainer table,
@@ -471,8 +473,8 @@ table {
 .details-container {
     margin-top: 20px;
     margin-bottom: 20px;
-    max-width: 1500px;
     width: 100%;
+    max-width: 900px;
     background: green;
     padding: 20px;
     border-radius: 3px;
@@ -580,6 +582,8 @@ table {
     background: purple;
     padding: 20px;
     border-radius: 3px;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 /* Form Title */
@@ -612,7 +616,7 @@ table {
     padding: 10px;
     border: 1px solid #fac003;
     border-radius: 3px;
-    margin-bottom: 10px;
+
     background-color: white;
     color: black;
     font-size: 1rem;
@@ -648,22 +652,6 @@ table {
     background-color: white;
     color: #fac003;
     border: 3px solid #fac003;
-}
-
-/* Add buttons (e.g., + Add Variant, + Add Add-on) */
-#admin-page .form-group button[type="button"],
-#admin-page .form-row button[type="button"] {
-    background-color: white;
-    height: 2rem;
-    color: #fac003;
-    font-size: 14px;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    margin-top: 5px;
-    padding: 2px 10px;
 }
 
 /* Section title */
@@ -723,41 +711,6 @@ table {
 
 
 
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-    .dashboard-layout {
-        flex-direction: column;
-    }
-
-    .dashboard-sidebar {
-        display: none;
-        position: absolute;
-        z-index: 999;
-        background: white;
-        width: 50%;
-        height: 60vh;
-        padding: 1rem;
-        color: black;
-
-        /* ✅ Position on the right */
-        right: 0;
-        top: 12rem;
-        box-shadow: -2px 0 10px rgb(253, 159, 2);
-    }
-
-    .dashboard-sidebar.show-sidebar {
-        display: block;
-    }
-}
-
-
 #booking-table-container {
     max-width: 100%;
 }
@@ -786,23 +739,24 @@ table {
     display: none;
 }
 
-/* Center the close icon and make it easier to tap */
-.close-icon {
-    float: none;
-    display: block;
-    text-align: right;
-    font-size: 3px;
-    padding: 5px;
-    cursor: pointer;
-    color: #fac003;
-}
-
 /* Make table scrollable on mobile */
 #booking-table {
     display: block;
     overflow-x: auto;
     background-color: #fac003;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2000,4 +1954,72 @@ ul.list-payment-icon li {
         font-size: 0.8rem;
         padding: 10px 0;
     }
+
+
+
+
+
+
+    /* Admin Dashboard */
+
+.dashboard-layout {
+    flex-direction: column;
+}
+
+    .dashboard-sidebar {
+        display: none;
+        position: absolute;
+        z-index: 999;
+        background: white;
+        width: 50%;
+        height: 60vh;
+        padding: 1rem;
+        color: black;
+
+        /* ✅ Position on the right */
+        right: 0;
+        top: 12rem;
+        box-shadow: -2px 0 10px rgb(253, 159, 2);
+    }
+
+    .dashboard-sidebar.show-sidebar {
+        display: block;
+    }
+
+
+
+    .form-row.horizontal-group {
+        flex-direction: column;  /* Stack horizontally grouped elements vertically */
+    }
+
+    .form-row.horizontal-group .form-group {
+        width: 100% !important;  /* Make form groups full width */
+        margin-bottom: 1rem;     /* Space between stacked groups */
+    }
+
+    .form-row button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    input[type="file"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea,
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 94%;
+    }
+
+
 }
