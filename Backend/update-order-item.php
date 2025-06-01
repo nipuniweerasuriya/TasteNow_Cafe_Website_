@@ -34,6 +34,7 @@ if (!$item) {
 <html lang="en">
 <head>
     <title>Update Order Item</title>
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
 </head>
 <body>
 <h2>Update Order Item - <?php echo htmlspecialchars($item['item_name']); ?></h2>

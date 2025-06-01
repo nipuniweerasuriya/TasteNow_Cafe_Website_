@@ -150,54 +150,54 @@ if (isset($_GET['load_bookings'])) {
 
 
 
-$today = date('Y-m-d');
+    $today = date('Y-m-d');
 
-// Total Orders Today
-$sqlOrders = "SELECT COUNT(*) AS total_orders FROM processed_order WHERE DATE(created_at) = ?";
-$stmt1 = $conn->prepare($sqlOrders);
-$stmt1->bind_param("s", $today);
-$stmt1->execute();
-$result1 = $stmt1->get_result();
-$totalOrders = $result1->fetch_assoc()['total_orders'] ?? 0;
+    // Total Orders Today
+    $sqlOrders = "SELECT COUNT(*) AS total_orders FROM processed_order WHERE DATE(created_at) = ?";
+    $stmt1 = $conn->prepare($sqlOrders);
+    $stmt1->bind_param("s", $today);
+    $stmt1->execute();
+    $result1 = $stmt1->get_result();
+    $totalOrders = $result1->fetch_assoc()['total_orders'] ?? 0;
 
-// Total Revenue Today
-$sqlRevenue = "SELECT COALESCE(SUM(amount_paid), 0) AS total_revenue FROM payments WHERE DATE(paid_at) = ?";
-$stmt2 = $conn->prepare($sqlRevenue);
-$stmt2->bind_param("s", $today);
-$stmt2->execute();
-$result2 = $stmt2->get_result();
-$totalRevenue = $result2->fetch_assoc()['total_revenue'] ?? 0.00;
-
-
-// Total Confirmed Bookings Today
-$sqlBookings = "SELECT COUNT(*) AS total_bookings FROM table_bookings WHERE booking_date = ? AND status = 'Confirmed'";
-$stmt3 = $conn->prepare($sqlBookings);
-$stmt3->bind_param("s", $today);
-$stmt3->execute();
-$result3 = $stmt3->get_result();
-$totalBookings = $result3->fetch_assoc()['total_bookings'] ?? 0;
+    // Total Revenue Today
+    $sqlRevenue = "SELECT COALESCE(SUM(amount_paid), 0) AS total_revenue FROM payments WHERE DATE(paid_at) = ?";
+    $stmt2 = $conn->prepare($sqlRevenue);
+    $stmt2->bind_param("s", $today);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+    $totalRevenue = $result2->fetch_assoc()['total_revenue'] ?? 0.00;
 
 
-// Save into daily_summary table (INSERT or UPDATE)
-$checkSql = "SELECT id FROM daily_summary WHERE summary_date = ?";
-$checkStmt = $conn->prepare($checkSql);
-$checkStmt->bind_param("s", $today);
-$checkStmt->execute();
-$checkResult = $checkStmt->get_result();
+    // Total Confirmed Bookings Today
+    $sqlBookings = "SELECT COUNT(*) AS total_bookings FROM table_bookings WHERE booking_date = ? AND status = 'Confirmed'";
+    $stmt3 = $conn->prepare($sqlBookings);
+    $stmt3->bind_param("s", $today);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+    $totalBookings = $result3->fetch_assoc()['total_bookings'] ?? 0;
 
-if ($checkResult->num_rows > 0) {
-    // Update existing entry
-    $updateSql = "UPDATE daily_summary SET total_orders = ?, total_revenue = ?, total_bookings = ? WHERE summary_date = ?";
-    $updateStmt = $conn->prepare($updateSql);
-    $updateStmt->bind_param("iids", $totalOrders, $totalRevenue, $totalBookings, $today);
-    $updateStmt->execute();
-} else {
-    // Insert new entry
-    $insertSql = "INSERT INTO daily_summary (summary_date, total_orders, total_revenue, total_bookings) VALUES (?, ?, ?, ?)";
-    $insertStmt = $conn->prepare($insertSql);
-    $insertStmt->bind_param("sidi", $today, $totalOrders, $totalRevenue, $totalBookings);
-    $insertStmt->execute();
-}
+
+    // Save into daily_summary table (INSERT or UPDATE)
+    $checkSql = "SELECT id FROM daily_summary WHERE summary_date = ?";
+    $checkStmt = $conn->prepare($checkSql);
+    $checkStmt->bind_param("s", $today);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if ($checkResult->num_rows > 0) {
+        // Update existing entry
+        $updateSql = "UPDATE daily_summary SET total_orders = ?, total_revenue = ?, total_bookings = ? WHERE summary_date = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bind_param("iids", $totalOrders, $totalRevenue, $totalBookings, $today);
+        $updateStmt->execute();
+    } else {
+        // Insert new entry
+        $insertSql = "INSERT INTO daily_summary (summary_date, total_orders, total_revenue, total_bookings) VALUES (?, ?, ?, ?)";
+        $insertStmt = $conn->prepare($insertSql);
+        $insertStmt->bind_param("sidi", $today, $totalOrders, $totalRevenue, $totalBookings);
+        $insertStmt->execute();
+    }
 
 
 
@@ -230,14 +230,6 @@ if ($checkResult->num_rows > 0) {
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-    <style>
-
-
-
-
-    </style>
 
 
 </head>
@@ -320,26 +312,29 @@ if ($checkResult->num_rows > 0) {
             <div class="orders-wrapper" id="ordersContainer">
 
                 <!-- Your Summary Cards HTML -->
-                <div class="summary-grid">
-                    <div class="summary-card">
-                        <h3>Total Orders Today</h3>
-                        <p id="ordersCount"><?= $totalOrders ?></p>
-                    </div>
+                <div class="summary-container my-4" id="summary-container">
+                    <h2 class="summary-heading">Today Summary</h2>
+                    <div class="summary-grid" id="summary-grid">
+                        <div class="summary-card">
+                            <h3>Total Orders Today</h3>
+                            <p id="ordersCount"><?= $totalOrders ?></p>
+                        </div>
 
-                    <div class="summary-card">
-                        <h3>Total Revenue</h3>
-                        <p>Rs. <span id="totalRevenue"><?= number_format($totalRevenue, 2) ?></span></p>
-                    </div>
+                        <div class="summary-card">
+                            <h3>Total Revenue</h3>
+                            <p>Rs. <span id="totalRevenue"><?= number_format($totalRevenue, 2) ?></span></p>
+                        </div>
 
-                    <div class="summary-card">
-                        <h3>Total Bookings Today</h3>
-                        <p id="bookingsCount"><?= $totalBookings ?></p>
+                        <div class="summary-card">
+                            <h3>Total Bookings Today</h3>
+                            <p id="bookingsCount"><?= $totalBookings ?></p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Processed Orders Display -->
                 <div class="container my-4" id="ordersTableContainer">
-                    <h3 class="mb-4 text-center">Today's Orders</h3>
+                    <h3 class="order-table-heading mb-4">Today's Orders</h3>
                     <div class="table-responsive">
                         <table id="orders-table" class="table table-bordered table-striped table-hover align-middle text-center">
                             <thead class="table-dark">

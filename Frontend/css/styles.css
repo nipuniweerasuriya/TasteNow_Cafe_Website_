@@ -91,7 +91,7 @@ body, html {
 }
 
 .navbar-scrolled {
-    background-color: black !important;
+    background-color: transparent;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
@@ -142,7 +142,6 @@ body, html {
     margin-left: 1rem;
 }
 
-
 /* Style for the navbar toggler button */
 .navbar-toggler {
     width: 40px;
@@ -155,7 +154,6 @@ body, html {
     justify-content: center;
 }
 
-/* the three bars */
 .navbar-toggler-icon {
     background-image: none;
     width: 24px;
@@ -183,6 +181,33 @@ body, html {
     top: 8px;
 }
 
+/* Profiles and Cart Pages Navbar*/
+.common-page .navbar {
+    margin-top: 2.5rem;
+    background-color: #fac003 !important;
+}
+
+.common-page .nav-link {
+    color: white;
+    font-weight: 500;
+    margin-left: 20px;
+    transition: color 0.3s ease;
+}
+
+/* Navbar Container*/
+.common-page .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 3.3rem;
+    padding: 0 1rem;
+}
+
+.common-page .navbar-brand {
+    flex: 1;
+}
+
 
 /* SignIn,SignUp */
 #signing-form {
@@ -201,6 +226,7 @@ body, html {
 
 #signup-form {
     display: none;
+    margin-bottom: 2rem;
     position: absolute;
     top: 75px;
     right: 25px;
@@ -209,7 +235,7 @@ body, html {
     padding: 20px;
     width: 300px;
     color: black;
-    height: 35rem;
+    height: 32rem;
     z-index: 1000;
 }
 
@@ -218,7 +244,7 @@ body, html {
     font-size: 24px;
     color: #fac003;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-transform: uppercase;
 }
 
@@ -253,6 +279,7 @@ body, html {
 #signing-form button[type="submit"],
 #signup-form button[type="submit"] {
     padding: 10px;
+    margin-top: 0.5rem;
     background-color: #fac003;
     color: white;
     border: 1px solid #fac003;
@@ -313,230 +340,6 @@ body, html {
     color: #fac003;
 }
 
-
-
-
-
-.dashboard-sidebar {
-    width: 280px;
-    height: auto;
-    background-color: blue;
-    border-right: 1px solid #e4e4e4;
-    border-left: none;
-    border-top: none;
-    border-bottom: none;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    display: flex;
-    margin-top: 1rem;
-    flex-direction: column;
-}
-
-
-.summary-container {
-    background-color: #ffffff;
-    padding: 20px 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 600px;
-}
-
-.summary-container h2 {
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-}
-
-.summary-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    max-width: 1000px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-}
-
-.summary-card {
-    flex: 1 1 calc(33.333% - 20px);
-    background-color: yellow;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    min-width: 200px;
-}
-
-.summary-card h3 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #333;
-}
-
-.summary-card p {
-    font-size: 22px;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.summary-card.full-width {
-    flex: 1 1 100%;
-}
-
-.popular-items-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.popular-items-list li {
-    padding: 6px 0;
-    font-size: 16px;
-    color: #555;
-}
-
-
-/* Heading */
-.heading-center {
-    text-align: center;
-    color: #f1cc52;
-    font-size: x-large;
-    margin-top: 2rem;
-    font-style: italic;
-    font-family: 'Playfair Display', ui-sans-serif;
-}
-
-/* Base Table Styling */
-/* Base Table Styling */
-table {
-    width: 100%;
-    border: 1px solid white;
-    font-family: Arial, sans-serif;
-}
-
-
-
-/* Shared Table Styling for Sections */
-#menu-section table,
-#userDetailsContainer table,
-#booking-table-container table,
-#orders-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: 'Segoe UI', sans-serif;
-    min-width: 400px;
-    width: 100%;
-    border: 1px solid white;
-}
-
-/* Table Headers (all <th> in <thead> + optional .table-header class) */
-#menu-section table thead th,
-#userDetailsContainer table thead th,
-#orders-table thead th,
-#booking-table-container table thead th,
-.table-header {
-    background-color: #fac003; /* Yellow/Orange */
-    color: white;
-    border: 1px solid white;
-    font-size: small;
-    text-align: left;
-    padding: 10px;
-    font-weight: bold;
-}
-
-/* Table Cells */
-#menu-section table th,
-#menu-section table td,
-#userDetailsContainer table th,
-#userDetailsContainer table td,
-#booking-table-container table th,
-#booking-table-container table td,
-#orders-table th,
-#orders-table td {
-    padding: 10px;
-    text-align: left;
-    font-size: smaller;
-    vertical-align: top;
-    border: 1px solid #fac003;
-}
-
-/* Hover Row Effect */
-#menu-section table tbody tr:hover,
-#userDetailsContainer table tbody tr:hover,
-#booking-table-container table tbody tr:hover,
-#orders-table tbody tr:hover {
-    background-color: #f6dc88;
-}
-
-/* Section Containers */
-.details-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 900px;
-    background: green;
-    padding: 20px;
-    border-radius: 3px;
-    border: none;
-}
-
-/* Menu Images */
-#menu-section table img {
-    max-width: 80px;
-    max-height: 80px;
-    border-radius: 3px;
-}
-
-/* Buttons (Menu + User Table) */
-#menu-section button,
-#userDetailsContainer button {
-    padding: 5px 8px;
-    font-size: 13px;
-    background-color: #fac003;
-    color: white;
-    width: 100%;
-    border: 1px solid white;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    margin-top: 5px;
-}
-
-/* Hover Effect for Buttons */
-#menu-section button:hover,
-#userDetailsContainer button:hover {
-    background-color: white;
-    color: #fac003;
-    border: 1px solid #fac003;
-}
-
-/* Delete Button Specific Styling */
-#menu-section button[onclick^="deleteMenuItem"],
-#userDetailsContainer button.delete-btn {
-    background-color: #fac003 !important;
-    color: white !important;
-}
-
-/* Hover Effect for Delete Button */
-#menu-section button[onclick^="deleteMenuItem"]:hover,
-#userDetailsContainer button.delete-btn:hover {
-    background-color: white !important;
-    color: #fac003 !important;
-    border: 1px solid #fac003;
-}
-
-
-/* Hover Effect for Delete Button */
-#menu-section button[onclick^="deleteMenuItem"]:hover,
-#userDetailsContainer button.delete-btn:hover {
-    background-color: white !important;
-    color: #fac003 !important;
-    border: 1px solid #fac003;
-}
-
-
 /* Search Containers */
 #admin-page .search-container {
     position: relative;
@@ -571,348 +374,15 @@ table {
 }
 
 
-/* Container for Add Menu Form */
-#admin-page #form-container,
-#menu-section,
-#userDetailsContainer,
-#ordersTableContainer,
-#booking-table-container {
-    border: none;
-    margin-top: 20px;
-    background: purple;
-    padding: 20px;
-    border-radius: 3px;
-    max-width: 100%;
-    overflow-x: auto;
-}
-
-/* Form Title */
-.form-heading {
-    text-align: center;
-    color: #f1cc52;
-    font-size: x-large;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    font-style: italic;
-    font-family: 'Playfair Display', ui-sans-serif;
-}
-
-/* Form labels */
-.form-row label {
-    display: block;
-    color: black;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-/* Inputs, selects, and textareas */
-.form-row input,
-.form-row select,
-.form-row textarea,
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-
-    background-color: white;
-    color: black;
-    font-size: 1rem;
-}
-
-/* Placeholders */
-#admin-page .form-row input::placeholder,
-#admin-page .form-row textarea::placeholder,
-#admin-page.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: #f1d476;
-    font-size: 0.9rem;
-}
-
-/* Submit and Add buttons */
-#admin-page .form-row button,
-#admin-page .form-group button {
-    padding: 10px;
-    background-color: #fac003;
-    color: white;
-    width: 100%;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    margin-top: 5px;
-}
-
-/* Hover effect for submit buttons */
-#admin-page .form-row button[type="submit"]:hover,
-#admin-page .form-group button[type="submit"]:hover {
-    background-color: white;
-    color: #fac003;
-    border: 3px solid #fac003;
-}
-
-/* Section title */
-#admin-page #add-menu-form h3 {
-    font-size: 24px;
-    color: #fac003;
-    text-align: center;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-/* NEW: Horizontal layout for grouped fields */
-#admin-page .horizontal-group {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-/* NEW: Form group blocks inside horizontal rows */
-#admin-page .form-group {
-    flex: 1;
-    min-width: 280px;
-}
-
-/* NEW: Variant inputs in one row */
-#admin-page .form-subrow {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-#admin-page .form-subrow input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-    background-color: white;
-    color: black;
-    font-size: 1rem;
-}
-
-#admin-page .form-subrow input::placeholder {
-    color: #f1d476;
-    font-size: 0.9rem;
-}
-
-
-.close-icon {
-    float: right;
-    font-size: 16px;
-    cursor: pointer;
-    color: #fac003;
-    margin: 10px;
-}
-
-
-
-#booking-table-container {
-    max-width: 100%;
-}
-
-#booking-table {
-    font-size: 12px;
-}
-
-#booking-table th,
-#booking-table td {
-    padding: 6px;
-    white-space: nowrap;
-}
-
-#booking-table-container h3 {
-    text-align: center;
-}
-
-/* Optionally hide less important columns to reduce clutter */
-#booking-table td:nth-child(4), /* Phone */
-#booking-table td:nth-child(5), /* Email */
-#booking-table td:nth-child(10), /* Special Request */
-#booking-table th:nth-child(4),
-#booking-table th:nth-child(5),
-#booking-table th:nth-child(10) {
-    display: none;
-}
-
-/* Make table scrollable on mobile */
-#booking-table {
-    display: block;
-    overflow-x: auto;
-    background-color: #fac003;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Profiles and Cart Pages Navbar*/
-.common-page .navbar{
-    margin-top: 2.5rem;
-    background-color: #fac003 !important;
-}
-
-.common-page .nav-link {
-    color: white;
-    font-weight: 500;
-    margin-left: 20px;
-    transition: color 0.3s ease;
-}
-
-/* Navbar Container*/
-.common-page .navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 3.3rem;
-    padding: 0 1rem;
-}
-
-.common-page .navbar-brand {
-    flex: 1;
-}
-
-
-/* Cart items part */
-.common-page .container {
-    width: 100%;
-    max-width: 100rem;
-    height: 100%;
-    background-color: #f8f9fa;
-    margin-top: 1rem;
-}
-
-.cart-item img {
-    width: 100px;
-    height: 100px;
-}
-
-#cart-page .cart-items-container {
-    border: 1px solid #fac003;
-}
-
-.item-title {
-    font-size: 1.2rem;
-}
-
-.item-price .price {
-    color: #fac003;
-    font-size: 1rem;
-}
-
-.quantity-control button {
-    padding: 2px 10px;
-    width: 32px;
-    height: 32px;
-    text-align: center;
-    color: #fac003;
-    border-radius: 2px;
-    border-color: #fac003;
-    font-size: 1rem;
-}
-
-.quantity-control button:hover {
-    color: white;
-    background-color: orange;
-    border-color: #fac003;
-}
-
-.customizations p {
-    margin: 0;
-    font-size: 0.9em;
-    font-weight: normal;
-}
-
-.custom-text-danger {
-    color: #fac003;
-}
-
-.order-summary-container {
-    margin-top: 3rem;
-    border: 1px solid #fac003;
-    padding: 20px;
-    border-radius: 2px;
-    background-color: white;
-
-}
-
-#cart-page .custom-form-control {
-    width: 100%;
-    height: 2rem;
-    max-width: 500px;
-    border-radius: 2px;
-    border: 1px solid #fac003;
-    font-size: 16px;
-    color: #f1cc52;
-}
-
-#cart-page .custom-form-control::placeholder {
-    padding-left: 0.5rem;
-    color: #f1d476;
-    font-size: 1rem;
-}
-
-#cart-page .payment-btn {
-    border-radius: 3px;
-    border: 3px solid #fac003;
-    height: 40px;
-    font-size: 1rem;
-    color: white;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    transition: background-color 0.3s ease;
-    background-color: #fac003;
-    cursor: pointer;
-    width: 100%;
-}
-
-#cart-page .payment-btn:hover {
-    background-color: white;
-    color: #fac003;
-}
-
-
-/* Welcome massage */
-.h1-container {
+/* Home page*/
+#main-section .h1-container {
     margin-left: 2rem;
     margin-top: 3rem;
     padding: 4rem 1rem;
     max-width: 900px;
-
 }
 
-.h1-heading {
+#main-section  .h1-heading {
     font-size: 3rem;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
@@ -923,22 +393,22 @@ table {
     animation: fadeSlideUp 1.5s ease-out forwards;
 }
 
-.h1-heading span {
+#main-section  .h1-heading span {
     color: #fac003;
 }
 
-.p-0 {
+#main-section  .p-0 {
     font-size: 1.2rem;
     color: white;
     margin-bottom: 2rem;
 }
 
-.h1-container .button {
+#main-section  .h1-container .button {
     justify-content: left;
     flex-wrap: wrap;
 }
 
-.btn-menu, .btn-booking {
+#main-section  .btn-menu, .btn-booking {
     border-radius: 50px;
     border: 3px solid #fac003;
     padding: 0.75rem 1.5rem;
@@ -950,17 +420,17 @@ table {
     cursor: pointer;
 }
 
-.btn-menu:hover, .btn-booking:hover {
+#main-section  .btn-menu:hover,
+#main-section .btn-booking:hover {
     background-color: #fac003;
     color: white;
 }
 
-.h1-heading, .p-0, .btn-booking, .btn-menu {
+#main-section  .h1-heading, .p-0, .btn-booking, .btn-menu {
     opacity: 0.5;
     transform: translateY(30px);
     animation: fadeSlideUp 0.5s ease-out forwards;
 }
-
 
 /* About Us */
 .about-us {
@@ -969,7 +439,7 @@ table {
     margin-top: 0.1rem;
     align-items: center;
     padding: 2rem;
-    background-color: palegoldenrod;
+    background-color: #f1cc52;
 }
 
 .images-grid {
@@ -1009,6 +479,7 @@ table {
 
 .section-title {
     color: Black;
+    margin-bottom: 2rem;
     font-size: x-large;
     font-style: italic;
     font-family: 'Playfair Display', ui-sans-serif;
@@ -1022,29 +493,24 @@ table {
     color: White;
 }
 
-
 /* Menu */
 .menu-heading-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 30px;
+    width: 100%;
+}
+
+#menu .menu-heading,
+#feedback-section .feedback-heading,
+#summary-container .summary-heading,
+#ordersTableContainer .order-table-heading {
+    text-align: center;
     font-size: x-large;
-    font-style: italic;
+    margin-bottom: 20px;
     color: #fac003;
-    padding: 2rem 1rem 1rem;
-    margin-top: 0.1rem;
     font-family: 'Playfair Display', ui-sans-serif;
-    background-size: cover;
 }
 
-/* Style the icon */
-#filter-toggle {
-    font-size: 2rem;
-    cursor: pointer;
-    display: none; /* hidden by default */
-}
-
-#category-container {
+#menu #category-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -1052,27 +518,27 @@ table {
     gap: 15px;
 }
 
-.category-button {
+#menu .category-button {
     padding: 10px 20px;
     color: black;
     background-color: transparent;
     cursor: pointer;
     border: none;
-    font-size: large;
+    font-size: medium;
     transition: all 0.3s ease;
 }
 
-.category-button:hover {
+#menu .category-button:hover {
     color: #fac003;
 }
 
-.category-header {
+#menu .category-header {
     display: flex;
-    justify-content: flex-end; /* Push the icon to the right end */
+    justify-content: flex-end;
 
 }
 
-#menu-container {
+#menu #menu-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -1082,7 +548,7 @@ table {
     font-size: 0.95rem;
 }
 
-.menu-item {
+#menu .menu-item {
     display: none;
     width: 280px;
     background-color: white;
@@ -1093,15 +559,15 @@ table {
     transition: transform 0.2s ease;
 }
 
-.menu-item.visible {
+#menu .menu-item.visible {
     display: block;
 }
 
-.menu-item:hover {
+#menu .menu-item:hover {
     transform: translateY(-5px);
 }
 
-.menu-image {
+#menu .menu-image {
     width: 100%;
     height: 250px;
     object-fit: cover;
@@ -1109,7 +575,7 @@ table {
     margin-bottom: 1rem;
 }
 
-.add-to-cart-btn {
+#menu .add-to-cart-btn {
     background-color: white;
     border-radius: 3px;
     border: 2px solid #fac003;
@@ -1122,215 +588,199 @@ table {
     transition: all 0.3s ease;
 }
 
-.add-to-cart-btn:hover {
+#menu .add-to-cart-btn:hover {
     background-color: #fac003;
     color: white;
 }
 
-.see-more-btn {
+#menu .see-more-btn {
     width: fit-content;
     margin: 2rem auto;
     display: block;
     font-size: 0.8rem;
     text-align: center;
     padding: 12px 24px;
-    color: #fac003;
+    color: black;
     background-color: transparent;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* General Modal Styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
+/* Table Booking Section */
+.booking-container {
+    background-color: #f1cc52;
+    padding: 30px;
     width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-    padding-top: 60px;
 }
 
-.modal-content {
-    background-color: #fff;
-    margin: 6% auto;
-    padding: 15px;
-    width: 40%;
-    height: auto;
-    max-width: 600px;
-    border-radius: 3px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.close {
-    color: #fac003;
-    float: right;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-select {
-    width: 100%;
-    height: 500%;
-    padding: 10px;
+#table_booking .form-heading {
+    text-align: center;
+    font-size: x-large;
     margin-bottom: 20px;
-    font-size: 15px;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-}
-
-#addOnsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between checkboxes */
-    justify-content: flex-start;
-}
-
-.addOnOption {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Space between checkbox and label */
-}
-
-.addOnOption input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-}
-
-.addOnOption .addon-label {
-    font-size: 15px;
     color: black;
+    font-family: 'Playfair Display', ui-sans-serif;
+    font-style: italic;
 }
 
-#addToCartWithOptions {
-    padding: 10px;
-    margin-top: 1rem;
-    background-color: #fac003;
-    color: white;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    width: 100%;
-}
-
-#addToCartWithOptions:hover {
-    background-color: white;
-    color: #fac003;
-    border: 3px solid #fac003;
-}
-
-
-
-
-
-/* footer */
-.footer {
-    background-color: black;
-    margin-top: 0.1rem;
-}
-
-.footer-brand {
-    text-decoration: none;
-    font-size: 2rem;
-    font-weight: bold;
-    font-family: 'Playfair Display', serif;
-    color: white;
-}
-
-.footer-brand:hover {
-    color: #fac003;
-}
-
-.footer-sub-headings {
-    font-size: 1rem;
-    font-family: 'Playfair Display', serif;
-    margin-top: 10px;
-}
-
-.footer p {
-    color: darkgrey;
-    font-size: small;
-}
-
-.footer ul li a {
-    color: darkgrey;
-    text-decoration: none;
-    font-size: small;
-}
-
-footer ul li a:hover {
-    color: #fac003;
-}
-
-.payment-icon {
-    width: 30px;
-    height: auto;
-    margin-right: 20px;
-    vertical-align: middle;
-}
-
-ul.list-payment-icon {
-    padding-left: 0;
-    list-style-type: none;
+#table_booking .booking-form .form-row {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
-ul.list-payment-icon li {
-    margin-right: 20px;
+#table_booking .booking-form .form-row > * {
+    flex: 1; /* Ensures all inputs in a row have equal width */
 }
 
-.social-icon {
-    color: #fac003;
+#table_booking .booking-form .form-row.single-column {
+    flex-direction: column;
 }
 
-.feedback-form {
+#table_booking .booking-form input,
+#table_booking .booking-form textarea,
+#table_booking .booking-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid white;
     border-radius: 3px;
     font-size: 16px;
-    color: #f1d476 !important;
-    width: 110%;
+    background-color: #f1cc52;
+    color: white;
+    opacity: 0.8;
+    box-sizing: border-box;
 }
 
-.feedback-form::placeholder {
-    padding-left: 0.5rem;
-    color: #fac003;
-    font-size: 1rem;
+/* Placeholder text color for inputs and textarea */
+#table_booking .booking-form input::placeholder,
+#table_booking .booking-form textarea::placeholder {
+    color: white;
+    opacity: 0.8;
 }
 
-.submit-btn {
+/* For date and time inputs text color and opacity */
+#table_booking input[type="date"],
+#table_booking input[type="time"] {
+    color: white;
+    opacity: 0.8;
+}
+
+#table_booking .booking-form select option {
+    padding: 10px;
+    border: 1px solid #fac003 !important;
     border-radius: 3px;
-    width: 110%;
-    border: 3px solid #fac003;
-    height: 40px;
+    width: 100%;
+    background-color: white;
+    color: black;
     font-size: 1rem;
+}
+
+#table_booking .booking-form select option :focus {
+    border-color: #fac003;
+    outline: none;
+}
+
+#table_booking .booking-form select option {
+    background-color: white;
     color: #fac003;
+}
+
+#table_booking .booking-form button {
+    border-radius: 3px;
+    border: 3px solid white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: white;
     font-weight: 600;
     margin-bottom: 1rem;
     transition: background-color 0.3s ease;
-    background-color: white;
+    background-color: #f1cc52;
     cursor: pointer;
+    width: 100%;
 }
 
-.submit-btn:hover {
-    background-color: #fac003;
-    color: white;
+#table_booking .booking-form button:hover {
+    background-color: white;
+    color: #f1cc52;
 }
 
-.footer-bottom-bar {
-    width: 100%; /* ensures full screen */
-    background-color: #fac003;
-    font-size: 0.7rem;
-    font-weight: 500;
+/* Feedback Section */
+.feedback-container {
+    background-color: white;
+    padding: 30px;
+    width: 100%;
+    height: 100%;
 }
 
+.feedback-scroll-container {
+    width: 110%;
+    overflow: hidden;
+    background: white;
+    padding: 15px 0;
+    position: relative;
+}
+
+.feedback-scroll-track {
+    display: flex;
+    width: max-content;
+    animation: scroll-left 50s linear infinite;
+    gap: 20px;
+    padding-left: 100%;
+}
+
+.feedback-card {
+    background: white;
+    border-radius: 3px;
+    padding: 15px 20px;
+    min-width: 300px;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    color: black;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+
+.feedback-card:hover {
+    transform: translateY(-3px);
+}
+
+.feedback-card strong {
+    color: black;
+    font-size: medium;
+}
+
+.feedback-card small {
+    display: block;
+    margin-top: 8px;
+    color: gray;
+    font-size: 13px;
+}
+
+.feedback-scroll-container:hover .feedback-scroll-track {
+    animation-play-state: paused;
+}
+
+/* Map */
+.location-section {
+    text-align: center;
+    margin-top: 0.1rem;
+    background-color: #fefefe;
+}
+
+.map-container {
+    width: 100%;
+    margin: 0 auto;
+    height: 400px;
+    overflow: hidden;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 
 /*Profile Page */
 .profile-sidebar {
@@ -1465,7 +915,324 @@ ul.list-payment-icon li {
 }
 
 
-/* Admin Dashboard */
+/* Admin page */
+.dashboard-sidebar {
+    width: 280px;
+    height: auto;
+    background-color: blue;
+    border-right: 1px solid #e4e4e4;
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    margin-top: 1rem;
+    flex-direction: column;
+}
+
+/* Section Containers */
+.details-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 900px;
+    background: aliceblue;
+    padding: 20px;
+    border-radius: 3px;
+    border: none;
+}
+
+.summary-container {
+ background-color: white;
+}
+
+.summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1000px;
+    padding: 20px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+.summary-card {
+    flex: 1 1 calc(33.333% - 20px);
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid #fac003;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 200px;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+}
+
+.summary-card h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: black;
+}
+
+.summary-card p {
+    font-size: 22px;
+    font-weight: bold;
+    color: #7e7878;
+}
+
+.summary-card.full-width {
+    flex: 1 1 100%;
+}
+
+/* Base Table Styling */
+table {
+    width: 100%;
+    border: 1px solid white;
+    font-family: Arial, sans-serif;
+}
+
+#admin-page #form-container,
+#menu-section,
+#userDetailsContainer,
+#ordersTableContainer,
+#booking-table-container {
+    border: none;
+    margin-top: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 3px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Shared Table Styling for Sections */
+#menu-section table,
+#userDetailsContainer table,
+#booking-table-container table,
+#orders-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: 'Segoe UI', sans-serif;
+    min-width: 400px;
+    width: 100%;
+    border: 1px solid white;
+}
+
+#menu-section table thead th,
+#userDetailsContainer table thead th,
+#orders-table thead th,
+#booking-table-container table thead th,
+.table-header {
+    background-color: #fac003; /* Yellow/Orange */
+    color: white;
+    border: 1px solid white;
+    font-size: small;
+    text-align: left;
+    padding: 10px;
+    font-weight: bold;
+}
+
+#menu-section table th,
+#menu-section table td,
+#userDetailsContainer table th,
+#userDetailsContainer table td,
+#booking-table-container table th,
+#booking-table-container table td,
+#orders-table th,
+#orders-table td {
+    padding: 10px;
+    text-align: left;
+    font-size: smaller;
+    vertical-align: top;
+    border: 1px solid #fac003;
+}
+
+#menu-section table img {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 3px;
+}
+
+#menu-section button,
+#userDetailsContainer button {
+    padding: 5px 8px;
+    font-size: 13px;
+    background-color: #fac003;
+    color: white;
+    width: 100%;
+    border: 1px solid white;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+#menu-section button:hover,
+#userDetailsContainer button:hover {
+    background-color: white;
+    color: #fac003;
+    border: 1px solid #fac003;
+}
+
+#menu-section button[onclick^="deleteMenuItem"],
+#userDetailsContainer button.delete-btn {
+    background-color: #fac003 !important;
+    color: white !important;
+}
+
+#menu-section button[onclick^="deleteMenuItem"]:hover,
+#userDetailsContainer button.delete-btn:hover {
+    background-color: white !important;
+    color: #fac003 !important;
+    border: 1px solid #fac003;
+}
+
+#booking-table-container {
+    max-width: 100%;
+}
+
+#booking-table {
+    font-size: 12px;
+}
+
+#booking-table th,
+#booking-table td {
+    padding: 6px;
+    white-space: nowrap;
+}
+
+#booking-table-container h3 {
+    text-align: center;
+}
+
+/* Optionally hide less important columns to reduce clutter */
+#booking-table td:nth-child(4),
+#booking-table td:nth-child(5),
+#booking-table td:nth-child(10),
+#booking-table th:nth-child(4),
+#booking-table th:nth-child(5),
+#booking-table th:nth-child(10) {
+    display: none;
+}
+
+/* Make table scrollable on mobile */
+#booking-table {
+    display: block;
+    overflow-x: auto;
+    background-color: #fac003;
+}
+
+/* Add menu form */
+.form-row label {
+    display: block;
+    color: black;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea,
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #fac003;
+    border-radius: 3px;
+
+    background-color: white;
+    color: black;
+    font-size: 1rem;
+}
+
+#admin-page .form-row input::placeholder,
+#admin-page .form-row textarea::placeholder,
+#admin-page.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #f1d476;
+    font-size: 0.9rem;
+}
+
+#admin-page .form-row button,
+#admin-page .form-group button {
+    padding: 10px;
+    background-color: #fac003;
+    color: white;
+    width: 100%;
+    border: 1px solid #fac003;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+#admin-page .form-row button[type="submit"]:hover,
+#admin-page .form-group button[type="submit"]:hover {
+    background-color: white;
+    color: #fac003;
+    border: 3px solid #fac003;
+}
+
+#admin-page #add-menu-form h3 {
+    font-size: 24px;
+    color: #fac003;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+#admin-page .horizontal-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#admin-page .form-group {
+    flex: 1;
+    min-width: 280px;
+}
+
+#admin-page .form-subrow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#admin-page .form-subrow input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #fac003;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    font-size: 1rem;
+}
+
+#admin-page .form-subrow input::placeholder {
+    color: #f1d476;
+    font-size: 0.9rem;
+}
+
+
+.close-icon {
+    float: right;
+    font-size: 16px;
+    cursor: pointer;
+    color: #fac003;
+    margin: 10px;
+}
+
+
 #admin-page .dropdown-wrapper {
     position: relative;
     display: inline-block;
@@ -1505,43 +1272,226 @@ ul.list-payment-icon li {
     color: #fac003;
 }
 
-
-
-#form-container {
-    display: none;
-    background-color: #ffffff;
-    border: 1px solid #fac003;
-    border-radius: 3px;
-    padding: 20px;
+/* Cart items part */
+.common-page .container {
     width: 100%;
-    max-width: 900px;
+    max-width: 100rem;
+    height: 100%;
+    background-color: #f8f9fa;
     margin-top: 1rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-
-/*profile page */
-.profile-action-item.active {
-    background-color: #dc3545;
-    border-radius: 6px;
+.cart-item img {
+    width: 100px;
+    height: 100px;
 }
 
-.profile-action-item.active {
-    background-color: #0d6efd;
-    border-radius: 6px;
+#cart-page .cart-items-container {
+    border: 1px solid #fac003;
 }
 
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    #totalIncome {
-        font-size: 14px;
-        padding: 8px;
-    }
+.item-title {
+    font-size: 1.2rem;
 }
+
+.item-price .price {
+    color: #fac003;
+    font-size: 1rem;
+}
+
+.quantity-control button {
+    padding: 2px 10px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    color: #fac003;
+    border-radius: 2px;
+    border-color: #fac003;
+    font-size: 1rem;
+}
+
+.quantity-control button:hover {
+    color: white;
+    background-color: orange;
+    border-color: #fac003;
+}
+
+.customizations p {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.custom-text-danger {
+    color: #fac003;
+}
+
+.order-summary-container {
+    margin-top: 3rem;
+    border: 1px solid #fac003;
+    padding: 20px;
+    border-radius: 2px;
+    background-color: white;
+
+}
+
+#cart-page .custom-form-control {
+    width: 100%;
+    height: 2rem;
+    max-width: 500px;
+    border-radius: 2px;
+    border: 1px solid #fac003;
+    font-size: 16px;
+    color: #f1cc52;
+}
+
+#cart-page .custom-form-control::placeholder {
+    padding-left: 0.5rem;
+    color: #f1d476;
+    font-size: 1rem;
+}
+
+#cart-page .payment-btn {
+    border-radius: 3px;
+    border: 3px solid #fac003;
+    height: 40px;
+    font-size: 1rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    background-color: #fac003;
+    cursor: pointer;
+    width: 100%;
+}
+
+#cart-page .payment-btn:hover {
+    background-color: white;
+    color: #fac003;
+}
+
+/* footer */
+.footer {
+    background-color: black;
+    margin-top: 0.1rem;
+}
+
+.footer-brand {
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    color: white;
+}
+
+.footer-brand:hover {
+    color: #fac003;
+}
+
+.footer-sub-headings {
+    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
+    margin-top: 10px;
+}
+
+.footer p {
+    color: darkgrey;
+    font-size: small;
+}
+
+.footer ul li a {
+    color: darkgrey;
+    text-decoration: none;
+    font-size: small;
+}
+
+footer ul li a:hover {
+    color: #fac003;
+}
+
+.payment-icon {
+    width: 30px;
+    height: auto;
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+ul.list-payment-icon {
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+ul.list-payment-icon li {
+    margin-right: 20px;
+}
+
+.social-icon {
+    color: #fac003;
+}
+
+.feedback-form {
+    border-radius: 3px;
+    font-size: 16px;
+    color: #f1d476 !important;
+    width: 110%;
+}
+
+.feedback-form::placeholder {
+    padding-left: 0.5rem;
+    color: #fac003;
+    font-size: 1rem;
+}
+
+.submit-btn {
+    border-radius: 3px;
+    width: 110%;
+    border: 3px solid #fac003;
+    height: 40px;
+    font-size: 1rem;
+    color: #fac003;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    background-color: white;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #fac003;
+    color: white;
+}
+
+.footer-bottom-bar {
+    width: 100%; /* ensures full screen */
+    background-color: #fac003;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+/* Back to top btn */
+.back-to-top {
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    display: none;
+    z-index: 999;
+    cursor: pointer;
+}
+
+.back-to-top .material-icons {
+    font-size: 24px;
+    color: #fac003;
+}
+
 
 /* Animations */
+/* Welcome msg */
 @keyframes fadeSlideUp {
     to {
         opacity: 1;
@@ -1550,6 +1500,7 @@ ul.list-payment-icon li {
 
 }
 
+/* Nav brand */
 @keyframes slideLeftRight {
     0% {
         transform: translateX(0);
@@ -1568,17 +1519,26 @@ ul.list-payment-icon li {
     }
 }
 
+/* Feedback Section */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 
 /* Responsive design for small screens */
 @media (max-width: 770px) {
+    /* Home page */
     .container-fluid {
         height: auto;
         background-position: top;
         padding: 20px;
     }
 
-
-    /* Top Bar */
     .top-bar {
         flex-direction: column;
         align-items: flex-start;
@@ -1592,8 +1552,6 @@ ul.list-payment-icon li {
         gap: 5px;
     }
 
-
-    /*Nav Bar */
     .navbar-nav {
         flex-direction: column;
         align-items: flex-start;
@@ -1601,8 +1559,6 @@ ul.list-payment-icon li {
         padding-top: 10px;
     }
 
-
-    /* Main Heading */
     .h1-container {
         margin-left: 0.1rem;
         padding: 2rem 1rem;
@@ -1634,23 +1590,22 @@ ul.list-payment-icon li {
 
     }
 
-
     /* About Us */
     .about-us {
-        flex-direction: column-reverse; /*Text appears first on mobile */
+        flex-direction: column-reverse;
         gap: 0.5rem;
         padding: 0.5rem;
     }
 
     .images-grid {
-        grid-template-columns: repeat(1, 100%); /* Stacks images vertically */
-        grid-template-rows: auto; /* Adjust row height to auto */
-        width: 100%; /* images take full width */
+        grid-template-columns: repeat(1, 100%);
+        grid-template-rows: auto;
+        width: 100%;
     }
 
     .image-box {
-        width: 100%; /* Make each image box take full width */
-        height: auto; /* Let height adjust based on image aspect ratio */
+        width: 100%;
+        height: auto;
     }
 
     .about-text {
@@ -1661,13 +1616,12 @@ ul.list-payment-icon li {
     }
 
     .section-title {
-        font-size: 1.9rem; /* Adjust title size for smaller screens */
+        font-size: 1.9rem;
     }
 
     .read-more {
         text-align: center;
     }
-
 
     /* Menu*/
     .menu-heading {
@@ -1678,33 +1632,6 @@ ul.list-payment-icon li {
 
     #filter-toggle {
         display: inline-block;
-    }
-
-    /* Category buttons hidden by default */
-    #category-container {
-        display: none;
-        position: absolute;
-        top: 100px; /* adjust based on header height */
-        left: 0;
-        right: 0;
-        background: white;
-        z-index: 10;
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    /* Show when toggled */
-    #category-container.show {
-        display: flex;
-    }
-
-    /* Optional: prevent page scroll when overlay open */
-    body.category-open {
-        overflow: hidden;
     }
 
     .menu-item {
@@ -1718,21 +1645,7 @@ ul.list-payment-icon li {
         height: auto;
     }
 
-    .modal-box,
-    .modal-content {
-        width: 90%;
-        max-width: none;
-        padding: 15px;
-        margin-top: 20%;
-    }
-
-    #quantity-input {
-        width: 100%;
-        font-size: 1rem;
-    }
-
-    .add-to-cart-btn,
-    .modal-content button {
+    .add-to-cart-btn {
         width: 50%;
         font-size: 1rem;
         padding: 12px;
@@ -1745,16 +1658,6 @@ ul.list-payment-icon li {
         font-size: 1rem;
         text-align: center;
     }
-
-    #item-options label {
-        font-size: 1rem;
-    }
-
-    #item-options input[type="radio"],
-    #item-options input[type="checkbox"] {
-        transform: scale(0.8);
-    }
-
 
     /* Table Booking Section */
     .booking-form .form-row {
@@ -1770,11 +1673,10 @@ ul.list-payment-icon li {
         font-size: 1.5rem;
     }
 
-
     /* Cart Page */
     .common-page .navbar-container {
         height: auto;
-        padding: 0.4rem 1rem 0.4rem 1rem;
+        padding: 0.4rem 0.5rem 0.4rem 0.5rem;
     }
 
     .common-page .container {
@@ -1835,7 +1737,6 @@ ul.list-payment-icon li {
         height: 36px;
     }
 
-
     /* Profile Page */
     .profile-layout {
         flex-direction: column;
@@ -1889,6 +1790,65 @@ ul.list-payment-icon li {
         margin: 1rem 0;
     }
 
+    /* Dashboard */
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+        display: none;
+        position: absolute;
+        z-index: 999;
+        background: white;
+        width: 50%;
+        height: 60vh;
+        padding: 1rem;
+        color: black;
+
+        /* ✅ Position on the right */
+        right: 0;
+        top: 12rem;
+        box-shadow: -2px 0 10px rgb(253, 159, 2);
+    }
+
+    .dashboard-sidebar.show-sidebar {
+        display: block;
+    }
+
+
+    .form-row.horizontal-group {
+        flex-direction: column; /* Stack horizontally grouped elements vertically */
+    }
+
+    .form-row.horizontal-group .form-group {
+        width: 100% !important; /* Make form groups full width */
+        margin-bottom: 1rem; /* Space between stacked groups */
+    }
+
+    .form-row button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    input[type="file"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea,
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 94%;
+    }
+
     .cart-item {
         flex-direction: column !important;
         align-items: center !important;
@@ -1919,7 +1879,7 @@ ul.list-payment-icon li {
     }
 
 
-    /* Section: Footer */
+    /* Footer */
     .footer .row {
         text-align: center;
     }
@@ -1954,72 +1914,5 @@ ul.list-payment-icon li {
         font-size: 0.8rem;
         padding: 10px 0;
     }
-
-
-
-
-
-
-    /* Admin Dashboard */
-
-.dashboard-layout {
-    flex-direction: column;
-}
-
-    .dashboard-sidebar {
-        display: none;
-        position: absolute;
-        z-index: 999;
-        background: white;
-        width: 50%;
-        height: 60vh;
-        padding: 1rem;
-        color: black;
-
-        /* ✅ Position on the right */
-        right: 0;
-        top: 12rem;
-        box-shadow: -2px 0 10px rgb(253, 159, 2);
-    }
-
-    .dashboard-sidebar.show-sidebar {
-        display: block;
-    }
-
-
-
-    .form-row.horizontal-group {
-        flex-direction: column;  /* Stack horizontally grouped elements vertically */
-    }
-
-    .form-row.horizontal-group .form-group {
-        width: 100% !important;  /* Make form groups full width */
-        margin-bottom: 1rem;     /* Space between stacked groups */
-    }
-
-    .form-row button {
-        width: 100%;
-        padding: 12px;
-        font-size: 1rem;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    input[type="file"] {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-
-    .form-row input,
-    .form-row select,
-    .form-row textarea,
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        width: 94%;
-    }
-
 
 }

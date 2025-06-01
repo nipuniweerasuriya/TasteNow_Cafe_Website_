@@ -34,149 +34,6 @@ session_start();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
-
-    <style>
-        /* Table Booking Section */
-        .booking-container {
-            background-color: #f1cc52;
-            padding: 30px;
-            width: 100%;
-        }
-
-        .form-heading {
-            text-align: center;
-            font-size: x-large;
-            margin-bottom: 20px;
-            color: black;
-            font-family: 'Playfair Display', ui-sans-serif;
-            font-style: italic;
-        }
-
-        .booking-form .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .booking-form .form-row > * {
-            flex: 1; /* Ensures all inputs in a row have equal width */
-        }
-
-        .booking-form .form-row.single-column {
-            flex-direction: column;
-        }
-
-        .booking-form input,
-        .booking-form textarea,
-        .booking-form select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid white;
-            border-radius: 3px;
-            font-size: 16px;
-            background-color: #f1cc52;
-            color: white;
-            opacity: 0.8;
-            box-sizing: border-box;
-        }
-
-        /* Placeholder text color for inputs and textarea */
-        .booking-form input::placeholder,
-        .booking-form textarea::placeholder {
-            color: white;
-            opacity: 0.8;
-        }
-
-        /* For date and time inputs text color and opacity */
-        input[type="date"],
-        input[type="time"] {
-            color: white;
-            opacity: 0.8;
-        }
-
-        .booking-form select option {
-            padding: 10px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            width: 100%;
-            background-color: white;
-            color: black;
-            font-size: 1rem;
-        }
-
-        .booking-form select option :focus {
-            border-color: #fac003;
-            outline: none;
-        }
-
-        .booking-form select option {
-            background-color: white;
-            color: #fac003;
-        }
-
-        /* Button styling */
-        .booking-form button {
-            border-radius: 3px;
-            border: 3px solid white;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            color: white;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            transition: background-color 0.3s ease;
-            background-color: #f1cc52;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .booking-form button:hover {
-            background-color: white;
-            color: #f1cc52;
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 50px;
-            right: 10px;
-            color: white;
-            padding: 12px;
-            text-align: center;
-            display: none;
-            z-index: 999;
-            cursor: pointer;
-        }
-
-
-
-        .back-to-top .material-icons {
-            font-size: 24px;
-            color: #fac003;
-        }
-
-
-
-        .location-section {
-            text-align: center;
-            margin-top: 0.1rem;
-            background-color: #fefefe;
-        }
-
-        .map-container {
-            width: 100%;
-            margin: 0 auto;
-            height: 400px;
-            overflow: hidden;
-        }
-
-        .map-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-
-    </style>
-
 </head>
 
 
@@ -274,7 +131,6 @@ session_start();
                             <input type="password" name="password" required placeholder="Enter Your Password">
                             <label>Confirm Password</label>
                             <input type="password" name="confirm-password" required placeholder="Confirm Your Password">
-                            <button type="submit">SIGN UP</button>
                             <label>Role</label>
                             <select name="role" required>
                                 <option value="admin">Admin</option>
@@ -282,6 +138,7 @@ session_start();
                                 <option value="cashier">Cashier</option>
                                 <option value="user">User</option>
                             </select>
+                            <button type="submit">SIGN UP</button>
                             <p>Already have an account? <a href="#" id="switch-to-signin">Sign In</a></p>
                         </div>
                     </form>
@@ -301,11 +158,15 @@ session_start();
 
 
     <!-- Section: Welcome Message -->
-    <div class="container h1-container">
+    <div class="container h1-container" id="main-section">
         <h1 class="h1-heading">Welcome to <span>TasteNow</span></h1>
         <p class="p-0">Serving delicious moments for over 18 years!</p>
-        <a href="#menu"><button class="btn btn-menu">OUR MENU</button></a>
-        <a href="#table_booking"><button class="btn btn-booking">BOOK A TABLE</button></a>
+        <a href="#menu">
+            <button class="btn btn-menu">OUR MENU</button>
+        </a>
+        <a href="#table_booking">
+            <button class="btn btn-booking">BOOK A TABLE</button>
+        </a>
     </div>
 </div>
 
@@ -341,8 +202,7 @@ session_start();
 <!-- Section: Menu -->
 <section id="menu">
     <div class="menu-heading-container">
-        <h2>-----Our Menu-----</h2>
-        <span id="filter-toggle" class="material-symbols-outlined" onclick="toggleCategories()">filter_list</span>
+        <h2 class="menu-heading">-----Our Menu-----</h2>
     </div>
 
     <div id="category-container">
@@ -356,26 +216,11 @@ session_start();
     </div>
 
     <div id="menu-container">
-        <!-- Section: Get Menu Items In The Backend And Display Dynamically -->
         <?php include '../Backend/get_menu_items.php'; ?>
     </div>
 
     <button class="see-more-btn" id="see-more-btn">See More</button>
 </section>
-
-<!-- Section: Modal For Variants and Add-ons -->
-<div id="menu-options-modal" class="modal">
-    <div class="modal-content">
-        <span id="close-modal" class="close">&times;</span>
-        <h6>Select Variant:</h6>
-        <select id="variantsDropdown">
-            <option value="">Select Variant</option>
-        </select>
-        <h6>Add-ons:</h6>
-        <div id="addOnsContainer"></div>
-        <button id="addToCartWithOptions">Add</button>
-    </div>
-</div>
 
 
 <!-- Section: Table Booking -->
@@ -393,12 +238,12 @@ session_start();
             <input type="time" name="booking_time" required/>
         </div>
         <div class="form-row">
-            <select name="duration" required>
+            <select name="role" required>
                 <option value="" disabled selected>Duration (hours)</option>
                 <option value="1">1 Hour</option>
-                <option value="2">2 Hours</option>
-                <option value="3">3 Hours</option>
-                <option value="4">4 Hours</option>
+                <option value="2">2 Hour</option>
+                <option value="3">3 Hour</option>
+                <option value="4">4 Hour</option>
             </select>
         </div>
         <textarea name="special_request" placeholder="Special Request" rows="4"></textarea>
@@ -407,16 +252,19 @@ session_start();
 </div>
 
 
+<!-- Section: Feedback display -->
+<div class="feedback-container">
+    <?php include 'display_feedback.php'; ?>
+</div>
 
 
+<!-- Section: Location -->
 <section class="location-section">
     <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15831.5771470398!2d80.32347147620074!3d7.252871027803606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae317ff06856f21%3A0x2bfab7cb42395899!2sWOW%20Cafe%20Kegalle!5e0!3m2!1ssi!2slk!4v1748712708946!5m2!1ssi!2slk" >
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15831.5771470398!2d80.32347147620074!3d7.252871027803606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae317ff06856f21%3A0x2bfab7cb42395899!2sWOW%20Cafe%20Kegalle!5e0!3m2!1ssi!2slk!4v1748712708946!5m2!1ssi!2slk">
         </iframe>
     </div>
 </section>
-
-
 
 
 <!-- Section: Footer -->
@@ -463,7 +311,8 @@ session_start();
             <div class="col-md-3 mb-4">
                 <h5 class="footer-sub-headings text-uppercase">Feedback</h5>
                 <form action="feedback.php" method="POST">
-                    <textarea class="feedback-form" name="message" rows="3" placeholder="Your feedback..." required></textarea>
+                    <textarea class="feedback-form" name="message" rows="3" placeholder="Your feedback..."
+                              required></textarea>
                     <button type="submit" class="submit-btn btn-light mt-2">Submit</button>
                     <div id="feedbackMessage" class="mt-2 text-success"></div>
                 </form>
@@ -480,12 +329,10 @@ session_start();
 </footer>
 
 
-
-
 <!-- Section: Js Link-->
 <script>
+    // Navbar Fixed Top
     document.addEventListener("DOMContentLoaded", function () {
-        // Navbar Fixed Top
         window.addEventListener('scroll', function () {
             const navbar = document.getElementById('navbar');
             const topBarHeight = document.querySelector('.top-bar')?.offsetHeight || 0;
@@ -581,7 +428,7 @@ session_start();
 
                 fetch('add_to_cart.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(cartData)
                 })
                     .then(response => response.json())
@@ -599,15 +446,7 @@ session_start();
             });
         });
 
-
-
-        // Category Toggler
-        window.toggleCategories = function () {
-            const categoryContainer = document.getElementById('category-container');
-            const isVisible = categoryContainer.classList.toggle('show');
-            document.body.classList.toggle('category-open', isVisible);
-        };
-
+        // Booking Section
         // Set minimum date to today
         const dateInput = document.querySelector('input[name="booking_date"]');
         const timeInput = document.querySelector('input[name="booking_time"]');
@@ -631,7 +470,7 @@ session_start();
         if (dateInput && timeInput) setMinDateTime();
     });
 
-
+    // Back to top btn
     const backToTopBtn = document.getElementById("backToTopBtn");
 
     window.addEventListener("scroll", () => {
@@ -649,8 +488,6 @@ session_start();
             behavior: "smooth"
         });
     });
-
-
 </script>
 
 
