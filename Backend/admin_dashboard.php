@@ -75,8 +75,8 @@ if (isset($_GET['load_bookings'])) {
     if (mysqli_num_rows($result) > 0) {
         echo "<div class='p-4 mb-5' id='booking-table-container' style='max-width: 100%; overflow-x: auto;'>";
         echo "<div class='d-flex justify-content-between align-items-center mb-3'>";
-        echo "<h3 class='text-center flex-grow-1 mb-0'>Table Booking Details</h3>";
-        echo "<button class='btn-close' onclick='closeBookingContainer()' aria-label='Close'></button>";
+        echo "<h3 class='text-center flex-grow-1 mb-0 booking-heading'>Table Booking Details</h3>";
+        echo "<button class='btn close-icon' onclick='closeBookingContainer()' aria-label='Close'><i class='fas fa-times'></i></button>";
         echo "</div>";
 
         echo "<div class='table-responsive'>";
@@ -128,7 +128,7 @@ if (isset($_GET['load_bookings'])) {
             echo "<td>" . htmlspecialchars($row['duration']) . "</td>";
             echo "<td>" . nl2br(htmlspecialchars($row['special_request'])) . "</td>";
             echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
-            echo "<td><span class='badge bg-$badgeClass'>$status</span></td>";
+            echo "<td>$status</td>";
 
             // Action buttons
             echo "<td>
@@ -554,7 +554,7 @@ if (isset($_GET['load_bookings'])) {
             formContainer.innerHTML = `
             <span class="close-icon" onclick="closeFormContainer()">&times;</span>
             <h3 class="form-heading">Add New Menu Item</h3>
-            <form class="menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+            <form class="menu-form" id="add-menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
                 <div class="form-row horizontal-group">
                   <div class="form-group">
                     <label>Item Name</label>
@@ -587,7 +587,7 @@ if (isset($_GET['load_bookings'])) {
                     <button type="submit">Add Item</button>
                 </div>
                 <div class="form-row">
-                    <button type="button" onclick="displayMenu()">Display Menu</button>
+                    <button type="submit" onclick="displayMenu()">Display Menu</button>
                 </div>
             </form>
         `;
@@ -650,9 +650,9 @@ if (isset($_GET['load_bookings'])) {
 
 
                     let tableHTML = `
-                    <h3 class="heading-center">Menu Items</h3>
+                    <h3 class="menu-heading">Menu Items</h3>
                     <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle text-center" id="menuTable">
+                    <table class="table table-bordered table-hover table-striped align-middle text-center" id="menuTable">
                         <thead class="table-dark">
                             <tr>
                                 <th>Image</th>
@@ -744,9 +744,9 @@ if (isset($_GET['load_bookings'])) {
                         userDetailsContainer.innerHTML += '<p>No users found.</p>';
                     } else {
                         let table = `
-                        <h3 class="heading-center">User's Details</h3>
+                        <h3 class="user-table-heading">User's Details</h3>
                         <div class="table-responsive">
-                        <table class="table table-striped table-bordered align-middle text-center">
+                        <table class="table table-bordered table-hover table-striped align-middle text-center">
                             <thead class="table-dark">
                                 <tr>
                                     <th>ID</th>

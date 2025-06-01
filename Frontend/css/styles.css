@@ -208,6 +208,15 @@ body, html {
     flex: 1;
 }
 
+/* Admin,cart... */
+.common-page .container {
+    width: 100%;
+    max-width: 100rem;
+    height: 100%;
+    background-color: #f8f9fa;
+    margin-top: 1rem;
+}
+
 
 /* SignIn,SignUp */
 #signing-form {
@@ -341,7 +350,7 @@ body, html {
 }
 
 /* Search Containers */
-#admin-page .search-container {
+.common-page .search-container {
     position: relative;
     width: 200%;
     margin-top: 0.1rem;
@@ -349,7 +358,7 @@ body, html {
     font-size: 12px;
 }
 
-#admin-page .search-container i {
+.common-page .search-container i {
     position: absolute;
     top: 50%;
     left: 12px;
@@ -357,8 +366,8 @@ body, html {
     color: #fac003;
 }
 
-#admin-page #searchInput,
-#admin-page #searchBar {
+.common-page #searchInput,
+.common-page #searchBar {
     width: 100%;
     padding: 8px 12px 8px 36px;
     font-size: 12px;
@@ -368,8 +377,8 @@ body, html {
     transition: 0.3s ease;
 }
 
-#admin-page #searchInput::placeholder,
-#admin-page #searchBar::placeholder {
+.common-page #searchInput::placeholder,
+.common-page #searchBar::placeholder {
     color: #fac003;
 }
 
@@ -382,7 +391,7 @@ body, html {
     max-width: 900px;
 }
 
-#main-section  .h1-heading {
+#main-section .h1-heading {
     font-size: 3rem;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
@@ -393,22 +402,22 @@ body, html {
     animation: fadeSlideUp 1.5s ease-out forwards;
 }
 
-#main-section  .h1-heading span {
+#main-section .h1-heading span {
     color: #fac003;
 }
 
-#main-section  .p-0 {
+#main-section .p-0 {
     font-size: 1.2rem;
     color: white;
     margin-bottom: 2rem;
 }
 
-#main-section  .h1-container .button {
+#main-section .h1-container .button {
     justify-content: left;
     flex-wrap: wrap;
 }
 
-#main-section  .btn-menu, .btn-booking {
+#main-section .btn-menu, .btn-booking {
     border-radius: 50px;
     border: 3px solid #fac003;
     padding: 0.75rem 1.5rem;
@@ -420,13 +429,13 @@ body, html {
     cursor: pointer;
 }
 
-#main-section  .btn-menu:hover,
+#main-section .btn-menu:hover,
 #main-section .btn-booking:hover {
     background-color: #fac003;
     color: white;
 }
 
-#main-section  .h1-heading, .p-0, .btn-booking, .btn-menu {
+#main-section .h1-heading, .p-0, .btn-booking, .btn-menu {
     opacity: 0.5;
     transform: translateY(30px);
     animation: fadeSlideUp 0.5s ease-out forwards;
@@ -499,12 +508,17 @@ body, html {
     width: 100%;
 }
 
-#menu .menu-heading,
+.menu-heading,
+.user-table-heading,
 #feedback-section .feedback-heading,
 #summary-container .summary-heading,
-#ordersTableContainer .order-table-heading {
+#ordersTableContainer .order-table-heading,
+#admin-page .form-heading,
+.booking-heading,
+#summary-page .summary-heading{
     text-align: center;
     font-size: x-large;
+    margin-top: 20px;
     margin-bottom: 20px;
     color: #fac003;
     font-family: 'Playfair Display', ui-sans-serif;
@@ -801,6 +815,8 @@ body, html {
 .profile-avatar, .dashboard-avatar {
     width: 50px;
     height: 50px;
+    margin-top: 0.3rem;
+    margin-left: 1.6rem;
     font-size: 1.2rem;
     border-radius: 50%;
     background-color: #fac003;
@@ -919,7 +935,7 @@ body, html {
 .dashboard-sidebar {
     width: 280px;
     height: auto;
-    background-color: blue;
+    background-color: #f8f9fa;
     border-right: 1px solid #e4e4e4;
     border-left: none;
     border-top: none;
@@ -927,24 +943,31 @@ body, html {
     padding: 1.5rem;
     margin-bottom: 1rem;
     display: flex;
-    margin-top: 1rem;
     flex-direction: column;
 }
 
 /* Section Containers */
 .details-container {
-    margin-top: 20px;
+    margin-top: -80px;
     margin-bottom: 20px;
     width: 100%;
     max-width: 900px;
-    background: aliceblue;
+    background: #f8f9fa;
     padding: 20px;
     border-radius: 3px;
     border: none;
 }
 
 .summary-container {
- background-color: white;
+    background-color: white;
+    border-radius: 3px;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
 }
 
 .summary-grid {
@@ -1003,6 +1026,7 @@ table {
     border: none;
     margin-top: 20px;
     background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     border-radius: 3px;
     max-width: 100%;
@@ -1128,40 +1152,81 @@ table {
     background-color: #fac003;
 }
 
+/* Booking Table Action Buttons */
+#booking-table-container .btn {
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 3px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#booking-table-container .btn-success {
+    background-color: #fac003;
+    border: 1px solid white;
+    color: white;
+}
+
+#booking-table-container .btn-success:hover:not(:disabled) {
+    background-color: white;
+    color: #fac003;
+    transform: scale(1.05);
+    border: 1px solid #fac003;
+}
+
+#booking-table-container .btn-danger {
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+}
+
+#booking-table-container .btn-danger:hover:not(:disabled) {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    transform: scale(1.05);
+}
+
+#booking-table-container .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
 /* Add menu form */
-.form-row label {
+#add-menu-form .form-row label {
     display: block;
     color: black;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.form-row input,
-.form-row select,
-.form-row textarea,
-.form-group input,
-.form-group select,
-.form-group textarea {
+#add-menu-form .form-row input,
+#add-menu-form .form-row select,
+#add-menu-form .form-row textarea,
+#add-menu-form .form-group input,
+#add-menu-form .form-group select,
+#add-menu-form .form-group textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #fac003;
     border-radius: 3px;
-
     background-color: white;
     color: black;
     font-size: 1rem;
 }
 
-#admin-page .form-row input::placeholder,
-#admin-page .form-row textarea::placeholder,
-#admin-page.form-group input::placeholder,
-.form-group textarea::placeholder {
+#add-menu-form .form-row input::placeholder,
+#add-menu-form .form-row textarea::placeholder,
+#add-menu-form .form-group input::placeholder,
+#add-menu-form .form-group textarea::placeholder {
     color: #f1d476;
     font-size: 0.9rem;
 }
 
-#admin-page .form-row button,
-#admin-page .form-group button {
+#add-menu-form .form-row button,
+#add-menu-form .form-group button {
     padding: 10px;
     background-color: #fac003;
     color: white;
@@ -1174,12 +1239,13 @@ table {
     margin-top: 5px;
 }
 
-#admin-page .form-row button[type="submit"]:hover,
-#admin-page .form-group button[type="submit"]:hover {
+#add-menu-form .form-row button[type="submit"]:hover,
+#add-menu-form .form-group button[type="submit"]:hover {
     background-color: white;
     color: #fac003;
     border: 3px solid #fac003;
 }
+
 
 #admin-page #add-menu-form h3 {
     font-size: 24px;
@@ -1251,6 +1317,7 @@ table {
     z-index: 100;
 }
 
+
 #admin-page .dropdown-item {
     cursor: pointer;
     border-radius: 3px;
@@ -1272,15 +1339,85 @@ table {
     color: #fac003;
 }
 
-/* Cart items part */
-.common-page .container {
-    width: 100%;
-    max-width: 100rem;
-    height: 100%;
-    background-color: #f8f9fa;
-    margin-top: 1rem;
+.summary-history-container{
+    padding: 20px;
 }
 
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.filter-form label {
+    font-weight: 600;
+    margin-left: 0.1rem;
+}
+
+.filter-form select,
+.filter-form input[type="date"] {
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid #fac003;
+    border-radius: 5px;
+    min-width: 150px;
+}
+.filter-form option {
+    background-color: white;
+    color: #fac003;
+    font-size: 14px;
+}
+
+
+/* Summary history page */
+table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: 'Segoe UI', sans-serif;
+    min-width: 400px;
+    width: 100%;
+    border: 1px solid white;
+}
+
+table th{
+    background-color: #fac003; /* Yellow/Orange */
+    color: white;
+    border: 1px solid white;
+    font-size: small;
+    text-align: left;
+    padding: 10px;
+    font-weight: bold;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    font-size: smaller;
+    vertical-align: top;
+    border: 1px solid #fac003;
+}
+
+tr:hover {
+    background-color: #e7e9ec;
+}
+
+.divider {
+    margin: 10px 0;
+    color: #bcbaba;
+}
+
+.totals {
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    padding: 15px;
+    border-radius: 3px;
+    color: black;
+}
+
+/* Cart items part */
 .cart-item img {
     width: 100px;
     height: 100px;
@@ -1790,7 +1927,7 @@ ul.list-payment-icon li {
         margin: 1rem 0;
     }
 
-    /* Dashboard */
+    /* Admin dashboard */
     .dashboard-layout {
         flex-direction: column;
     }
@@ -1847,6 +1984,36 @@ ul.list-payment-icon li {
     .form-group select,
     .form-group textarea {
         width: 94%;
+    }
+
+
+    /* Summary history page */
+    .summary-history-container {
+        padding: 10px;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-form label,
+    .filter-form select,
+    .filter-form input[type="date"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table {
+        font-size: 12px;
+        min-width: unset;
+        overflow-x: auto;
+        display: block;
+        width: 100%;
+    }
+
+    .totals {
+        font-size: 11px;
     }
 
     .cart-item {
