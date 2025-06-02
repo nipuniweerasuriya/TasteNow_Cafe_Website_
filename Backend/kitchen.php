@@ -2,7 +2,6 @@
 require_once '../Backend/db_connect.php';  // Include your database connection
 
 // SQL Query to fetch all processed orders and related data
-
 $sql = "
     SELECT
         poi.id AS item_id,
@@ -18,8 +17,18 @@ $sql = "
     FROM processed_order_items poi
     JOIN processed_order po ON poi.order_id = po.id
     WHERE DATE(po.created_at) = CURDATE()
-    ORDER BY po.created_at DESC, poi.id ASC
+    ORDER BY 
+        CASE poi.status
+            WHEN 'Canceled' THEN 1
+            WHEN 'Pending' THEN 2
+            WHEN 'Prepared' THEN 3
+            WHEN 'Served' THEN 4
+            ELSE 5
+        END,
+        po.created_at DESC
 ";
+
+
 
 
 
@@ -50,46 +59,6 @@ $result = $conn->query($sql);
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-
-
-    <style>
-        /* Search Containers */
-        .search-container {
-            position: relative;
-            width: 200%;
-            margin-top: 0.1rem;
-            margin-bottom: 0.1rem;
-            font-size: 12px;
-        }
-
-        .search-container i {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            color: #fac003;
-        }
-
-        #searchInput,
-        #searchBar {
-            width: 100%;
-            padding: 8px 12px 8px 36px;
-            font-size: 12px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s ease;
-        }
-
-        #searchInput::placeholder,
-        #searchBar::placeholder {
-            color: #fac003;
-        }
-
-
-    </style>
 
 
 </head>
@@ -127,88 +96,105 @@ $result = $conn->query($sql);
 
 
 
-            <?php
-            $orders = [];
-            if ($result && $result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $orderId = $row['order_id'];
-                    if (!isset($orders[$orderId])) {
-                        $orders[$orderId] = [
-                            'order_id' => $orderId,
-                            'table_number' => $row['table_number'],
-                            'created_at' => $row['created_at'],
-                            'total_price' => $row['total_price'],
-                            'items' => []
-                        ];
-                    }
-                    $orders[$orderId]['items'][] = $row;
-                }
-            }
-            ?>
 
-            <div class="container">
+<?php
+$orders = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $orderId = $row['order_id'];
+        if (!isset($orders[$orderId])) {
+            $orders[$orderId] = [
+                'order_id' => $orderId,
+                'table_number' => $row['table_number'],
+                'created_at' => $row['created_at'],
+                'total_price' => $row['total_price'],
+                'items' => []
+            ];
+        }
+        $orders[$orderId]['items'][] = $row;
+    }
+}
+?>
 
-                <div class="menu-container" style="background-color: white">
+<div class="container">
+    <div class="profile-layout">
+        <div class="order-container w-100">
+            <h3 class="heading mb-4">Today Orders</h3>
+
+            <div class="order-items-container p-3 mb-3">
+                <div class="menu-table-container" style="background-color: white">
                     <!-- Display Menu Button -->
                     <div class="mb-3 text-end">
-                        <button class="btn btn-dark" onclick="displayMenu()">Menu</button>
+                        <button class="btn menu-btn" onclick="displayMenu()">Menu</button>
                     </div>
 
                     <!-- Menu Section (Initially Hidden) - Will show below the button -->
                     <div id="menu-section" style="display: none;"></div>
 
                 </div>
-
-
-
-
-                <div class="profile-layout">
-                    <div class="order-container w-100">
-                        <h4 class="mb-4">Today Orders</h4>
-
-                        <div class="order-items-container bg-white p-3 mb-3">
-                            <?php if (!empty($orders)): ?>
-                                <?php foreach ($orders as $order): ?>
-                                    <div class="border rounded p-3 mb-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <div>
-                                                <strong>Order ID:</strong> #<?php echo $order['order_id']; ?><br>
-                                                <strong>Table:</strong> <?php echo $order['table_number']; ?><br>
-                                                <strong>Date:</strong> <?php echo date('Y-m-d H:i', strtotime($order['created_at'])); ?>
-                                            </div>
-                                            <div class="text-end">
-                                                <strong>Total Price:</strong><br>
-                                                <span class="fs-5 text-success">Rs. <?php echo number_format($order['total_price'], 2); ?></span>
-                                            </div>
+                <?php if (!empty($orders)): ?>
+                    <?php foreach ($orders as $order): ?>
+                        <div class="order-card p-3 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>Order ID:</strong> #<?php echo $order['order_id']; ?><br>
+                                    <strong>Table:</strong> <?php echo $order['table_number']; ?><br>
+                                    <strong>Date:</strong> <?php echo date('Y-m-d H:i', strtotime($order['created_at'])); ?>
+                                </div>
+                                <div class="text-end">
+                                    <strong>Total Price:</strong><br>
+                                    <span class="fs-5">Rs. <?php echo number_format($order['total_price'], 2); ?></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <?php foreach ($order['items'] as $item): ?>
+                                <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3 <?= ($item['status'] === 'Cancelled') ? 'cancelled-highlight' : '' ?>">
+                                    <div class="flex-grow-1">
+                                        <div class="qty-price-container">
+                                            <img src="../../Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
+                                            <p class="item-title mb-1">
+                                                <?php echo htmlspecialchars($item['item_name']); ?>
+                                                <?php if ($item['status'] === 'Cancelled'): ?>
+                                                    <span class="cancelled-badge">Cancelled</span>
+                                                <?php endif; ?>
+                                            </p>
+                                            <div>Qty: <?php echo $item['quantity']; ?></div>
+                                            <div>Rs. <?php echo number_format($item['price'], 2); ?></div>
                                         </div>
-                                        <hr>
-                                        <?php foreach ($order['items'] as $item): ?>
-                                            <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3">
-                                                <img src="../../Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
-                                                <div class="flex-grow-1">
-                                                    <p class="item-title mb-1"><?php echo htmlspecialchars($item['item_name']); ?></p>
-                                                    <div>Qty: <?php echo $item['quantity']; ?> | Rs. <?php echo number_format($item['price'], 2); ?></div>
-                                                </div>
-                                                <div class="btn-group status-btn-group" data-item-id="<?php echo $item['item_id']; ?>">
-                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
-                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Preparing') ? 'btn-info active' : 'btn-outline-info'; ?>" data-status="Preparing">Preparing</button>
-                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
-                                                    <button class="btn btn-sm status-btn <?php echo ($item['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <p>No processed orders found.</p>
-                            <?php endif; ?>
+
+                                    <?php if ($item['status'] === 'Canceled'): ?>
+                                    <button
+                                            class="btn btn-danger cancelled-remove-btn"
+                                            data-item-id="<?php echo $item['item_id']; ?>"
+                                            title="Remove this cancelled item"
+                                    >
+                                        Cancelled
+                                    </button>
+                                    <?php else: ?>
+                                    <div class="btn-group status-btn-group" data-item-id="<?php echo $item['item_id']; ?>">
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Preparing') ? 'btn-info active' : 'btn-outline-info'; ?>" data-status="Preparing">Preparing</button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+
                         </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No processed orders found.</p>
+                <?php endif; ?>
             </div>
+        </div>
+    </div>
+</div>
 
 
-            <script>
+
+<script>
      document.addEventListener('DOMContentLoaded', function () {
          document.querySelectorAll('.status-btn-group').forEach(group => {
              group.addEventListener('click', function (e) {
@@ -356,6 +342,40 @@ $result = $conn->query($sql);
                  row.style.display = rowText.includes(searchValue) ? '' : 'none';
              });
          }
+     });
+
+
+     document.addEventListener('DOMContentLoaded', function() {
+         const removeButtons = document.querySelectorAll('.cancelled-remove-btn');
+
+         removeButtons.forEach(button => {
+             button.addEventListener('click', function() {
+                 if (!confirm('Are you sure you want to remove this cancelled item?')) return;
+
+                 const itemId = this.getAttribute('data-item-id');
+                 const buttonElem = this;
+
+                 fetch('remove_cancelled_item.php', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                     body: JSON.stringify({ item_id: itemId })
+                 })
+                     .then(response => response.json())
+                     .then(data => {
+                         if (data.success) {
+                             // Remove the item from the DOM
+                             buttonElem.closest('.cart-item').remove();
+                         } else {
+                             alert('Failed to remove item: ' + data.message);
+                         }
+                     })
+                     .catch(err => {
+                         alert('Error: ' + err);
+                     });
+             });
+         });
      });
 
             </script>

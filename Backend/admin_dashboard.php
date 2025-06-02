@@ -291,7 +291,6 @@ if (isset($_GET['load_bookings'])) {
                 <a href="index.php" class="dashboard-action-item" style="text-decoration: none"><small>Home</small></a>
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
-                <a href="summary_history.php" class="dashboard-action-item" style="text-decoration: none;">Summary</a>
                 <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
                 <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 

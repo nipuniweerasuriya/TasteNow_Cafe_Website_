@@ -508,6 +508,7 @@ body, html {
     width: 100%;
 }
 
+#kitchen-page .heading,
 .menu-heading,
 .user-table-heading,
 #feedback-section .feedback-heading,
@@ -743,14 +744,14 @@ body, html {
 }
 
 .feedback-card {
-    background: white;
+    background: black;
     border-radius: 3px;
     padding: 15px 20px;
     min-width: 300px;
     max-width: 300px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
-    color: black;
+    color: white;
     flex-shrink: 0;
     align-items: center;
 }
@@ -768,7 +769,7 @@ body, html {
 .feedback-card small {
     display: block;
     margin-top: 8px;
-    color: gray;
+    color: #f1cc52;
     font-size: 13px;
 }
 
@@ -1052,7 +1053,7 @@ table {
 #orders-table thead th,
 #booking-table-container table thead th,
 .table-header {
-    background-color: #fac003; /* Yellow/Orange */
+    background-color: black; /* Yellow/Orange */
     color: white;
     border: 1px solid white;
     font-size: small;
@@ -1339,83 +1340,81 @@ table {
     color: #fac003;
 }
 
-.summary-history-container{
-    padding: 20px;
-}
-
-.filter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-}
-
-.filter-form label {
-    font-weight: 600;
-    margin-left: 0.1rem;
-}
-
-.filter-form select,
-.filter-form input[type="date"] {
-    padding: 6px 10px;
-    font-size: 14px;
-    border: 1px solid #fac003;
-    border-radius: 5px;
-    min-width: 150px;
-}
-.filter-form option {
-    background-color: white;
-    color: #fac003;
-    font-size: 14px;
-}
-
-
-/* Summary history page */
-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: 'Segoe UI', sans-serif;
-    min-width: 400px;
+/* Kitchen Page */
+#kitchen-page .order-items-container {
+    border: none;
+    margin: 10px 0;
     width: 100%;
-    border: 1px solid white;
+    background-color: transparent !important;
 }
 
-table th{
-    background-color: #fac003; /* Yellow/Orange */
+#kitchen-page .menu-table-container  {
+    border: none;
+    background-color: transparent !important;
+}
+
+#kitchen-page .menu-btn {
+    background-color: black;
     color: white;
+    border-radius: 3px;
+    font-size: 1rem;
+    font-weight: bold;
     border: 1px solid white;
-    font-size: small;
-    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#kitchen-page #menu-section {
+    margin-top: 20px;
+}
+
+#kitchen-page #menu-section table img {
+    border-radius: 5px;
+}
+
+#kitchen-page .cart-item img {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+#kitchen-page .order-card {
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+#kitchen-page .cancelled-highlight {
+    background-color: #fac003;
+    border-left: 1px solid #fac003;
+}
+
+#kitchen-page .cancelled-badge {
+    background-color: #fac003;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #fac003;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+#kitchen-page .cancelled-remove-btn {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+}
+
+/* Status buttons */
+#kitchen-page .status-btn-group .status-btn.active {
     font-weight: bold;
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    font-size: smaller;
-    vertical-align: top;
-    border: 1px solid #fac003;
+#kitchen-page .status-btn-group .status-btn {
+    margin-right: 4px;
 }
 
-tr:hover {
-    background-color: #e7e9ec;
-}
 
-.divider {
-    margin: 10px 0;
-    color: #bcbaba;
-}
-
-.totals {
-    margin-top: 25px;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    padding: 15px;
-    border-radius: 3px;
-    color: black;
-}
 
 /* Cart items part */
 .cart-item img {
@@ -1986,34 +1985,9 @@ ul.list-payment-icon li {
         width: 94%;
     }
 
-
-    /* Summary history page */
-    .summary-history-container {
-        padding: 10px;
-    }
-
-    .filter-form {
+    #kitchen-page .cart-item {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .filter-form label,
-    .filter-form select,
-    .filter-form input[type="date"] {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    table {
-        font-size: 12px;
-        min-width: unset;
-        overflow-x: auto;
-        display: block;
-        width: 100%;
-    }
-
-    .totals {
-        font-size: 11px;
     }
 
     .cart-item {
