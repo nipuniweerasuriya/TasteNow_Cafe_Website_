@@ -271,7 +271,7 @@ $conn->close();
             }
 
             // Post order details to backend (you need to implement checkout logic)
-            fetch('checkout.php', {
+            fetch('process_checkout.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tableNumber, items: selectedItems })
