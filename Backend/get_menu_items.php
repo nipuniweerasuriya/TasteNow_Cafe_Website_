@@ -14,7 +14,9 @@ if ($result && $result->num_rows > 0) {
         $itemId = $item['id'];
         $itemName = htmlspecialchars($item['name']);
         $itemPrice = number_format($item['price'], 2);
-        $itemImage = !empty($item['image_url']) ? '../../Backend/uploads/' . htmlspecialchars($item['image_url']) : 'default.jpg';
+        $itemImage = !empty($item['image_url'])
+            ? '../Backend/uploads/' . htmlspecialchars($item['image_url'])
+            : '../Backend/uploads/default.jpg';
         $categoryName = htmlspecialchars($item['category_name']);
 
         echo '<div class="menu-item visible" data-category="' . $categoryName . '">';

@@ -666,7 +666,7 @@ if (isset($_GET['load_bookings'])) {
                     data.forEach(item => {
                         tableHTML += `
                     <tr data-item-name="${item.name.toLowerCase()}">
-                        <td><img src="${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
+                        <td><img src="uploads/${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
                         <td>Rs.${item.price}</td>
                         <td><button onclick="deleteMenuItem(${item.id})">Delete</button></td>
@@ -710,14 +710,25 @@ if (isset($_GET['load_bookings'])) {
         window.deleteMenuItem = function (itemId) {
             if (!confirm("Delete this menu item and related variants/add-ons?")) return;
 
-            fetch(`../Backend/delete_menu_item.php?id=${itemId}`, {method: 'DELETE'})
-                .then(res => res.text())
+            fetch('../Backend/delete_menu_item.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `id=${encodeURIComponent(itemId)}`
+            })
+                .then(res => res.json())
                 .then(result => {
-                    alert(result);
-                    displayMenu(); // refresh
+                    if (result.success) {
+                        alert("Menu item deleted successfully.");
+                        displayMenu(); // refresh
+                    } else {
+                        alert("Delete failed: " + (result.message || 'Unknown error'));
+                    }
                 })
                 .catch(err => console.error('Delete failed:', err));
         };
+
 
         window.showUserDetails = function () {
             const formContainer = document.getElementById('form-container');

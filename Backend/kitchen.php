@@ -151,7 +151,7 @@ if ($result && $result->num_rows > 0) {
                                 <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3 <?= ($item['status'] === 'Cancelled') ? 'cancelled-highlight' : '' ?>">
                                     <div class="flex-grow-1">
                                         <div class="qty-price-container">
-                                            <img src="../../Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
+                                            <img src="/Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
                                             <p class="item-title mb-1">
                                                 <?php echo htmlspecialchars($item['item_name']); ?>
                                                 <?php if ($item['status'] === 'Cancelled'): ?>
@@ -277,7 +277,7 @@ if ($result && $result->num_rows > 0) {
                      data.forEach(item => {
                          const row = document.createElement('tr');
                          row.innerHTML = `
-                        <td><img src="../../Backend/uploads/${item.image_url}" alt="${item.name}" style="width: 80px; height: auto;"></td>
+                        <td><img src="uploads/${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
                         <td>Rs. ${item.price}</td>
                         <td><button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">Delete</button></td>

@@ -2,11 +2,13 @@
 require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = intval($_POST['id']);
+    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
-    // Optional: Delete associated image file if needed (only if storing image path)
+    if ($id <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid ID.']);
+        exit;
+    }
 
-    // Delete the menu item from the database
     $stmt = $conn->prepare("DELETE FROM menu_items WHERE id = ?");
     $stmt->bind_param("i", $id);
 
@@ -19,6 +21,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
     $conn->close();
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-

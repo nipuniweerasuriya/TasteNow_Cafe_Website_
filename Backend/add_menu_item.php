@@ -23,14 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $imagePath = null;
     if (isset($_FILES['item_image']) && $_FILES['item_image']['error'] === UPLOAD_ERR_OK) {
         $imageTmp = $_FILES['item_image']['tmp_name'];
-        $imageName = basename($_FILES['item_image']['name']);
-        $uploadDir = 'uploads/';
+
+        // ✅ Create unique file name
+        $imageName = time() . '_' . basename($_FILES['item_image']['name']);
+        $imagePath = $imageName;  // Store only the file name in the DB
+
+        // ✅ Define and create upload folder if not exists
+        $uploadDir = '../Backend/uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
-        $imagePath = $uploadDir . time() . '_' . $imageName;
-        move_uploaded_file($imageTmp, $imagePath);
+
+        // ✅ Move file to the uploads folder
+        move_uploaded_file($imageTmp, $uploadDir . $imagePath);
     }
+
 
     // Insert into menu_items
     $stmt = $conn->prepare("INSERT INTO menu_items (name, price, image_url, category_id) VALUES (?, ?, ?, ?)");
