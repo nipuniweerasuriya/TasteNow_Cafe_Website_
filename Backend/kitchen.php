@@ -1,7 +1,7 @@
 <?php
 require_once '../Backend/db_connect.php';  // Include your database connection
 
-// SQL Query to fetch all processed orders and related data
+// SQL Query to fetch all processed orders and related data (excluding canceled items)
 $sql = "
     SELECT
         poi.id AS item_id,
@@ -17,21 +17,23 @@ $sql = "
     FROM processed_order_items poi
     JOIN processed_order po ON poi.order_id = po.id
     WHERE DATE(po.created_at) = CURDATE()
+      AND poi.status != 'Canceled'
+      AND EXISTS (
+          SELECT 1
+          FROM processed_order_items p
+          WHERE p.order_id = po.id
+            AND p.status != 'Canceled'
+      )
     ORDER BY 
         CASE poi.status
-            WHEN 'Canceled' THEN 1
-            WHEN 'Pending' THEN 2
+            WHEN 'Pending' THEN 1
+            WHEN 'Preparing' THEN 2
             WHEN 'Prepared' THEN 3
             WHEN 'Served' THEN 4
             ELSE 5
         END,
         po.created_at DESC
 ";
-
-
-
-
-
 
 $result = $conn->query($sql);
 ?>
