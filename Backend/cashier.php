@@ -108,7 +108,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         }
     </style>
 </head>
-<body class="common-page" id="kitchen-page">
+<body class="common-page" id="cashier-page">
 
 <div class="navbar">
     <div class="navbar-container">
@@ -118,7 +118,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Date, or Status">
+            <input type="text" id="searchInput" placeholder="Search by Table No Or Order Id">
         </div>
 
         <div class="d-flex align-items-center ms-3">
@@ -130,7 +130,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 </div>
 
 <div class="container mt-4">
-    <h2 class="mb-4">Cashier Orders (Served)</h2>
+    <h3 class="heading mb-4">Cashier Orders</h3>
 
     <!-- SEARCH FORM REMOVED -->
 
@@ -149,65 +149,67 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <p>Table: <?php echo htmlspecialchars($order['table_number']); ?></p>
                 <p>Date: <?php echo htmlspecialchars($order['order_date']); ?></p>
 
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Item Name</th>
-                        <th>Qty</th>
-                        <th>Price (Rs.)</th>
-                        <th>Total (Rs.)</th>
-                        <th>Payment</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $total_amount = 0;
-                    foreach ($order['items'] as $item):
-                        $item_total = $item['price'] * $item['quantity'];
-
-                        if ($item['status'] === 'Canceled') {
-                            $item_total *= 0.20; // Only 20% charged
-                        }
-
-                        $total_amount += $item_total;
-                        ?>
-                        <tr<?php if ($item['status'] === 'Canceled') echo ' class="table-warning"'; ?>>
-                            <td>
-                                <?php echo htmlspecialchars($item['item_name']); ?>
-                                <?php if ($item['status'] === 'Canceled'): ?>
-                                    <span class="badge bg-danger ms-2">Canceled</span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                            <td><?php echo number_format($item['price'], 2); ?></td>
-                            <td>
-                                <?php
-                                echo number_format($item_total, 2);
-                                if ($item['status'] === 'Canceled') echo " (20%)";
-                                ?>
-                            </td>
-                            <td></td>
+                <div class="table-responsive cashier-table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Price (Rs.)</th>
+                            <th>Total (Rs.)</th>
+                            <th>Payment</th>
                         </tr>
-                    <?php endforeach; ?>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $total_amount = 0;
+                        foreach ($order['items'] as $item):
+                            $item_total = $item['price'] * $item['quantity'];
 
-                    <tr>
-                        <td colspan="3" class="text-end fw-bold">Total:</td>
-                        <td class="fw-bold"><?php echo number_format($total_amount, 2); ?> Rs.</td>
-                        <td>
-                            <!-- Place this inside each order card -->
-                            <form method="POST" action="cashier_payment_process.php" class="mt-3">
-                                <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
-                                <input type="hidden" name="total_amount" value="<?php echo $total_amount; ?>">
-                                <div class="input-group">
-                                    <span class="input-group-text">Given Rs.</span>
-                                    <input type="number" name="given_money" class="form-control" step="0.01" required>
-                                    <button type="submit" class="btn btn-success">Pay & Print</button>
-                                </div>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            if ($item['status'] === 'Canceled') {
+                                $item_total *= 0.20; // Only 20% charged
+                            }
+
+                            $total_amount += $item_total;
+                            ?>
+                            <tr<?php if ($item['status'] === 'Canceled') echo ' class="table-warning"'; ?>>
+                                <td>
+                                    <?php echo htmlspecialchars($item['item_name']); ?>
+                                    <?php if ($item['status'] === 'Canceled'): ?>
+                                        <span class="badge bg-black ms-2" style="border-radius: 3px">Canceled</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                                <td><?php echo number_format($item['price'], 2); ?></td>
+                                <td>
+                                    <?php
+                                    echo number_format($item_total, 2);
+                                    if ($item['status'] === 'Canceled') echo " (20%)";
+                                    ?>
+                                </td>
+                                <td></td>
+                            </tr>
+                        <?php endforeach; ?>
+
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Total:</td>
+                            <td class="fw-bold"><?php echo number_format($total_amount, 2); ?> Rs.</td>
+                            <td>
+                                <!-- Place this inside each order card -->
+                                <form method="POST" action="cashier_payment_process.php" class="mt-3">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                    <input type="hidden" name="total_amount" value="<?php echo $total_amount; ?>">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Given Rs.</span>
+                                        <input type="number" name="given_money" class="form-control" required>
+                                        <button type="submit" class="btn btn-success">Pay</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <?php endforeach; ?>
     <?php else: ?>

@@ -76,7 +76,7 @@ if (isset($_GET['load_bookings'])) {
         echo "<div class='p-4 mb-5' id='booking-table-container' style='max-width: 100%; overflow-x: auto;'>";
         echo "<div class='d-flex justify-content-between align-items-center mb-3'>";
         echo "<h3 class='text-center flex-grow-1 mb-0 booking-heading'>Table Booking Details</h3>";
-        echo "<button class='btn close-icon' onclick='closeBookingContainer()' aria-label='Close'><i class='fas fa-times'></i></button>";
+        echo "<span class='close-icon' onclick='closeBookingContainer()'>&times;</span>";
         echo "</div>";
 
         echo "<div class='table-responsive'>";
@@ -291,7 +291,7 @@ if (isset($_GET['load_bookings'])) {
                 <a href="index.php" class="dashboard-action-item" style="text-decoration: none"><small>Home</small></a>
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
-                <a href="#" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
+                <a href="#bookingContainer" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
                 <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
 
                 <div class="dropdown-wrapper">
@@ -299,8 +299,8 @@ if (isset($_GET['load_bookings'])) {
                         <small>Manage</small>
                     </div>
                     <div class="dropdown-menu" id="paidDropdown">
-                        <div class="dropdown-item" onclick="showAddMenuForm()">Menu</div>
-                        <div class="dropdown-item" onclick="showUserDetails()">User</div>
+                        <a href="#form-container" class="dropdown-item" onclick="showAddMenuForm()">Menu</a>
+                        <a href="#userDetailsContainer" class="dropdown-item" onclick="showUserDetails()">User</a>
                     </div>
                 </div>
             </div>
@@ -353,11 +353,11 @@ if (isset($_GET['load_bookings'])) {
                         </table>
                     </div>
                 </div>
-                    <div id="bookingContainer"></div>
-                    <div id="userDetailsContainer" style="display: none;"></div>
-                    <div class="form-container" id="form-container" style="display: none; margin-top: 30px;"></div>
-                    <div id="menu-section" style="display: none; margin-top: 20px;"></div>
         </div>
+                <div id="bookingContainer"></div>
+                <div id="userDetailsContainer" style="display: none;"></div>
+                <div id="form-container" class="form-container" style="display: none; margin-top: 30px;"></div>
+                <div id="menu-section" style="display: none; margin-top: 20px;"></div>
 </div>
 
 
@@ -639,7 +639,7 @@ if (isset($_GET['load_bookings'])) {
             fetch('../Backend/display_menu_items.php')
                 .then(response => response.json())
                 .then(data => {
-                    menuSection.innerHTML += `<span class="close-icon" onclick="closeMenuSection()" style="float:right;cursor:pointer;font-size:24px;">&times;</span>`;
+                    menuSection.innerHTML += `<span class="close-icon" onclick="closeMenuSection()">&times;</span>`;
                     menuSection.style.display = 'block';
 
                     if (data.length === 0) {
@@ -748,7 +748,7 @@ if (isset($_GET['load_bookings'])) {
                     userDetailsContainer.style.display = 'block';
 
                     // Add close icon
-                    userDetailsContainer.innerHTML += `<span class="close-icon" onclick="closeUserDetails()" style="float:right;cursor:pointer;font-size:24px;">&times;</span>`;
+                    userDetailsContainer.innerHTML += `<span class="close-icon" onclick="closeUserDetails()">&times;</span>`;
 
                     if (data.length === 0) {
                         userDetailsContainer.innerHTML += '<p>No users found.</p>';

@@ -105,4 +105,3 @@ try {
     $conn->rollback(); // Revert changes if error occurs
     echo json_encode(["success" => false, "message" => "Checkout failed: " . $e->getMessage()]);
 }
-?>

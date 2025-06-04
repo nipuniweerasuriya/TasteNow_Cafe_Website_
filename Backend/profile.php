@@ -130,55 +130,6 @@ if ($tab === 'bookings') {
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Frontend/css/styles.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-    <style>
-        /* Search Containers */
-        .search-container {
-            position: relative;
-            width: 200%;
-            margin-top: 0.1rem;
-            margin-bottom: 0.1rem;
-            font-size: 12px;
-        }
-
-        .search-container i {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            color: #fac003 !important;
-        }
-
-        #searchInput,
-        #searchBar {
-            width: 100%;
-            padding: 8px 12px 8px 36px;
-            font-size: 12px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s ease;
-        }
-
-        #searchInput::placeholder,
-        #searchBar::placeholder {
-            color: #fac003;
-        }
-
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .status-pending { background-color: #ffc107; color: black; }
-        .status-prepared { background-color: #0d6efd; color: white; }
-        .status-served { background-color: #198754; color: white; }
-        .status-canceled { background-color: #dc3545; color: white; }
-    </style>
 </head>
 <body class="common-page" id="profile-page">
 
@@ -214,6 +165,14 @@ if ($tab === 'bookings') {
                     <small class="text-muted"><?= htmlspecialchars($email) ?></small>  <!-- Display email -->
                 </div>
             </div> <!-- End of Profile Info -->
+
+            <!-- Right: Toggler Button (Mobile only) -->
+            <div class="d-md-none">
+                <button onclick="toggleSidebar()" class="btn">
+                    ☰
+                </button>
+            </div>
+
 
             <div class="profile-actions">
                 <?php
@@ -256,12 +215,12 @@ if ($tab === 'bookings') {
         ?>
 
         <!-- Orders Section -->
-        <div class="order-container mb-4" style="<?= $tab === 'bookings' ? 'display:block;' : 'display:block;' ?>">
             <div class="order-items-container bg-white p-3 mb-3">
+                <h3 class="order-section-heading">Today Orders</h3>
                 <?php if ($result->num_rows > 0): ?>
                     <?php if (!empty($ordersGrouped)): ?>
                         <?php foreach ($ordersGrouped as $orderId => $order): ?>
-                            <div class="order-section" style="border: 1px solid #ccc; margin: 15px 0; padding: 10px;">
+                            <div class="order-section">
                                 <h3>Order #<?= $orderId ?> (<?= $order['order_date'] ?>)</h3>
                                 <p><strong>Table:</strong> <?= $order['table_number'] ?> | <strong>Payment:</strong> <?= $order['payment_status'] ?></p>
                                 <ul style="list-style: none; padding-left: 0;">
@@ -271,7 +230,7 @@ if ($tab === 'bookings') {
                                                 <img src="<?= $item['item_image'] ?>" alt="<?= $item['item_name'] ?>" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;">
                                                 <div>
                                                     <strong><?= $item['item_name'] ?></strong><br>
-                                                    Quantity: <?= $item['quantity'] ?> | ₹<?= $item['total_price'] ?><br>
+                                                    Quantity: <?= $item['quantity'] ?> | Rs.<?= $item['total_price'] ?><br>
                                                     Status: <span style="font-weight: bold; color: <?= $item['item_status'] === 'Pending' ? 'orange' : ($item['item_status'] === 'Prepared' ? 'blue' : ($item['item_status'] === 'Served' ? 'green' : 'red')) ?>;">
                                                 <?= $item['item_status'] ?>
                                             </span>

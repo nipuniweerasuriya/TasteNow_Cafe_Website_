@@ -75,7 +75,7 @@ $result = $conn->query($sql);
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Date, or Status">
+            <input type="text" id="searchInput" placeholder="Search by Order ID, Table,Order Status or Item Name">
         </div>
 
 
@@ -86,17 +86,6 @@ $result = $conn->query($sql);
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 <?php
@@ -139,8 +128,9 @@ if ($result && $result->num_rows > 0) {
                         <div class="order-card p-3 mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
-                                    <strong>Order ID:</strong> #<?php echo $order['order_id']; ?><br>
-                                    <strong>Table:</strong> <?php echo $order['table_number']; ?><br>
+                                    <strong class="order-id">Order ID:</strong> #<?php echo $order['order_id']; ?><br>
+                                    <strong class="table-number">Table:</strong> <?php echo $order['table_number']; ?><br>
+
                                     <strong>Date:</strong> <?php echo date('Y-m-d H:i', strtotime($order['created_at'])); ?>
                                 </div>
                                 <div class="text-end">
@@ -153,7 +143,8 @@ if ($result && $result->num_rows > 0) {
                                 <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3 <?= ($item['status'] === 'Cancelled') ? 'cancelled-highlight' : '' ?>">
                                     <div class="flex-grow-1">
                                         <div class="qty-price-container">
-                                            <img src="/Backend/uploads/<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" style="width: 100px;">
+                                            <img src="uploads/<?php echo htmlspecialchars($item['image_url']); ?>"
+                                                 style="width: 100px;" alt="">
                                             <p class="item-title mb-1">
                                                 <?php echo htmlspecialchars($item['item_name']); ?>
                                                 <?php if ($item['status'] === 'Cancelled'): ?>
@@ -166,19 +157,28 @@ if ($result && $result->num_rows > 0) {
                                     </div>
 
                                     <?php if ($item['status'] === 'Canceled'): ?>
-                                    <button
-                                            class="btn btn-danger cancelled-remove-btn"
-                                            data-item-id="<?php echo $item['item_id']; ?>"
-                                            title="Remove this cancelled item"
-                                    >
-                                        Cancelled
-                                    </button>
+                                        <button
+                                                class="btn btn-danger cancelled-remove-btn"
+                                                data-item-id="<?php echo $item['item_id']; ?>"
+                                                title="Remove this cancelled item"
+                                        >
+                                            Cancelled
+                                        </button>
                                     <?php else: ?>
-                                    <div class="btn-group status-btn-group" data-item-id="<?php echo $item['item_id']; ?>">
-                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>" data-status="Pending">Pending</button>
-                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Preparing') ? 'btn-info active' : 'btn-outline-info'; ?>" data-status="Preparing">Preparing</button>
-                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>" data-status="Prepared">Prepared</button>
-                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>" data-status="Served">Served</button>
+                                        <div class="btn-group status-btn-group"
+                                             data-item-id="<?php echo $item['item_id']; ?>">
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Pending') ? 'btn-warning active' : 'btn-outline-warning'; ?>"
+                                                    data-status="Pending">Pending
+                                            </button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Preparing') ? 'btn-info active' : 'btn-outline-info'; ?>"
+                                                    data-status="Preparing">Preparing
+                                            </button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Prepared') ? 'btn-primary active' : 'btn-outline-primary'; ?>"
+                                                    data-status="Prepared">Prepared
+                                            </button>
+                                            <button class="btn btn-sm status-btn <?= ($item['status'] == 'Served') ? 'btn-success active' : 'btn-outline-success'; ?>"
+                                                    data-status="Served">Served
+                                            </button>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -195,64 +195,73 @@ if ($result && $result->num_rows > 0) {
 </div>
 
 
-
 <script>
-     document.addEventListener('DOMContentLoaded', function () {
-         document.querySelectorAll('.status-btn-group').forEach(group => {
-             group.addEventListener('click', function (e) {
-                 if (e.target.classList.contains('status-btn')) {
-                     const button = e.target;
-                     const newStatus = button.getAttribute('data-status');
-                     const itemId = group.getAttribute('data-item-id');
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.status-btn-group').forEach(group => {
+            group.addEventListener('click', function (e) {
+                if (e.target.classList.contains('status-btn')) {
+                    const button = e.target;
+                    const newStatus = button.getAttribute('data-status');
+                    const itemId = group.getAttribute('data-item-id');
 
-                     fetch('../Backend/update_order_status.php', {
-                         method: 'POST',
-                         headers: {
-                             'Content-Type': 'application/x-www-form-urlencoded'
-                         },
-                         body: `item_id=${itemId}&status=${newStatus}`
-                     })
-                         .then(res => res.json())
-                         .then(data => {
-                             if (data.success) {
-                                 group.querySelectorAll('.status-btn').forEach(btn => {
-                                     btn.classList.remove('btn-warning', 'btn-outline-warning', 'btn-primary', 'btn-outline-primary', 'btn-success', 'btn-outline-success', 'active');
-                                     const status = btn.getAttribute('data-status');
-                                     if (status === 'Pending') btn.classList.add('btn-outline-warning');
-                                     if (status === 'Preparing') btn.classList.add('btn-outline-warning');
-                                     if (status === 'Prepared') btn.classList.add('btn-outline-primary');
-                                     if (status === 'Served') btn.classList.add('btn-outline-success');
-                                 });
+                    fetch('../Backend/update_order_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `item_id=${itemId}&status=${newStatus}`
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Remove all status-related classes and 'active' from all buttons in the group
+                                group.querySelectorAll('.status-btn').forEach(btn => {
+                                    btn.classList.remove(
+                                        'btn-warning', 'btn-outline-warning',
+                                        'btn-info', 'btn-outline-info',
+                                        'btn-primary', 'btn-outline-primary',
+                                        'btn-success', 'btn-outline-success',
+                                        'active'
+                                    );
 
-                                 button.classList.remove('btn-outline-warning', 'btn-outline-primary', 'btn-outline-success');
-                                 button.classList.add('active');
-                                 if (newStatus === 'Pending') button.classList.add('btn-warning');
-                                 if (newStatus === 'Preparing') button.classList.add('btn-outline-warning');
-                                 if (newStatus === 'Prepared') button.classList.add('btn-primary');
-                                 if (newStatus === 'Served') button.classList.add('btn-success');
-                             } else {
-                                 alert('Failed to update status: ' + data.message);
-                             }
-                         })
-                         .catch(err => {
-                             console.error(err);
-                             alert('An error occurred.');
-                         });
-                 }
-             });
-         });
-     });
+                                    // Add outline class according to status
+                                    const status = btn.getAttribute('data-status');
+                                    if (status === 'Pending') btn.classList.add('btn-outline-warning');
+                                    if (status === 'Preparing') btn.classList.add('btn-outline-info');
+                                    if (status === 'Prepared') btn.classList.add('btn-outline-primary');
+                                    if (status === 'Served') btn.classList.add('btn-outline-success');
+                                });
+
+                                // Remove outline class and add active + filled class to clicked button
+                                button.classList.remove('btn-outline-warning', 'btn-outline-info', 'btn-outline-primary', 'btn-outline-success');
+                                button.classList.add('active');
+                                if (newStatus === 'Pending') button.classList.add('btn-warning');
+                                if (newStatus === 'Preparing') button.classList.add('btn-info');
+                                if (newStatus === 'Prepared') button.classList.add('btn-primary');
+                                if (newStatus === 'Served') button.classList.add('btn-success');
+                            } else {
+                                alert('Failed to update status: ' + data.message);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('An error occurred.');
+                        });
+                }
+            });
+        });
+    });
 
 
-         function displayMenu() {
-         fetch('display_menu_items.php')
-             .then(response => response.json())
-             .then(data => {
-                 const menuSection = document.getElementById('menu-section');
+    function displayMenu() {
+        fetch('display_menu_items.php')
+            .then(response => response.json())
+            .then(data => {
+                const menuSection = document.getElementById('menu-section');
 
-                 // Create a table if it doesn't exist
-                 menuSection.innerHTML = `
-                <h4 class="mt-4 mb-3">Menu Items</h4>
+                menuSection.innerHTML = `
+                <span class="close-icon" onclick="closeMenuSection()">&times;</span>
+                <h3 class="heading mt-4 mb-3">Menu Items</h3>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="menuTable">
                         <thead class="table-dark">
@@ -270,122 +279,104 @@ if ($result && $result->num_rows > 0) {
                 </div>
             `;
 
-                 const tableBody = document.getElementById('menuItemsTableBody');
-                 tableBody.innerHTML = ''; // Clear old rows
+                menuSection.style.display = 'block';
 
-                 if (data.length === 0) {
-                     tableBody.innerHTML = '<tr><td colspan="6">No menu items found.</td></tr>';
-                 } else {
-                     data.forEach(item => {
-                         const row = document.createElement('tr');
-                         row.innerHTML = `
+                const tableBody = document.getElementById('menuItemsTableBody');
+                tableBody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No menu items found.</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
                         <td><img src="uploads/${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
                         <td>Rs. ${item.price}</td>
                         <td><button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">Delete</button></td>
                     `;
-                         tableBody.appendChild(row);
-                     });
-                 }
-
-                 menuSection.style.display = 'block'; // Show the section
-             })
-             .catch(error => {
-                 console.error('Error fetching menu items:', error);
-                 const menuSection = document.getElementById('menu-section');
-                 menuSection.innerHTML = `<div class="alert alert-danger">Failed to load menu items.</div>`;
-                 menuSection.style.display = 'block';
-             });
-     }
+                        tableBody.appendChild(row);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching menu items:', error);
+                const menuSection = document.getElementById('menu-section');
+                menuSection.innerHTML = `<div class="alert alert-danger">Failed to load menu items.</div>`;
+                menuSection.style.display = 'block';
+            });
+    }
 
 
+    function closeMenuSection() {
+        document.getElementById('menu-section').style.display = 'none';
+    }
 
 
-     function deleteMenuItem(id) {
-         if (confirm('Are you sure you want to delete this menu item?')) {
-             fetch('delete_menu_item.php', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                 body: 'id=' + encodeURIComponent(id)
-             })
-                 .then(response => response.json())
-                 .then(result => {
-                     if (result.success) {
-                         alert('Menu item deleted successfully.');
-                         displayMenu(); // Refresh the table
-                     } else {
-                         alert('Failed to delete: ' + (result.message || 'Unknown error.'));
-                     }
-                 })
-                 .catch(error => {
-                     console.error('Error:', error);
-                     alert('An error occurred while deleting the menu item.');
-                 });
-         }
-     }
+    function deleteMenuItem(id) {
+        if (confirm('Are you sure you want to delete this menu item?')) {
+            fetch('delete_menu_item.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'id=' + encodeURIComponent(id)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Menu item deleted successfully.');
+                        displayMenu(); // Refresh the table
+                    } else {
+                        alert('Failed to delete: ' + (result.message || 'Unknown error.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the menu item.');
+                });
+        }
+    }
 
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+
+                // === FILTER ORDER CARDS ===
+                const orderCards = document.querySelectorAll('.order-card');
+                orderCards.forEach(card => {
+                    const orderId = card.querySelector('.order-id')?.nextSibling?.textContent.trim().toLowerCase() || '';
+                    const tableNumber = card.querySelector('.table-number')?.nextSibling?.textContent.trim().toLowerCase() || '';
+
+                    let statusMatch = false;
+                    card.querySelectorAll('.status-btn-group .status-btn.active').forEach(btn => {
+                        if (btn.textContent.toLowerCase().includes(filter)) {
+                            statusMatch = true;
+                        }
+                    });
+
+                    const matches = orderId.includes(filter) || tableNumber.includes(filter) || statusMatch;
+                    card.style.display = matches ? '' : 'none';
+                });
+
+                // === FILTER MENU TABLE ROWS ===
+                const menuRows = document.querySelectorAll('#menuItemsTableBody tr');
+                menuRows.forEach(row => {
+                    const itemName = row.querySelector('td:nth-child(2)')?.textContent.trim().toLowerCase() || '';
+                    row.style.display = itemName.includes(filter) ? '' : 'none';
+                });
+            });
+        }
+    });
 
 
-     document.getElementById('searchInput').addEventListener('input', function () {
-         const searchValue = this.value.toLowerCase().trim();
-
-         // Filter orders
-         document.querySelectorAll('.order-items-container .border.rounded').forEach(orderCard => {
-             const text = orderCard.innerText.toLowerCase();
-             orderCard.style.display = text.includes(searchValue) ? 'block' : 'none';
-         });
-
-         // Filter menu items (if visible)
-         const menuTable = document.getElementById('menuItemsTableBody');
-         if (menuTable) {
-             menuTable.querySelectorAll('tr').forEach(row => {
-                 const rowText = row.innerText.toLowerCase();
-                 row.style.display = rowText.includes(searchValue) ? '' : 'none';
-             });
-         }
-     });
-
-
-     document.addEventListener('DOMContentLoaded', function() {
-         const removeButtons = document.querySelectorAll('.cancelled-remove-btn');
-
-         removeButtons.forEach(button => {
-             button.addEventListener('click', function() {
-                 if (!confirm('Are you sure you want to remove this cancelled item?')) return;
-
-                 const itemId = this.getAttribute('data-item-id');
-                 const buttonElem = this;
-
-                 fetch('remove_cancelled_item.php', {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/json'
-                     },
-                     body: JSON.stringify({ item_id: itemId })
-                 })
-                     .then(response => response.json())
-                     .then(data => {
-                         if (data.success) {
-                             // Remove the item from the DOM
-                             buttonElem.closest('.cart-item').remove();
-                         } else {
-                             alert('Failed to remove item: ' + data.message);
-                         }
-                     })
-                     .catch(err => {
-                         alert('Error: ' + err);
-                     });
-             });
-         });
-     });
-
-            </script>
-
+</script>
 
 
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../Frontend/js/script.js"></script>
- </body>
+</body>
 </html>

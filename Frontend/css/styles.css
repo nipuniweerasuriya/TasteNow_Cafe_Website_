@@ -508,6 +508,9 @@ body, html {
     width: 100%;
 }
 
+
+#profile-page .order-section-heading,
+#cashier-page .heading,
 #kitchen-page .heading,
 .menu-heading,
 .user-table-heading,
@@ -516,8 +519,9 @@ body, html {
 #ordersTableContainer .order-table-heading,
 #admin-page .form-heading,
 .booking-heading,
-#summary-page .summary-heading{
+#summary-page .summary-heading {
     text-align: center;
+    padding: 10px;
     font-size: x-large;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -816,8 +820,8 @@ body, html {
 .profile-avatar, .dashboard-avatar {
     width: 50px;
     height: 50px;
-    margin-top: 0.3rem;
-    margin-left: 1.6rem;
+    margin-top: 0.1rem;
+    margin-left: 0.1rem;
     font-size: 1.2rem;
     border-radius: 50%;
     background-color: #fac003;
@@ -830,31 +834,125 @@ body, html {
     gap: 1rem;
 }
 
-.profile-action-item,
+.profile-action-item a,
 .dashboard-action-item {
     display: flex;
     align-items: center;
-    color: black;
+    color: black !important;
     cursor: pointer;
     transition: background-color 0.2s ease;
     padding: 0.25rem 0.5rem;
     border-radius: 2px;
 }
 
-.profile-action-item:hover,
+.profile-action-item a:hover,
 .dashboard-action-item:hover {
-    color: #fac003;
+    color: #fac003 !important;
 }
 
-#profile-page .order-container {
+#profile-page .order-items-container {
     flex: 1;
-    background-color: white;
+    background-color: #f8f9fa !important;
     border-radius: 3px;
-    border: 1px solid #fac003;
+    border: none;
     height: auto;
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
 }
+
+/* Order Section Wrapper */
+#profile-page .order-section {
+    border: 1px solid #ccc;
+    margin: 15px 0;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: #fefefe;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Order Heading */
+#profile-page .order-section h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+/* Order Meta Info */
+#profile-page .order-section p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Order Item List */
+#profile-page .order-section ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Each Item Entry */
+#profile-page .order-section li {
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+}
+
+/* Item Display Layout */
+#profile-page .order-section li .item-row {
+    display: flex;
+    align-items: center;
+}
+
+/* Item Image */
+#profile-page .order-section img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 10px;
+}
+
+/* Item Info */
+#profile-page .order-section .item-details {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Status Coloring */
+#profile-page .order-section .status-pending {
+    color: orange;
+    font-weight: bold;
+}
+
+#profile-page .order-section .status-prepared {
+    color: #fac003;
+    font-weight: bold;
+}
+
+#profile-page .order-section .status-served {
+    color: #fac003;
+    font-weight: bold;
+}
+
+#profile-page .order-section .status-other {
+    color: #fac003;
+    font-weight: bold;
+}
+
+/* Action Buttons */
+#profile-page .order-section .btn {
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-top: 5px;
+}
+
+/* Disabled Action Text */
+#profile-page .order-section .no-actions {
+    color: gray;
+    font-size: 12px;
+}
+
 
 #profile-page .order-actions {
     display: flex;
@@ -871,7 +969,7 @@ body, html {
     border: 3px solid #fac003;
     width: 15%;
     height: 2rem;
-    color: #fac003;
+    color: #fac003 !important;
     font-weight: 600;
 }
 
@@ -933,7 +1031,8 @@ body, html {
 
 
 /* Admin page */
-.dashboard-sidebar {
+.dashboard-sidebar,
+#profile-page .dashboard-sidebar {
     width: 280px;
     height: auto;
     background-color: #f8f9fa;
@@ -985,7 +1084,7 @@ body, html {
     flex: 1 1 calc(33.333% - 20px);
     background-color: white;
     border-radius: 3px;
-    border: 1px solid #fac003;
+    border: 1px solid black;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -1038,7 +1137,8 @@ table {
 #menu-section table,
 #userDetailsContainer table,
 #booking-table-container table,
-#orders-table {
+#orders-table,
+#cashier-page table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
@@ -1052,6 +1152,7 @@ table {
 #userDetailsContainer table thead th,
 #orders-table thead th,
 #booking-table-container table thead th,
+#cashier-page .table thead th,
 .table-header {
     background-color: black; /* Yellow/Orange */
     color: white;
@@ -1069,7 +1170,9 @@ table {
 #booking-table-container table th,
 #booking-table-container table td,
 #orders-table th,
-#orders-table td {
+#orders-table td,
+#cashier-page .table th,
+#cashier-page .table td {
     padding: 10px;
     text-align: left;
     font-size: smaller;
@@ -1290,7 +1393,6 @@ table {
     font-size: 0.9rem;
 }
 
-
 .close-icon {
     float: right;
     font-size: 16px;
@@ -1298,7 +1400,6 @@ table {
     color: #fac003;
     margin: 10px;
 }
-
 
 #admin-page .dropdown-wrapper {
     position: relative;
@@ -1348,20 +1449,17 @@ table {
     background-color: transparent !important;
 }
 
-#kitchen-page .menu-table-container  {
+#kitchen-page .menu-table-container {
     border: none;
+    margin-bottom: 1rem;
     background-color: transparent !important;
 }
 
 #kitchen-page .menu-btn {
-    background-color: black;
-    color: white;
-    border-radius: 3px;
+    color: black;
+    border: none;
     font-size: 1rem;
-    font-weight: bold;
-    border: 1px solid white;
     cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 #kitchen-page #menu-section {
@@ -1372,37 +1470,12 @@ table {
     border-radius: 5px;
 }
 
-#kitchen-page .cart-item img {
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
 #kitchen-page .order-card {
     border-radius: 3px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
     margin-bottom: 10px;
     background-color: white;
-}
-
-#kitchen-page .cancelled-highlight {
-    background-color: #fac003;
-    border-left: 1px solid #fac003;
-}
-
-#kitchen-page .cancelled-badge {
-    background-color: #fac003;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid #fac003;
-    font-size: 0.8rem;
-    margin-left: 5px;
-}
-
-#kitchen-page .cancelled-remove-btn {
-    font-size: 0.8rem;
-    padding: 4px 8px;
 }
 
 /* Status buttons */
@@ -1414,7 +1487,163 @@ table {
     margin-right: 4px;
 }
 
+#kitchen-page .status-btn {
+    min-width: 80px;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-right: 4px;
+}
 
+/* Pending */
+#kitchen-page .btn-warning, .btn-outline-warning.active {
+    background-color: black !important;
+    color: white !important;
+    border: 1px solid black !important;
+}
+
+#kitchen-page .btn-outline-warning {
+    background-color: transparent;
+    color: #fac003;
+    border: 1px solid #fac003;
+}
+
+#kitchen-page .btn-outline-warning:hover {
+    background-color: #fac003;
+    color: white;
+}
+
+/* Preparing */
+#kitchen-page .btn-info, .btn-outline-info.active {
+    background-color: black !important;
+    color: white !important;
+    border: 1px solid black !important;
+}
+
+#kitchen-page .btn-outline-info {
+    background-color: transparent;
+    color: #fac003;
+    border: 1px solid #fac003;
+}
+
+#kitchen-page .btn-outline-info:hover {
+    background-color: #fac003 !important;
+    color: white;
+    border: 1px solid #fac003 !important;
+}
+
+/* Prepared */
+#kitchen-page .btn-primary, .btn-outline-primary.active {
+    background-color: black !important;
+    color: white !important;
+    border: 1px solid black !important;
+}
+
+#kitchen-page .btn-outline-primary {
+    background-color: transparent;
+    color: #fac003;
+    border: 1px solid #fac003;
+}
+
+#kitchen-page .btn-outline-primary:hover {
+    background-color: #fac003 !important;
+    color: white;
+    border: 1px solid #fac003 !important;
+}
+
+/* Served */
+#kitchen-page .btn-success, .btn-outline-success.active {
+    background-color: black !important;
+    color: white !important;
+    border: 1px solid black !important;
+}
+
+#kitchen-page .btn-outline-success {
+    background-color: transparent;
+    color: #fac003;
+    border: 1px solid #fac003 !important;
+}
+
+#kitchen-page .btn-outline-success:hover {
+    background-color: #fac003 !important;
+    color: white;
+    border: 1px solid #fac003 !important;
+}
+
+/* Cashier page */
+#cashier-page .card {
+    width: 100%;
+    border: none;
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#cashier-page .table-warning {
+    background-color: #e8d390 !important;
+}
+
+#cashier-page .badge.bg-danger {
+    font-size: 0.85rem;
+}
+
+#cashier-page .input-group {
+    margin-top: 8px;
+    border: 1px solid #fac003;
+    border-radius: 3px;
+}
+
+#cashier-page input[type="number"]:focus {
+    border-color: inherit !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none;
+}
+
+#cashier-page .input-group-text {
+    background-color: #f8f9fa;
+    border-right: 0;
+    border: none;
+    border-radius: 3px;
+}
+
+#cashier-page .form-control {
+    border-left: 0;
+    border-right: 0;
+}
+
+#cashier-page .btn-success {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #fac003;
+    border: 1px solid #fac003;
+}
+
+#cashier-page .alert-success,
+#cashier-page .alert-danger,
+#cashier-page .alert-warning {
+    font-size: small;
+    background-color: #f8f9fa;
+    border-color: black !important;
+    color: black !important;
+    font-style: italic;
+    border-radius: 3px;
+    padding: 3px;
+    border: 1px dashed;
+}
+
+#cashier-page .cashier-table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+#cashier-page .cashier-table-responsive .table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+}
 
 /* Cart items part */
 .cart-item img {
@@ -1985,9 +2214,51 @@ ul.list-payment-icon li {
         width: 94%;
     }
 
+    /* Kitchen page */
+    #kitchen-page .order-card {
+        font-size: 14px;
+    }
+
+    #kitchen-page .order-card .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    #kitchen-page .order-card .text-end {
+        text-align: left !important;
+        margin-top: 10px;
+    }
+
     #kitchen-page .cart-item {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    #kitchen-page .cart-item img {
+        width: 80px;
+        height: auto;
+    }
+
+    #kitchen-page .qty-price-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    #kitchen-page .status-btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    #kitchen-page .status-btn {
+        width: 100%;
+    }
+
+    #kitchen-page .cancelled-remove-btn {
+        width: 100%;
+        margin-top: 10px;
     }
 
     .cart-item {
@@ -2056,4 +2327,22 @@ ul.list-payment-icon li {
         padding: 10px 0;
     }
 
+    /* Target only cashier page */
+    #cashier-page .cashier-table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    /* Prevent the table from shrinking and keep full content */
+    #cashier-page .cashier-table-responsive .table {
+        width: max-content; /* keeps full natural width */
+        min-width: 100%; /* ensures it doesn't collapse on large screens */
+        border-collapse: collapse;
+    }
+
+
+    .sidebar-actions {
+        margin-top: 10px;
+    }
 }
