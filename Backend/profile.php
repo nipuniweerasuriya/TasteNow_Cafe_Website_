@@ -42,6 +42,7 @@ $sql = "
         poi.id AS order_item_id,
         poi.status AS item_status,
         poi.quantity,
+        poi.price AS item_price,
         poi.price AS total_price,
         poi.item_name,
         poi.image_url AS item_image,
@@ -215,57 +216,81 @@ if ($tab === 'bookings') {
         ?>
 
         <!-- Orders Section -->
-            <div class="order-items-container bg-white p-3 mb-3">
-                <h3 class="order-section-heading">Today Orders</h3>
-                <?php if ($result->num_rows > 0): ?>
-                    <?php if (!empty($ordersGrouped)): ?>
-                        <?php foreach ($ordersGrouped as $orderId => $order): ?>
-                            <div class="order-section">
-                                <h3>Order #<?= $orderId ?> (<?= $order['order_date'] ?>)</h3>
-                                <p><strong>Table:</strong> <?= $order['table_number'] ?> | <strong>Payment:</strong> <?= $order['payment_status'] ?></p>
-                                <ul style="list-style: none; padding-left: 0;">
-                                    <?php foreach ($order['items'] as $item): ?>
-                                        <li style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">
-                                            <div style="display: flex; align-items: center;">
-                                                <img src="<?= $item['item_image'] ?>" alt="<?= $item['item_name'] ?>" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;">
-                                                <div>
-                                                    <strong><?= $item['item_name'] ?></strong><br>
-                                                    Quantity: <?= $item['quantity'] ?> | Rs.<?= $item['total_price'] ?><br>
-                                                    Status: <span style="font-weight: bold; color: <?= $item['item_status'] === 'Pending' ? 'orange' : ($item['item_status'] === 'Prepared' ? 'blue' : ($item['item_status'] === 'Served' ? 'green' : 'red')) ?>;">
-                                                <?= $item['item_status'] ?>
-                                            </span>
-                                                    <br>
-
-                                                    <?php if ($item['item_status'] == 'Pending'): ?>
-                                                        <!-- Cancel and Update buttons -->
-                                                        <form action="../Backend/cancel-order-item.php" method="post" style="display: inline-block; margin-top: 5px;">
-                                                            <input type="hidden" name="order_item_id" value="<?= $item['order_item_id'] ?>">
-                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to cancel this item?');">Cancel</button>
-                                                        </form>
-                                                        <form action="../Backend/update-order-item.php" method="get" style="display: inline-block; margin-left: 5px; margin-top: 5px;">
-                                                            <input type="hidden" name="item_id" value="<?= $item['order_item_id'] ?>">
-                                                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                                                        </form>
-                                                    <?php else: ?>
-                                                        <span style="color: gray; font-size: 12px;">No actions available</span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
+        <div class="order-items-container bg-white p-3 mb-3">
+            <h3 class="order-section-heading">Today Orders</h3>
+            <?php if ($result->num_rows > 0): ?>
+                <?php if (!empty($ordersGrouped)): ?>
+                    <?php foreach ($ordersGrouped as $orderId => $order): ?>
+                        <div class="order-section">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <div>
+                                    <strong>Order ID:</strong> #<?= $orderId ?><br>
+                                    <strong>Table:</strong> <?= $order['table_number'] ?><br>
+                                    <strong>Date:</strong> <?= $order['order_date'] ?>
+                                </div>
+                                <div class="text-end" style="text-align: right;">
+                                    <strong>Total Price:</strong> Rs.<br>
+                                    <?= $order['payment_status'] ?><br>
+                                </div>
                             </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No orders found for the selected filter.</p>
-                    <?php endif; ?>
+                            <strong style="margin-bottom: 15px; border-bottom: 1px solid #cccccc; padding-bottom: 10px;"><hr></strong>
+
+                            <ul style="list-style: none; padding-left: 0;">
+                                <?php foreach ($order['items'] as $item): ?>
+
+                                    <li style="margin-bottom: 15px; border-bottom: 1px solid #cccccc; padding-bottom: 10px;">
+                                        <div style="display: flex; align-items: center;">
+                                            <img src="<?= $item['item_image'] ?>" alt="<?= $item['item_name'] ?>"
+                                                 style="width: 80px; height: 80px; object-fit: cover; margin-right: 10px;">
+                                            <div>
+                                                <strong><?= $item['item_name'] ?></strong> |
+                                                Qty: <?= $item['quantity'] ?> |
+                                                Rs.<?= $item['item_price'] ?> |
+                                                <span class="<?= $statusClass ?>"
+                                                      style="font-size: 0.9rem; padding: 5px 10px; color: #fac003;">
+                                            <?= $item['item_status'] ?>
+                                        </span>
+                                                <br>
+
+                                                <?php if ($item['item_status'] == 'Pending'): ?>
+                                                    <!-- Cancel and Update buttons -->
+                                                    <form action="../Backend/cancel-order-item.php" method="post"
+                                                          style="display: inline-block; margin-top: 5px;">
+                                                        <input type="hidden" name="order_item_id"
+                                                               value="<?= $item['order_item_id'] ?>">
+                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                                onclick="return confirm('Are you sure to cancel this item?');">
+                                                            Cancel
+                                                        </button>
+                                                    </form>
+                                                    <form action="../Backend/update-order-item.php" method="get"
+                                                          style="display: inline-block; margin-left: 5px; margin-top: 5px;">
+                                                        <input type="hidden" name="item_id"
+                                                               value="<?= $item['order_item_id'] ?>">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Update
+                                                        </button>
+                                                    </form>
+                                                <?php else: ?>
+                                                    <span class="no-actions">No actions available</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                    <p>No orders found for the selected filter.</p>
+                    <p>No Today Orders.</p>
                 <?php endif; ?>
-            </div>
+            <?php else: ?>
+                <p>No Today Orders.</p>
+            <?php endif; ?>
+        </div>
 
 
-            <!-- Bookings Section -->
+
+        <!-- Bookings Section -->
             <div class="container my-4" id="bookingContainer" style="<?= $tab === 'bookings' ? 'display:block;' : 'display:none;' ?>">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -325,7 +350,7 @@ if ($tab === 'bookings') {
                                                         </button>
                                                     </form>
                                                 <?php else: ?>
-                                                    <span class="text-muted small">N/A</span>
+                                                    <span class="text-muted small">Canceled</span>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -356,7 +381,7 @@ if ($tab === 'bookings') {
             document.getElementById("searchInput").addEventListener("input", function () {
                 const query = this.value.toLowerCase().trim();
 
-                // === Orders Section ===
+                //  Orders Section
                 const orderContainer = document.querySelector(".order-items-container");
                 const orderSections = Array.from(orderContainer.querySelectorAll(".order-section"));
 
@@ -377,7 +402,7 @@ if ($tab === 'bookings') {
                 matchedOrders.forEach(section => orderContainer.appendChild(section));
                 unmatchedOrders.forEach(section => orderContainer.appendChild(section));
 
-                // === Bookings Section ===
+                // Bookings Section
                 const bookingTableBody = document.querySelector("#bookingContainer tbody");
                 if (bookingTableBody) {
                     const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));

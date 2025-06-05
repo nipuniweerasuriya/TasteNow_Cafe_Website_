@@ -860,59 +860,41 @@ body, html {
     margin-bottom: 1rem;
 }
 
-/* Order Section Wrapper */
 #profile-page .order-section {
-    border: 1px solid #ccc;
+    border: none;
     margin: 15px 0;
     padding: 10px 15px;
-    border-radius: 10px;
-    background-color: #fefefe;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Order Heading */
-#profile-page .order-section h3 {
-    margin-top: 0;
-    color: #333;
-}
-
-/* Order Meta Info */
-#profile-page .order-section p {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
-}
-
-/* Order Item List */
 #profile-page .order-section ul {
     list-style: none;
     padding-left: 0;
     margin: 0;
 }
 
-/* Each Item Entry */
 #profile-page .order-section li {
     margin-bottom: 15px;
     border-bottom: 1px dashed #ccc;
     padding-bottom: 10px;
 }
 
-/* Item Display Layout */
 #profile-page .order-section li .item-row {
     display: flex;
     align-items: center;
 }
 
-/* Item Image */
 #profile-page .order-section img {
-    width: 60px;
-    height: 60px;
+
     object-fit: cover;
     border-radius: 6px;
     margin-right: 10px;
+    width: 80px;
+    height: 80px;
 }
 
-/* Item Info */
 #profile-page .order-section .item-details {
     flex-grow: 1;
     font-size: 14px;
@@ -931,7 +913,7 @@ body, html {
 }
 
 #profile-page .order-section .status-served {
-    color: #fac003;
+    color: #fac003 !important;
     font-weight: bold;
 }
 
@@ -949,10 +931,9 @@ body, html {
 
 /* Disabled Action Text */
 #profile-page .order-section .no-actions {
-    color: gray;
-    font-size: 12px;
+    color: #f1d476;
+    font-size: 10px;
 }
-
 
 #profile-page .order-actions {
     display: flex;
