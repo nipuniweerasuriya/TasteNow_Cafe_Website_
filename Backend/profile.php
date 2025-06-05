@@ -24,10 +24,11 @@ if (!$name || !$email) {
     exit();
 }
 
+// Profile avatar
 $nameParts = explode(' ', $name);
 $initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
 
-// Build order query
+// Orders
 $sql = "
     SELECT
         po.id AS order_id,
@@ -81,14 +82,14 @@ while ($order = $result->fetch_assoc()) {
 
     $ordersGrouped[$orderId]['items'][] = $order;
 
-    // ✅ Only add non-canceled items to total
+    //  Only add non-canceled items to total
     if (strtolower($order['item_status']) !== 'canceled') {
         $ordersGrouped[$orderId]['total_price'] += $order['item_total'];
     }
 }
 
 
-// Bookings tab
+// Bookings tables
 $tab = $_GET['tab'] ?? '';
 $bookings = [];
 
@@ -107,7 +108,11 @@ if ($tab === 'bookings') {
 
 <!doctype html>
 <html lang="en">
+
+
 <head>
+
+
     <meta charset="UTF-8">
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -134,9 +139,11 @@ if ($tab === 'bookings') {
     <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-</head>
-<body class="common-page" id="profile-page">
 
+</head>
+
+
+<body class="common-page" id="profile-page">
 <div class="navbar">
     <div class="navbar-container">
         <div class="navbar-brand">
@@ -366,6 +373,7 @@ if ($tab === 'bookings') {
 
 
 <script>
+    // Search function
     document.getElementById("unifiedSearchInput").addEventListener("keyup", function () {
         const searchValue = this.value.toLowerCase();
 
@@ -412,6 +420,8 @@ if ($tab === 'bookings') {
         [...matchedRows, ...unmatchedRows].forEach(row => bookingTableBody.appendChild(row));
     });
 
+
+    // Cancel booking
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.cancel-booking-btn').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -431,17 +441,11 @@ if ($tab === 'bookings') {
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'success') {
-                            // Option 1: Change button text and disable it
+                            // Change button text and disable it
                             cancelButton.textContent = 'Cancelled';
                             cancelButton.disabled = true;
-                            cancelButton.classList.remove('btn-danger'); // if using Bootstrap or similar
-                            cancelButton.classList.add('btn-secondary'); // optional styling change
-
-                            // Option 2: Or replace button completely with a non-clickable label
-                            // const cancelledLabel = document.createElement('span');
-                            // cancelledLabel.textContent = 'Cancelled';
-                            // cancelledLabel.className = 'badge bg-secondary';
-                            // cancelButton.replaceWith(cancelledLabel);
+                            cancelButton.classList.remove('btn-danger');
+                            cancelButton.classList.add('btn-secondary');
 
                             alert('Booking cancelled successfully.');
                         } else {
@@ -472,6 +476,7 @@ if ($tab === 'bookings') {
             });
         });
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

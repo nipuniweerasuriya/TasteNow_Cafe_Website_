@@ -24,14 +24,14 @@ $booking_end->modify("+$duration hours");
 $start_time_str = $booking_start->format('H:i:s');
 $end_time_str = $booking_end->format('H:i:s');
 
-// 1. Get all table numbers
+// Get all table numbers
 $tables = [];
 $tables_result = $conn->query("SELECT table_number FROM tables ORDER BY table_number ASC");
 while ($row = $tables_result->fetch_assoc()) {
     $tables[] = $row['table_number'];
 }
 
-// 2. Get booked tables for the date that overlap requested time
+// Get booked tables for the date that overlap requested time
 $sql = "
     SELECT table_number FROM table_bookings
     WHERE booking_date = ?
@@ -52,7 +52,7 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
-// 3. Find available tables
+// Find available tables
 $available_tables = array_diff($tables, $booked_tables);
 
 if (empty($available_tables)) {
@@ -60,10 +60,10 @@ if (empty($available_tables)) {
     exit();
 }
 
-// 4. Assign first available table
+// Assign first available table
 $table_number = array_shift($available_tables);
 
-// 5. Insert booking with assigned table number
+// Insert booking with assigned table number
 $insert = $conn->prepare("INSERT INTO table_bookings (user_id, name, phone, email, number_of_people, booking_date, booking_time, duration, special_request, table_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $insert->bind_param("isssissisi", $user_id, $name, $phone, $email, $number_of_people, $booking_date, $booking_time, $duration, $special_request, $table_number);
 

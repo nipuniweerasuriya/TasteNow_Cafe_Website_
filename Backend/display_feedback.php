@@ -15,9 +15,9 @@ $sql = "
 
 $result = $conn->query($sql);
 ?>
-    <!-- Feedback Scroll Section -->
+    <!-- Feedback Section -->
     <div class="feedback-scroll-container" aria-label="User feedback scroll" id="feedback-section">
-        <h2 class="feedback-heading">-----Customers says-----</h2>
+        <h2 class="feedback-heading">Customers Says</h2>
         <div class="feedback-scroll-track">
             <?php
             if ($result && $result->num_rows > 0) {

@@ -29,8 +29,8 @@ if (mysqli_num_rows($result) > 0) {
 $names = explode(' ', $user['name']);
 $initials = strtoupper(substr($names[0], 0, 1) . substr(end($names), 0, 1));
 
-// ===================== HANDLE AJAX REQUESTS ===================== //
 
+// Orders
 if (isset($_GET['load_orders'])) {
     header('Content-Type: application/json');
     $status = $_GET['status'] ?? 'all';
@@ -68,6 +68,8 @@ if (isset($_GET['load_orders'])) {
     exit();
 }
 
+
+// Load table bookings
 if (isset($_GET['load_bookings'])) {
     $query = "SELECT * FROM table_bookings ORDER BY booking_date DESC, booking_time DESC";
     $result = mysqli_query($conn, $query);
@@ -139,8 +141,8 @@ if (isset($_GET['load_bookings'])) {
         }
 
         echo "</tbody></table>";
-        echo "</div>"; // close table-responsive
-        echo "</div>"; // close booking-table-container
+        echo "</div>";
+        echo "</div>";
     } else {
         echo "<div>No bookings found.</div>";
     }
@@ -149,6 +151,7 @@ if (isset($_GET['load_bookings'])) {
 }
 
 
+// Order summary
 $today = date('Y-m-d');
 
 // Total Orders Today
@@ -197,12 +200,13 @@ if ($checkResult->num_rows > 0) {
     $insertStmt->bind_param("sidi", $today, $totalOrders, $totalRevenue, $totalBookings);
     $insertStmt->execute();
 }
-
-
 ?>
+
 
 <!doctype html>
 <html lang="en">
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -230,10 +234,10 @@ if ($checkResult->num_rows > 0) {
     <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+
 </head>
 
 <body class="common-page" id="admin-page">
-
 <!-- Navbar -->
 <div class="navbar">
     <div class="navbar-container">
@@ -243,7 +247,8 @@ if ($checkResult->num_rows > 0) {
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Status, Booking ID, User ID, Item Name">
+            <input type="text" id="searchInput"
+                   placeholder="Search by Table No, Order Id, Status, Booking ID, User ID, Item Name">
         </div>
 
 
@@ -353,7 +358,6 @@ if ($checkResult->num_rows > 0) {
             <div id="menu-section" style="display: none; margin-top: 20px;"></div>
 
 
-
             <a href="#" class="back-to-top" id="backToTopBtn">
                 <span class="material-icons">arrow_upward</span>
             </a>
@@ -363,7 +367,7 @@ if ($checkResult->num_rows > 0) {
 
         <!-- JS Scripts -->
         <script>
-
+            // Load today orders
             document.addEventListener("DOMContentLoaded", function () {
                 const tbody = document.querySelector("#orders-table tbody");
                 const historyBtn = document.getElementById('orderHistoryBtn');
@@ -393,6 +397,7 @@ if ($checkResult->num_rows > 0) {
                         }
                     });
                 }
+
 
                 function loadOrders(filter = 'today') {
                     let url = window.location.pathname + '?load_orders=1';
@@ -465,6 +470,7 @@ if ($checkResult->num_rows > 0) {
             });
 
 
+            // Side bar
             function toggleDropdown(id) {
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
                     if (menu.id !== id) menu.style.display = 'none';
@@ -616,6 +622,8 @@ if ($checkResult->num_rows > 0) {
                     return false;
                 };
 
+
+                // Display menu items
                 window.displayMenu = function () {
                     const formContainer = document.getElementById('form-container');
                     const menuSection = document.getElementById('menu-section');
@@ -679,6 +687,7 @@ if ($checkResult->num_rows > 0) {
                             menuSection.innerHTML = '<p>Error loading menu.</p>';
                         });
                 };
+
 
                 window.filterTable = function () {
                     const searchValue = document.getElementById('searchBar').value.toLowerCase();
@@ -808,13 +817,10 @@ if ($checkResult->num_rows > 0) {
                 };
 
 
-
             });
 
 
-
-
-
+            // Table booking
             function showTableBooking() {
                 fetch('admin_dashboard.php?load_bookings=true')
                     .then(response => response.text())
@@ -865,6 +871,7 @@ if ($checkResult->num_rows > 0) {
                 userDetailsContainer.innerHTML = '';
             };
 
+
             // Search Bookings, Users, Orders, Menu Items
             document.getElementById('searchInput').addEventListener('keyup', function () {
                 const searchTerm = this.value.toLowerCase();
@@ -880,26 +887,19 @@ if ($checkResult->num_rows > 0) {
                     });
                 }
 
-                // Orders Table: search order ID, table number, order status
-                // Assuming order ID is column 0, table number column 2, order status column 7 (adjust if needed)
                 const ordersTable = document.querySelector('#ordersContainer table');
-                filterTable(ordersTable, [0, 1, 5,6]);
+                filterTable(ordersTable, [0, 1, 5, 6]);
 
-                // Booking Table: search booking ID
-                // Assuming booking ID is in column 0
                 const bookingTable = document.querySelector('#bookingContainer table');
                 filterTable(bookingTable, [0]);
 
-                // Menu Table: search item name
-                // Assuming item name is in column 1
                 const menuTable = document.querySelector('#menu-section table');
                 filterTable(menuTable, [1]);
 
-                // User Table: search user ID
-                // Assuming user ID is in column 0
                 const userTable = document.querySelector('#userDetailsContainer table');
                 filterTable(userTable, [0]);
             });
+
 
             // Display Daily Summary
             async function fetchDailySummary() {
@@ -932,6 +932,7 @@ if ($checkResult->num_rows > 0) {
             fetchDailySummary();
 
 
+            // Side bar toggler
             function toggleSidebar() {
                 const sidebar = document.getElementById('dashboardSidebar');
                 sidebar.classList.toggle('show-sidebar');
@@ -942,17 +943,15 @@ if ($checkResult->num_rows > 0) {
                 dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
             }
 
-
-
-                window.addEventListener('scroll', function () {
+            // Nav bar fied top
+            window.addEventListener('scroll', function () {
                 const navbar = document.querySelector('.navbar');
                 if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
             });
-
 
 
             // Back to top btn
@@ -975,10 +974,9 @@ if ($checkResult->num_rows > 0) {
             });
         </script>
 
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="../Frontend/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../Frontend/js/script.js"></script>
 
 </body>
 </html>

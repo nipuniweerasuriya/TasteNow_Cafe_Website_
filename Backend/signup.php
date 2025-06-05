@@ -4,11 +4,11 @@ session_start();
 include 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name     = trim($_POST['name']);
-    $email    = trim($_POST['email']);
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $confirm  = $_POST['confirm-password'];
-    $role     = $_POST['role'];
+    $confirm = $_POST['confirm-password'];
+    $role = $_POST['role'];
 
     // Validate role against allowed options
     $allowedRoles = ['admin', 'kitchen', 'cashier', 'user'];

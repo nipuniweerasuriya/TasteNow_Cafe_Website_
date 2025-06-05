@@ -36,9 +36,7 @@ session_start();
 
 </head>
 
-
 <body id="home_page">
-
 <!-- Section: Topbar -->
 <div class="container-fluid">
     <div class="top-bar">
@@ -89,6 +87,7 @@ session_start();
                                 $profileLink = "../Backend/profile.php";
                         }
                         ?>
+                        <!-- Role name in nav bar -->
                         <a class="nav-link"
                            href="<?= $profileLink ?>"><?= htmlspecialchars($_SESSION['user_name']) ?></a>
                     <?php else: ?>
@@ -119,6 +118,7 @@ session_start();
                         </div>
                     </form>
 
+
                     <!-- Sign Up Form -->
                     <form action="signup.php" method="post">
                         <div id="signup-form" style="display:none;">
@@ -144,7 +144,6 @@ session_start();
                     </form>
                 </div>
 
-                <!-- Section: Cart Icon -->
                 <!-- Section: Cart Icon -->
                 <div class="d-flex align-items-center ms-3">
                     <?php if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'kitchen' && $_SESSION['role'] !== 'cashier')): ?>
@@ -218,10 +217,10 @@ session_start();
         <button class="category-button" data-category="drinks">Drinks</button>
     </div>
 
+    <!-- Menu display -->
     <div id="menu-container">
         <?php include '../Backend/get_menu_items.php'; ?>
     </div>
-
     <button class="see-more-btn" id="see-more-btn">See More</button>
 </section>
 
@@ -285,6 +284,7 @@ session_start();
                 </ul>
             </div>
 
+
             <!--Section: Quick Links -->
             <div class="col-md-3 mb-4">
                 <h6 class="footer-sub-headings text-uppercase">Quick Links</h6>
@@ -295,6 +295,7 @@ session_start();
                     <li><a href="#footer">Contact</a></li>
                 </ul>
             </div>
+
 
             <!-- Section: Contact -->
             <div class="col-md-3 mb-4">
@@ -332,7 +333,7 @@ session_start();
 </footer>
 
 
-<!-- Section: Js Link-->
+<!-- Section: Js -->
 <script>
     // Navbar Fixed Top
     document.addEventListener("DOMContentLoaded", function () {
@@ -348,6 +349,7 @@ session_start();
                 document.body.classList.remove('fixed-nav-padding');
             }
         });
+
 
         // Sign In and Sign Up Toggle Logic
         const signinBtn = document.getElementById('signing-btn');
@@ -383,6 +385,7 @@ session_start();
             }
         });
 
+
         // Menu See More Btn
         const menuItems = document.querySelectorAll(".menu-item");
         const seeMoreBtn = document.getElementById("see-more-btn");
@@ -399,6 +402,7 @@ session_start();
             seeMoreBtn.style.display = "none";
         });
 
+
         // Category Filtering
         const buttons = document.querySelectorAll('.category-button');
         buttons.forEach(button => {
@@ -412,6 +416,7 @@ session_start();
                 button.classList.add('active');
             });
         });
+
 
         // Add Item to Cart
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
@@ -449,6 +454,7 @@ session_start();
             });
         });
 
+
         // Booking Section
         // Set minimum date to today
         const dateInput = document.querySelector('input[name="booking_date"]');
@@ -472,6 +478,7 @@ session_start();
 
         if (dateInput && timeInput) setMinDateTime();
     });
+
 
     // Back to top btn
     const backToTopBtn = document.getElementById("backToTopBtn");
@@ -514,12 +521,8 @@ session_start();
             });
     }
 
-    // Optionally call on page load
     document.addEventListener('DOMContentLoaded', updateCartQuantity);
-
-
 </script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require_once '../Backend/db_connect.php';  // Include your database connection
+require_once '../Backend/db_connect.php';
 
 // SQL Query to fetch all processed orders and related data (excluding canceled items)
 $sql = "

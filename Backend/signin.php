@@ -3,7 +3,8 @@ global $conn;
 session_start();
 include 'db_connect.php';
 
-function redirectByRole($role) {
+function redirectByRole($role)
+{
     switch ($role) {
         case 'admin':
             header("Location: ../Backend/admin_dashboard.php");
