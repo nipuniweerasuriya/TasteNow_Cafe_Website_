@@ -44,7 +44,8 @@ if (isset($_GET['load_orders'])) {
                 poi.status,
                 poi.image_url,
                 po.table_number,
-                po.created_at
+                po.created_at,
+                po.payment_status
               FROM processed_order_items poi
               JOIN processed_order po ON poi.order_id = po.id";
 
@@ -66,7 +67,6 @@ if (isset($_GET['load_orders'])) {
     echo json_encode($orders);
     exit();
 }
-
 
 if (isset($_GET['load_bookings'])) {
     $query = "SELECT * FROM table_bookings ORDER BY booking_date DESC, booking_time DESC";
@@ -142,64 +142,61 @@ if (isset($_GET['load_bookings'])) {
         echo "</div>"; // close table-responsive
         echo "</div>"; // close booking-table-container
     } else {
-        echo "<div class='alert alert-info text-center'>No bookings found.</div>";
+        echo "<div>No bookings found.</div>";
     }
 
     exit();
 }
 
 
+$today = date('Y-m-d');
 
-    $today = date('Y-m-d');
+// Total Orders Today
+$sqlOrders = "SELECT COUNT(*) AS total_orders FROM processed_order WHERE DATE(created_at) = ?";
+$stmt1 = $conn->prepare($sqlOrders);
+$stmt1->bind_param("s", $today);
+$stmt1->execute();
+$result1 = $stmt1->get_result();
+$totalOrders = $result1->fetch_assoc()['total_orders'] ?? 0;
 
-    // Total Orders Today
-    $sqlOrders = "SELECT COUNT(*) AS total_orders FROM processed_order WHERE DATE(created_at) = ?";
-    $stmt1 = $conn->prepare($sqlOrders);
-    $stmt1->bind_param("s", $today);
-    $stmt1->execute();
-    $result1 = $stmt1->get_result();
-    $totalOrders = $result1->fetch_assoc()['total_orders'] ?? 0;
-
-    // Total Revenue Today
-    $sqlRevenue = "SELECT COALESCE(SUM(amount_paid), 0) AS total_revenue FROM payments WHERE DATE(paid_at) = ?";
-    $stmt2 = $conn->prepare($sqlRevenue);
-    $stmt2->bind_param("s", $today);
-    $stmt2->execute();
-    $result2 = $stmt2->get_result();
-    $totalRevenue = $result2->fetch_assoc()['total_revenue'] ?? 0.00;
-
-
-    // Total Confirmed Bookings Today
-    $sqlBookings = "SELECT COUNT(*) AS total_bookings FROM table_bookings WHERE booking_date = ? AND status = 'Confirmed'";
-    $stmt3 = $conn->prepare($sqlBookings);
-    $stmt3->bind_param("s", $today);
-    $stmt3->execute();
-    $result3 = $stmt3->get_result();
-    $totalBookings = $result3->fetch_assoc()['total_bookings'] ?? 0;
+// Total Revenue Today
+$sqlRevenue = "SELECT COALESCE(SUM(amount_paid), 0) AS total_revenue FROM payments WHERE DATE(paid_at) = ?";
+$stmt2 = $conn->prepare($sqlRevenue);
+$stmt2->bind_param("s", $today);
+$stmt2->execute();
+$result2 = $stmt2->get_result();
+$totalRevenue = $result2->fetch_assoc()['total_revenue'] ?? 0.00;
 
 
-    // Save into daily_summary table (INSERT or UPDATE)
-    $checkSql = "SELECT id FROM daily_summary WHERE summary_date = ?";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("s", $today);
-    $checkStmt->execute();
-    $checkResult = $checkStmt->get_result();
-
-    if ($checkResult->num_rows > 0) {
-        // Update existing entry
-        $updateSql = "UPDATE daily_summary SET total_orders = ?, total_revenue = ?, total_bookings = ? WHERE summary_date = ?";
-        $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param("iids", $totalOrders, $totalRevenue, $totalBookings, $today);
-        $updateStmt->execute();
-    } else {
-        // Insert new entry
-        $insertSql = "INSERT INTO daily_summary (summary_date, total_orders, total_revenue, total_bookings) VALUES (?, ?, ?, ?)";
-        $insertStmt = $conn->prepare($insertSql);
-        $insertStmt->bind_param("sidi", $today, $totalOrders, $totalRevenue, $totalBookings);
-        $insertStmt->execute();
-    }
+// Total Confirmed Bookings Today
+$sqlBookings = "SELECT COUNT(*) AS total_bookings FROM table_bookings WHERE booking_date = ? AND status = 'Confirmed'";
+$stmt3 = $conn->prepare($sqlBookings);
+$stmt3->bind_param("s", $today);
+$stmt3->execute();
+$result3 = $stmt3->get_result();
+$totalBookings = $result3->fetch_assoc()['total_bookings'] ?? 0;
 
 
+// Save into daily_summary table (INSERT or UPDATE)
+$checkSql = "SELECT id FROM daily_summary WHERE summary_date = ?";
+$checkStmt = $conn->prepare($checkSql);
+$checkStmt->bind_param("s", $today);
+$checkStmt->execute();
+$checkResult = $checkStmt->get_result();
+
+if ($checkResult->num_rows > 0) {
+    // Update existing entry
+    $updateSql = "UPDATE daily_summary SET total_orders = ?, total_revenue = ?, total_bookings = ? WHERE summary_date = ?";
+    $updateStmt = $conn->prepare($updateSql);
+    $updateStmt->bind_param("iids", $totalOrders, $totalRevenue, $totalBookings, $today);
+    $updateStmt->execute();
+} else {
+    // Insert new entry
+    $insertSql = "INSERT INTO daily_summary (summary_date, total_orders, total_revenue, total_bookings) VALUES (?, ?, ?, ?)";
+    $insertStmt = $conn->prepare($insertSql);
+    $insertStmt->bind_param("sidi", $today, $totalOrders, $totalRevenue, $totalBookings);
+    $insertStmt->execute();
+}
 
 
 ?>
@@ -211,26 +208,27 @@ if (isset($_GET['load_bookings'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
 
-    <!-- Fonts and Icons -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
           rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
           rel="stylesheet">
 
-    <!-- Bootstrap and Icons -->
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 
 </head>
 
@@ -245,7 +243,7 @@ if (isset($_GET['load_bookings'])) {
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Date, or Status">
+            <input type="text" id="searchInput" placeholder="Search by Table No, Order Id, Status, Booking ID, User ID, Item Name">
         </div>
 
 
@@ -259,40 +257,33 @@ if (isset($_GET['load_bookings'])) {
 
 <!-- Dashboard content -->
 <div class="container">
-    <!-- Header Section: Profile + Toggler -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <!-- Left: Avatar + Name + Email -->
-        <div class="d-flex align-items-center">
-            <div class="text-white d-flex justify-content-center align-items-center dashboard-avatar me-3">
-                <?php echo $initials; ?>
-            </div>
-            <div>
-                <h6 class="mb-0"><?php echo $user['name']; ?></h6>
-                <small class="text-muted"><?php echo $user['email']; ?></small>
-            </div>
-        </div>
-
-        <!-- Right: Toggler Button (Mobile only) -->
-        <div class="d-md-none">
-            <button onclick="toggleSidebar()" class="btn">
-                ☰
-            </button>
-        </div>
-    </div>
-
 
     <div class="dashboard-layout d-flex">
         <!-- Sidebar -->
         <div id="dashboardSidebar" class="dashboard-sidebar me-4">
-
+            <!-- Header Section: Profile + Toggler -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <!-- Left: Avatar + Name + Email -->
+                <div class="d-flex align-items-center">
+                    <div class="text-white d-flex justify-content-center align-items-center dashboard-avatar me-3">
+                        <?php echo $initials; ?>
+                    </div>
+                    <div>
+                        <h6 class="mb-0"><?php echo $user['name']; ?></h6>
+                        <small class="text-muted"><?php echo $user['email']; ?></small>
+                    </div>
+                </div>
+            </div>
 
             <!-- Sidebar Menu -->
             <div class="dashboard-actions">
                 <a href="index.php" class="dashboard-action-item" style="text-decoration: none"><small>Home</small></a>
                 <a href="kitchen.php" class="dashboard-action-item" style="text-decoration: none"><small>Kitchen</small></a>
                 <a href="cashier.php" class="dashboard-action-item" style="text-decoration: none"><small>Cashier</small></a>
-                <a href="#bookingContainer" class="dashboard-action-item" style="text-decoration: none;" onclick="showTableBooking()">Table Booking</a>
-                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order History</small></a>
+                <a href="#bookingContainer" class="dashboard-action-item" style="text-decoration: none;"
+                   onclick="showTableBooking()">Table Booking</a>
+                <a href="#" id="orderHistoryBtn" class="dashboard-action-item" style="text-decoration: none"><small>Order
+                        History</small></a>
 
                 <div class="dropdown-wrapper">
                     <div class="dashboard-action-item" onclick="toggleDropdown('paidDropdown')">
@@ -335,7 +326,8 @@ if (isset($_GET['load_bookings'])) {
                 <div class="container my-4" id="ordersTableContainer">
                     <h3 class="order-table-heading mb-4">Today's Orders</h3>
                     <div class="table-responsive">
-                        <table id="orders-table" class="table table-bordered table-striped table-hover align-middle text-center">
+                        <table id="orders-table"
+                               class="table table-bordered table-striped table-hover align-middle text-center">
                             <thead class="table-dark">
                             <tr>
                                 <th>Order ID</th>
@@ -344,6 +336,7 @@ if (isset($_GET['load_bookings'])) {
                                 <th>Item</th>
                                 <th>Quantity</th>
                                 <th>Status</th>
+                                <th>Payment</th>
                                 <th>Total Price</th>
                             </tr>
                             </thead>
@@ -353,204 +346,209 @@ if (isset($_GET['load_bookings'])) {
                         </table>
                     </div>
                 </div>
+            </div>
+            <div id="bookingContainer"></div>
+            <div id="userDetailsContainer" style="display: none;"></div>
+            <div id="form-container" class="form-container" style="display: none; margin-top: 30px;"></div>
+            <div id="menu-section" style="display: none; margin-top: 20px;"></div>
+
+
+
+            <a href="#" class="back-to-top" id="backToTopBtn">
+                <span class="material-icons">arrow_upward</span>
+            </a>
+
         </div>
-                <div id="bookingContainer"></div>
-                <div id="userDetailsContainer" style="display: none;"></div>
-                <div id="form-container" class="form-container" style="display: none; margin-top: 30px;"></div>
-                <div id="menu-section" style="display: none; margin-top: 20px;"></div>
-</div>
 
 
-<!-- JS Scripts -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tbody = document.querySelector("#orders-table tbody");
-        const historyBtn = document.getElementById('orderHistoryBtn');
+        <!-- JS Scripts -->
+        <script>
 
-        // Track if currently showing all orders or only today's
-        let showingAll = false;
+            document.addEventListener("DOMContentLoaded", function () {
+                const tbody = document.querySelector("#orders-table tbody");
+                const historyBtn = document.getElementById('orderHistoryBtn');
 
-        // Load today's orders initially
-        loadOrders();
+                let showingAll = false;
 
-        // Auto-refresh every 10 seconds (adjust timing as needed)
-        setInterval(() => {
-            loadOrders(showingAll ? 'all' : 'today');
-        }, 10000);
+                // Load today's orders initially
+                loadOrders();
 
-        // Toggle between all orders and today's orders on button click
-        if (historyBtn) {
-            historyBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (showingAll) {
-                    loadOrders('today');
-                    historyBtn.innerHTML = '<small>Order History</small>';
-                    showingAll = false;
-                } else {
-                    loadOrders('all');
-                    historyBtn.innerHTML = '<small>Today\'s Orders</small>';
-                    showingAll = true;
+                // Auto-refresh every 10 seconds
+                setInterval(() => {
+                    loadOrders(showingAll ? 'all' : 'today');
+                }, 10000);
+
+                // Toggle today's vs all orders
+                if (historyBtn) {
+                    historyBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (showingAll) {
+                            loadOrders('today');
+                            historyBtn.innerHTML = '<small>Order History</small>';
+                            showingAll = false;
+                        } else {
+                            loadOrders('all');
+                            historyBtn.innerHTML = '<small>Today\'s Orders</small>';
+                            showingAll = true;
+                        }
+                    });
                 }
-            });
-        }
 
-        // Function to load orders with filter 'today' or 'all'
-        function loadOrders(filter = 'today') {
-            // Use current page URL with query params for AJAX
-            let url = window.location.pathname + '?load_orders=1';
-            if (filter === 'all') url += '&status=all';
+                function loadOrders(filter = 'today') {
+                    let url = window.location.pathname + '?load_orders=1';
+                    if (filter === 'all') url += '&status=all';
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    tbody.innerHTML = '';
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            tbody.innerHTML = '';
 
-                    if (!data || data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="9">No processed orders found.</td></tr>';
-                        return;
-                    }
+                            if (!data || data.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="8">No processed orders found.</td></tr>';
+                                return;
+                            }
 
-                    const todayDate = new Date().toISOString().slice(0, 10);
+                            const todayDate = new Date().toISOString().slice(0, 10);
 
-                    data.forEach(order => {
-                        // If filtering today's orders, skip non-today orders
-                        if (filter === 'today' && order.created_at.slice(0, 10) !== todayDate) return;
+                            data.forEach(order => {
+                                if (filter === 'today' && order.created_at.slice(0, 10) !== todayDate) return;
 
-                        const totalPrice = (parseFloat(order.price) * parseInt(order.quantity)).toFixed(2);
-                        const orderDateFormatted = new Date(order.created_at).toLocaleString();
+                                const totalPrice = (parseFloat(order.price) * parseInt(order.quantity)).toFixed(2);
+                                const orderDateFormatted = new Date(order.created_at).toLocaleString();
+                                const paymentStatus = order.payment_status || 'N/A';
 
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
                         <td>${order.order_id}</td>
                         <td>${order.table_number || 'N/A'}</td>
                         <td>${orderDateFormatted}</td>
                         <td>${order.item_name}</td>
                         <td>${order.quantity}</td>
                         <td>${order.status}</td>
+                        <td>${paymentStatus}</td>
                         <td>Rs. ${totalPrice}</td>
                     `;
-                        tbody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading processed orders:', error);
-                    tbody.innerHTML = '<tr><td colspan="9">Failed to load data.</td></tr>';
-                });
-        }
-    });
-
-
-
-    // Search Prosecced orders
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        const searchTerm = this.value.toLowerCase();
-        const table = document.getElementById('orders-table');
-        const rows = table.tBodies[0].rows;
-
-        for (let row of rows) {
-            const orderId = row.cells[0].textContent.toLowerCase();
-            const tableNumber = row.cells[1].textContent.toLowerCase();
-            const orderDate = row.cells[2].textContent.toLowerCase();
-            const status = row.cells[7].textContent.toLowerCase();
-
-            if (
-                orderId.includes(searchTerm) ||
-                tableNumber.includes(searchTerm) ||
-                orderDate.includes(searchTerm) ||
-                status.includes(searchTerm)
-            ) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        }
-    });
-
-
-    function toggleDropdown(id) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            if (menu.id !== id) menu.style.display = 'none';
-        });
-        const dropdown = document.getElementById(id);
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function loadOrders(status) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", "../Frontend/admin_dashboard.php?load_orders=1&status=" + status, true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                document.getElementById("ordersContainer").innerHTML = xhr.responseText;
-            } else {
-                document.getElementById("ordersContainer").innerHTML = "Failed to load orders.";
-            }
-        };
-        xhr.send();
-    }
-
-
-    //Admin Page Drop Down Logic
-    function toggleDropdown(dropdownId) {
-        // Close all dropdowns first
-        const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
-        allDropdowns.forEach(dropdown => {
-            if (dropdown.id !== dropdownId) {
-                dropdown.style.display = 'none';
-            }
-        });
-
-        // Toggle the clicked dropdown
-        const dropdown = document.getElementById(dropdownId);
-        if (dropdown) {
-            const isVisible = dropdown.style.display === 'block';
-            dropdown.style.display = isVisible ? 'none' : 'block';
-        }
-    }
-
-    // Optional: Close dropdowns if clicking outside
-    document.addEventListener('click', function (event) {
-        const isClickInside = event.target.closest('.dropdown-wrapper');
-        if (!isClickInside) {
-            const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
-            allDropdowns.forEach(dropdown => {
-                dropdown.style.display = 'none';
+                                tbody.appendChild(row);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error loading processed orders:', error);
+                            tbody.innerHTML = '<tr><td colspan="8">Failed to load data.</td></tr>';
+                        });
+                }
             });
-        }
-    });
 
 
-    // Add Menu Items
-    document.addEventListener("DOMContentLoaded", function () {
-        let isFormVisible = false;
-        let isMenuVisible = false;
+            // Search Prosecced orders
+            document.getElementById('searchInput').addEventListener('keyup', function () {
+                const searchTerm = this.value.toLowerCase();
+                const table = document.getElementById('orders-table');
+                const rows = table.tBodies[0].rows;
 
-        window.showAddMenuForm = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
+                for (let row of rows) {
+                    const orderId = row.cells[0].textContent.toLowerCase();
+                    const tableNumber = row.cells[1].textContent.toLowerCase();
+                    const orderDate = row.cells[2].textContent.toLowerCase();
+                    const status = row.cells[7].textContent.toLowerCase();
 
-            // Hide other sections
-            menuSection.style.display = 'none';
-            menuSection.innerHTML = '';
-            isMenuVisible = false;
+                    if (
+                        orderId.includes(searchTerm) ||
+                        tableNumber.includes(searchTerm) ||
+                        orderDate.includes(searchTerm) ||
+                        status.includes(searchTerm)
+                    ) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
 
-            userDetailsContainer.style.display = 'none';
-            userDetailsContainer.innerHTML = '';
 
-            // Toggle form
-            if (isFormVisible) {
-                formContainer.style.display = 'none';
-                formContainer.innerHTML = '';
-                isFormVisible = false;
-                return;
+            function toggleDropdown(id) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (menu.id !== id) menu.style.display = 'none';
+                });
+                const dropdown = document.getElementById(id);
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
             }
 
-            formContainer.style.display = 'block';
-            isFormVisible = true;
+            function loadOrders(status) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "../Frontend/admin_dashboard.php?load_orders=1&status=" + status, true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        document.getElementById("ordersContainer").innerHTML = xhr.responseText;
+                    } else {
+                        document.getElementById("ordersContainer").innerHTML = "Failed to load orders.";
+                    }
+                };
+                xhr.send();
+            }
 
-            if (formContainer.innerHTML.trim() !== '') return;
 
-            formContainer.innerHTML = `
+            //Admin Page Drop Down Logic
+            function toggleDropdown(dropdownId) {
+                // Close all dropdowns first
+                const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
+                allDropdowns.forEach(dropdown => {
+                    if (dropdown.id !== dropdownId) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+
+                // Toggle the clicked dropdown
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    const isVisible = dropdown.style.display === 'block';
+                    dropdown.style.display = isVisible ? 'none' : 'block';
+                }
+            }
+
+            // Optional: Close dropdowns if clicking outside
+            document.addEventListener('click', function (event) {
+                const isClickInside = event.target.closest('.dropdown-wrapper');
+                if (!isClickInside) {
+                    const allDropdowns = document.querySelectorAll('#admin-page .dropdown-menu');
+                    allDropdowns.forEach(dropdown => {
+                        dropdown.style.display = 'none';
+                    });
+                }
+            });
+
+
+            // Add Menu Items
+            document.addEventListener("DOMContentLoaded", function () {
+                let isFormVisible = false;
+                let isMenuVisible = false;
+
+                window.showAddMenuForm = function () {
+                    const formContainer = document.getElementById('form-container');
+                    const menuSection = document.getElementById('menu-section');
+                    const userDetailsContainer = document.getElementById('userDetailsContainer');
+
+                    // Hide other sections
+                    menuSection.style.display = 'none';
+                    menuSection.innerHTML = '';
+                    isMenuVisible = false;
+
+                    userDetailsContainer.style.display = 'none';
+                    userDetailsContainer.innerHTML = '';
+
+                    // Toggle form
+                    if (isFormVisible) {
+                        formContainer.style.display = 'none';
+                        formContainer.innerHTML = '';
+                        isFormVisible = false;
+                        return;
+                    }
+
+                    formContainer.style.display = 'block';
+                    isFormVisible = true;
+
+                    if (formContainer.innerHTML.trim() !== '') return;
+
+                    formContainer.innerHTML = `
             <span class="close-icon" onclick="closeFormContainer()">&times;</span>
             <h3 class="form-heading">Add New Menu Item</h3>
             <form class="menu-form" id="add-menu-form" action="add_menu_item.php" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
@@ -590,65 +588,65 @@ if (isset($_GET['load_bookings'])) {
                 </div>
             </form>
         `;
-        };
+                };
 
-        window.handleFormSubmit = function (event) {
-            event.preventDefault();
+                window.handleFormSubmit = function (event) {
+                    event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
+                    const form = event.target;
+                    const formData = new FormData(form);
 
-            fetch(form.action, {
-                method: "POST",
-                body: formData
-            })
-                .then(response => response.text())
-                .then(result => {
-                    alert(result);
-                    form.reset();
-                    document.getElementById('form-container').style.display = 'none';
-                    document.getElementById('form-container').innerHTML = '';
-                    isFormVisible = false;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("There was an error adding the menu item.");
-                });
+                    fetch(form.action, {
+                        method: "POST",
+                        body: formData
+                    })
+                        .then(response => response.text())
+                        .then(result => {
+                            alert(result);
+                            form.reset();
+                            document.getElementById('form-container').style.display = 'none';
+                            document.getElementById('form-container').innerHTML = '';
+                            isFormVisible = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("There was an error adding the menu item.");
+                        });
 
-            return false;
-        };
+                    return false;
+                };
 
-        window.displayMenu = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
+                window.displayMenu = function () {
+                    const formContainer = document.getElementById('form-container');
+                    const menuSection = document.getElementById('menu-section');
+                    const userDetailsContainer = document.getElementById('userDetailsContainer');
 
-            // Hide other sections
-            formContainer.style.display = 'none';
-            formContainer.innerHTML = '';
-            userDetailsContainer.style.display = 'none';
-            userDetailsContainer.innerHTML = '';
+                    // Hide other sections
+                    formContainer.style.display = 'none';
+                    formContainer.innerHTML = '';
+                    userDetailsContainer.style.display = 'none';
+                    userDetailsContainer.innerHTML = '';
 
-            // Toggle
-            if (menuSection.style.display === 'block') {
-                menuSection.style.display = 'none';
-                menuSection.innerHTML = '';
-                return;
-            }
-
-            fetch('../Backend/display_menu_items.php')
-                .then(response => response.json())
-                .then(data => {
-                    menuSection.innerHTML += `<span class="close-icon" onclick="closeMenuSection()">&times;</span>`;
-                    menuSection.style.display = 'block';
-
-                    if (data.length === 0) {
-                        menuSection.innerHTML = '<p>No menu items found.</p>';
+                    // Toggle
+                    if (menuSection.style.display === 'block') {
+                        menuSection.style.display = 'none';
+                        menuSection.innerHTML = '';
                         return;
                     }
 
+                    fetch('../Backend/display_menu_items.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            menuSection.innerHTML += `<span class="close-icon" onclick="closeMenuSection()">&times;</span>`;
+                            menuSection.style.display = 'block';
 
-                    let tableHTML = `
+                            if (data.length === 0) {
+                                menuSection.innerHTML = '<p>No menu items found.</p>';
+                                return;
+                            }
+
+
+                            let tableHTML = `
                     <h3 class="menu-heading">Menu Items</h3>
                     <div class="table-responsive">
                     <table class="table table-bordered table-hover table-striped align-middle text-center" id="menuTable">
@@ -663,97 +661,97 @@ if (isset($_GET['load_bookings'])) {
                         <tbody id="menuTableBody">`;
 
 
-                    data.forEach(item => {
-                        tableHTML += `
+                            data.forEach(item => {
+                                tableHTML += `
                     <tr data-item-name="${item.name.toLowerCase()}">
                         <td><img src="uploads/${item.image_url}" alt="${item.name}" style="max-width: 100px;"></td>
                         <td>${item.name}</td>
                         <td>Rs.${item.price}</td>
                         <td><button onclick="deleteMenuItem(${item.id})">Delete</button></td>
                     </tr>`;
+                            });
+
+                            tableHTML += '</tbody></table></div>';
+                            menuSection.innerHTML += tableHTML;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching menu:', error);
+                            menuSection.innerHTML = '<p>Error loading menu.</p>';
+                        });
+                };
+
+                window.filterTable = function () {
+                    const searchValue = document.getElementById('searchBar').value.toLowerCase();
+                    const tableBody = document.getElementById('menuTableBody');
+                    const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+                    const matchingRows = [];
+                    const nonMatchingRows = [];
+
+                    rows.forEach(row => {
+                        const itemName = row.getAttribute('data-item-name');
+                        if (itemName.includes(searchValue)) {
+                            matchingRows.push(row);
+                        } else {
+                            nonMatchingRows.push(row);
+                        }
                     });
 
-                    tableHTML += '</tbody></table></div>';
-                    menuSection.innerHTML += tableHTML;
-                })
-                .catch(error => {
-                    console.error('Error fetching menu:', error);
-                    menuSection.innerHTML = '<p>Error loading menu.</p>';
-                });
-        };
+                    const allRows = [...matchingRows, ...nonMatchingRows];
 
-        window.filterTable = function () {
-            const searchValue = document.getElementById('searchBar').value.toLowerCase();
-            const tableBody = document.getElementById('menuTableBody');
-            const rows = Array.from(tableBody.getElementsByTagName('tr'));
+                    tableBody.innerHTML = '';
+                    allRows.forEach(row => {
+                        tableBody.appendChild(row);
+                    });
+                };
 
-            const matchingRows = [];
-            const nonMatchingRows = [];
+                window.deleteMenuItem = function (itemId) {
+                    if (!confirm("Delete this menu item and related variants/add-ons?")) return;
 
-            rows.forEach(row => {
-                const itemName = row.getAttribute('data-item-name');
-                if (itemName.includes(searchValue)) {
-                    matchingRows.push(row);
-                } else {
-                    nonMatchingRows.push(row);
-                }
-            });
-
-            const allRows = [...matchingRows, ...nonMatchingRows];
-
-            tableBody.innerHTML = '';
-            allRows.forEach(row => {
-                tableBody.appendChild(row);
-            });
-        };
-
-        window.deleteMenuItem = function (itemId) {
-            if (!confirm("Delete this menu item and related variants/add-ons?")) return;
-
-            fetch('../Backend/delete_menu_item.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `id=${encodeURIComponent(itemId)}`
-            })
-                .then(res => res.json())
-                .then(result => {
-                    if (result.success) {
-                        alert("Menu item deleted successfully.");
-                        displayMenu(); // refresh
-                    } else {
-                        alert("Delete failed: " + (result.message || 'Unknown error'));
-                    }
-                })
-                .catch(err => console.error('Delete failed:', err));
-        };
+                    fetch('../Backend/delete_menu_item.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `id=${encodeURIComponent(itemId)}`
+                    })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                alert("Menu item deleted successfully.");
+                                displayMenu(); // refresh
+                            } else {
+                                alert("Delete failed: " + (result.message || 'Unknown error'));
+                            }
+                        })
+                        .catch(err => console.error('Delete failed:', err));
+                };
 
 
-        window.showUserDetails = function () {
-            const formContainer = document.getElementById('form-container');
-            const menuSection = document.getElementById('menu-section');
-            const userDetailsContainer = document.getElementById('userDetailsContainer');
+                window.showUserDetails = function () {
+                    const formContainer = document.getElementById('form-container');
+                    const menuSection = document.getElementById('menu-section');
+                    const userDetailsContainer = document.getElementById('userDetailsContainer');
 
-            // Hide other sections
-            formContainer.style.display = 'none';
-            formContainer.innerHTML = '';
-            menuSection.style.display = 'none';
-            menuSection.innerHTML = '';
+                    // Hide other sections
+                    formContainer.style.display = 'none';
+                    formContainer.innerHTML = '';
+                    menuSection.style.display = 'none';
+                    menuSection.innerHTML = '';
 
-            fetch('../Backend/display-users.php')
-                .then(response => response.json())
-                .then(data => {
-                    userDetailsContainer.innerHTML = '';
-                    userDetailsContainer.style.display = 'block';
+                    fetch('../Backend/display-users.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            userDetailsContainer.innerHTML = '';
+                            userDetailsContainer.style.display = 'block';
 
-                    // Add close icon
-                    userDetailsContainer.innerHTML += `<span class="close-icon" onclick="closeUserDetails()">&times;</span>`;
+                            // Add close icon
+                            userDetailsContainer.innerHTML += `<span class="close-icon" onclick="closeUserDetails()">&times;</span>`;
 
-                    if (data.length === 0) {
-                        userDetailsContainer.innerHTML += '<p>No users found.</p>';
-                    } else {
-                        let table = `
+                            if (data.length === 0) {
+                                userDetailsContainer.innerHTML += '<p>No users found.</p>';
+                            } else {
+                                let table = `
                         <h3 class="user-table-heading">User's Details</h3>
                         <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped align-middle text-center">
@@ -768,8 +766,8 @@ if (isset($_GET['load_bookings'])) {
                             </thead>
                             <tbody>`;
 
-                        data.forEach(user => {
-                            table += `
+                                data.forEach(user => {
+                                    table += `
                         <tr>
                             <td>${user.id}</td>
                             <td>${user.name}</td>
@@ -777,163 +775,210 @@ if (isset($_GET['load_bookings'])) {
                             <td>${user.role}</td>
                             <td><button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button></td>
                         </tr>`;
+                                });
+                                table += `</tbody></table></div>`;
+
+
+                                userDetailsContainer.innerHTML += table;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching users:', error);
+                            userDetailsContainer.innerHTML += '<p>Error loading users.</p>';
                         });
-                        table += `</tbody></table></div>`;
+                };
 
 
-                        userDetailsContainer.innerHTML += table;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching users:', error);
-                    userDetailsContainer.innerHTML += '<p>Error loading users.</p>';
-                });
-        };
+                window.deleteUser = function (userId) {
+                    if (!confirm("Are you sure you want to delete this user?")) return;
+
+                    fetch('../Backend/delete-user.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `user_id=${encodeURIComponent(userId)}`
+                    })
+                        .then(res => res.text())
+                        .then(result => {
+                            alert(result);
+                            showUserDetails(); // Refresh list
+                        })
+                        .catch(err => console.error('Delete failed:', err));
+                };
 
 
-        window.deleteUser = function (userId) {
-            if (!confirm("Are you sure you want to delete this user?")) return;
 
-            fetch(`../Backend/delete_user.php?id=${userId}`, {method: 'DELETE'})
-                .then(res => res.text())
-                .then(result => {
-                    alert(result);
-                    showUserDetails(); // Refresh
-                })
-                .catch(err => console.error('Delete failed:', err));
-        };
-    });
-
-
-    function showTableBooking() {
-        fetch('admin_dashboard.php?load_bookings=true')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('bookingContainer').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error loading bookings:', error);
             });
-    }
-    function confirmBooking(id) {
-        if (confirm("Are you sure you want to confirm this booking?")) {
-            window.location.href = 'update_booking_status.php?action=confirm&id=' + id;
-        }
-    }
-
-    function cancelBooking(id) {
-        if (confirm("Are you sure you want to cancel this booking?")) {
-            window.location.href = 'update_booking_status.php?action=cancel&id=' + id;
-        }
-    }
 
 
 
-    // Close Form Container, Menu Section, User Details Container, Booking Container
-    function closeBookingContainer() {
-        const container = document.getElementById('booking-table-container');
-        if (container) {
-            container.remove(); // or use container.style.display = 'none';
-        }
-    }
-
-    window.closeFormContainer = function () {
-        const formContainer = document.getElementById('form-container');
-        formContainer.style.display = 'none';
-        formContainer.innerHTML = '';
-    };
-
-    window.closeMenuSection = function () {
-        const menuSection = document.getElementById('menu-section');
-        menuSection.style.display = 'none';
-        menuSection.innerHTML = '';
-    };
-
-    window.closeUserDetails = function () {
-        const userDetailsContainer = document.getElementById('userDetailsContainer');
-        userDetailsContainer.style.display = 'none';
-        userDetailsContainer.innerHTML = '';
-    };
-
-    // Search Bookings, Users, Orders, Menu Items
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        const searchTerm = this.value.toLowerCase();
-
-        function filterTable(table, columnsToCheck) {
-            if (!table) return;
-            Array.from(table.tBodies[0].rows).forEach(row => {
-                const matches = columnsToCheck.some(colIndex => {
-                    const cellText = row.cells[colIndex]?.textContent.toLowerCase() || '';
-                    return cellText.includes(searchTerm);
-                });
-                row.style.display = matches ? '' : 'none';
-            });
-        }
 
 
-        const ordersTable = document.querySelector('#ordersContainer table');
-        filterTable(ordersTable, [0, 1, 2, 7]);
-
-
-        const bookingTable = document.querySelector('#bookingContainer table');
-        filterTable(bookingTable, [0, 11]);
-
-
-        const menuTable = document.querySelector('#menu-section table');
-        filterTable(menuTable, [1]);
-
-
-        const userTable = document.querySelector('#userDetailsContainer table');
-        filterTable(userTable, [0, 3]);
-    });
-
-    // Display Daily Summary
-    async function fetchDailySummary() {
-        try {
-            const response = await fetch('get_daily_summary.php');
-            if (!response.ok) throw new Error('Network error');
-
-            const data = await response.json();
-
-            document.getElementById('ordersCount').textContent = data.total_orders;
-            document.getElementById('totalRevenue').textContent = data.total_revenue.toFixed(2);
-            document.getElementById('bookingsCount').textContent = data.total_bookings;
-
-            const topItemsList = document.getElementById('topItemsList');
-            topItemsList.innerHTML = '';
-            if (data.popular_items.length === 0) {
-                topItemsList.innerHTML = '<li>No orders yet</li>';
-            } else {
-                data.popular_items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = `${item.name} — ${item.quantity} sold`;
-                    topItemsList.appendChild(li);
-                });
+            function showTableBooking() {
+                fetch('admin_dashboard.php?load_bookings=true')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('bookingContainer').innerHTML = data;
+                    })
+                    .catch(error => {
+                        console.error('Error loading bookings:', error);
+                    });
             }
-        } catch (err) {
-            console.error('Error fetching daily summary:', err);
-        }
-    }
 
-    fetchDailySummary();
+            function confirmBooking(id) {
+                if (confirm("Are you sure you want to confirm this booking?")) {
+                    window.location.href = 'update_booking_status.php?action=confirm&id=' + id;
+                }
+            }
 
-
-
-    function toggleSidebar() {
-        const sidebar = document.getElementById('dashboardSidebar');
-        sidebar.classList.toggle('show-sidebar');
-    }
-
-    function toggleDropdown(id) {
-        const dropdown = document.getElementById(id);
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-</script>
+            function cancelBooking(id) {
+                if (confirm("Are you sure you want to cancel this booking?")) {
+                    window.location.href = 'update_booking_status.php?action=cancel&id=' + id;
+                }
+            }
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../Frontend/js/script.js"></script>
+            // Close Form Container, Menu Section, User Details Container, Booking Container
+            function closeBookingContainer() {
+                const container = document.getElementById('booking-table-container');
+                if (container) {
+                    container.remove(); // or use container.style.display = 'none';
+                }
+            }
+
+            window.closeFormContainer = function () {
+                const formContainer = document.getElementById('form-container');
+                formContainer.style.display = 'none';
+                formContainer.innerHTML = '';
+            };
+
+            window.closeMenuSection = function () {
+                const menuSection = document.getElementById('menu-section');
+                menuSection.style.display = 'none';
+                menuSection.innerHTML = '';
+            };
+
+            window.closeUserDetails = function () {
+                const userDetailsContainer = document.getElementById('userDetailsContainer');
+                userDetailsContainer.style.display = 'none';
+                userDetailsContainer.innerHTML = '';
+            };
+
+            // Search Bookings, Users, Orders, Menu Items
+            document.getElementById('searchInput').addEventListener('keyup', function () {
+                const searchTerm = this.value.toLowerCase();
+
+                function filterTable(table, columnsToCheck) {
+                    if (!table) return;
+                    Array.from(table.tBodies[0].rows).forEach(row => {
+                        const matches = columnsToCheck.some(colIndex => {
+                            const cellText = row.cells[colIndex]?.textContent.toLowerCase() || '';
+                            return cellText.includes(searchTerm);
+                        });
+                        row.style.display = matches ? '' : 'none';
+                    });
+                }
+
+                // Orders Table: search order ID, table number, order status
+                // Assuming order ID is column 0, table number column 2, order status column 7 (adjust if needed)
+                const ordersTable = document.querySelector('#ordersContainer table');
+                filterTable(ordersTable, [0, 1, 5,6]);
+
+                // Booking Table: search booking ID
+                // Assuming booking ID is in column 0
+                const bookingTable = document.querySelector('#bookingContainer table');
+                filterTable(bookingTable, [0]);
+
+                // Menu Table: search item name
+                // Assuming item name is in column 1
+                const menuTable = document.querySelector('#menu-section table');
+                filterTable(menuTable, [1]);
+
+                // User Table: search user ID
+                // Assuming user ID is in column 0
+                const userTable = document.querySelector('#userDetailsContainer table');
+                filterTable(userTable, [0]);
+            });
+
+            // Display Daily Summary
+            async function fetchDailySummary() {
+                try {
+                    const response = await fetch('get_daily_summary.php');
+                    if (!response.ok) throw new Error('Network error');
+
+                    const data = await response.json();
+
+                    document.getElementById('ordersCount').textContent = data.total_orders;
+                    document.getElementById('totalRevenue').textContent = data.total_revenue.toFixed(2);
+                    document.getElementById('bookingsCount').textContent = data.total_bookings;
+
+                    const topItemsList = document.getElementById('topItemsList');
+                    topItemsList.innerHTML = '';
+                    if (data.popular_items.length === 0) {
+                        topItemsList.innerHTML = '<li>No orders yet</li>';
+                    } else {
+                        data.popular_items.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = `${item.name} — ${item.quantity} sold`;
+                            topItemsList.appendChild(li);
+                        });
+                    }
+                } catch (err) {
+                    console.error('Error fetching daily summary:', err);
+                }
+            }
+
+            fetchDailySummary();
+
+
+            function toggleSidebar() {
+                const sidebar = document.getElementById('dashboardSidebar');
+                sidebar.classList.toggle('show-sidebar');
+            }
+
+            function toggleDropdown(id) {
+                const dropdown = document.getElementById(id);
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            }
+
+
+
+                window.addEventListener('scroll', function () {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+            });
+
+
+
+            // Back to top btn
+            const backToTopBtn = document.getElementById("backToTopBtn");
+
+            window.addEventListener("scroll", () => {
+                if (document.documentElement.scrollTop > 500) {
+                    backToTopBtn.style.display = "block";
+                } else {
+                    backToTopBtn.style.display = "none";
+                }
+            });
+
+            backToTopBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+        </script>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../Frontend/js/script.js"></script>
 
 </body>
 </html>

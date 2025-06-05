@@ -70,6 +70,29 @@ body, html {
 }
 
 
+/* Add this CSS to fix navbar at the top */
+.common-page .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050; /* Make sure it's above other elements */
+    background-color: #fff; /* or your preferred background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* optional shadow */
+}
+
+/* To prevent content from being hidden behind the fixed navbar */
+body.common-page {
+    padding-top: 80px; /* Adjust this based on your navbar height */
+}
+
+.common-page .navbar-scrolled {
+    background-color: #f8f9fa; /* Lighter shade or any background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+
 /* navbar */
 .navbar {
     background-color: rgba(0, 0, 0, 0.7) !important;
@@ -80,12 +103,13 @@ body, html {
 
 }
 
+
 .navbar.fixed-top {
     position: fixed !important;
     top: 0;
     left: 0;
-    right: 0;
-    z-index: 1030;
+    width: 100%;
+    z-index: 1050;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     border-bottom: 1px solid #fac003;
 }
@@ -185,6 +209,26 @@ body, html {
 .common-page .navbar {
     margin-top: 2.5rem;
     background-color: #fac003 !important;
+}
+
+/* Add this CSS to fix navbar at the top */
+.common-page .navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    background-color: white;
+}
+
+body.common-page {
+    padding-top: 110px;
+}
+
+.common-page .navbar-scrolled {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .common-page .nav-link {
@@ -382,11 +426,28 @@ body, html {
     color: #fac003;
 }
 
-
 /* Home page*/
+.cart-badge {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    color: #fac003;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    transform: translate(50%, -50%);
+}
+
+.main-container {
+    margin-top: 9rem;
+    margin-left: 3rem;
+}
+
 #main-section .h1-container {
     margin-left: 2rem;
-    margin-top: 3rem;
+    margin-top: 30rem;
     padding: 4rem 1rem;
     max-width: 900px;
 }
@@ -510,6 +571,7 @@ body, html {
 
 
 #profile-page .order-section-heading,
+#profile-page .booking-table-heading,
 #cashier-page .heading,
 #kitchen-page .heading,
 .menu-heading,
@@ -802,7 +864,7 @@ body, html {
 }
 
 /*Profile Page */
-.profile-sidebar {
+#profile-page .profile-sidebar {
     width: 280px;
     height: 100vh;
     background-color: #f8f9fa;
@@ -817,7 +879,7 @@ body, html {
     flex-direction: column;
 }
 
-.profile-avatar, .dashboard-avatar {
+#profile-page .profile-avatar, .dashboard-avatar {
     width: 50px;
     height: 50px;
     margin-top: 0.1rem;
@@ -827,15 +889,15 @@ body, html {
     background-color: #fac003;
 }
 
-.profile-actions, .dashboard-actions {
+#profile-page .profile-actions, .dashboard-actions {
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.profile-action-item a,
-.dashboard-action-item {
+#profile-page .profile-action-item a,
+#profile-page .dashboard-action-item {
     display: flex;
     align-items: center;
     color: black !important;
@@ -845,8 +907,8 @@ body, html {
     border-radius: 2px;
 }
 
-.profile-action-item a:hover,
-.dashboard-action-item:hover {
+#profile-page .profile-action-item a:hover,
+#profile-page .dashboard-action-item:hover {
     color: #fac003 !important;
 }
 
@@ -895,38 +957,22 @@ body, html {
     height: 80px;
 }
 
-#profile-page .order-section .item-details {
-    flex-grow: 1;
-    font-size: 14px;
-    color: #333;
-}
-
-/* Status Coloring */
-#profile-page .order-section .status-pending {
-    color: orange;
-    font-weight: bold;
-}
-
-#profile-page .order-section .status-prepared {
-    color: #fac003;
-    font-weight: bold;
-}
-
-#profile-page .order-section .status-served {
-    color: #fac003 !important;
-    font-weight: bold;
-}
-
-#profile-page .order-section .status-other {
-    color: #fac003;
-    font-weight: bold;
-}
-
-/* Action Buttons */
-#profile-page .order-section .btn {
+#profile-page .order-section .btn-cancel {
     font-size: 12px;
-    padding: 4px 8px;
+    font-weight: bold;
+    color: white !important;
+    padding: 1px 4px;
+    height: 25px;
     margin-top: 5px;
+    border-radius: 3px;
+    border: 1px solid #fac003 !important;
+    width: 100%;
+    background-color: #fac003;
+}
+
+#profile-page .order-section .btn-cancel:hover {
+    background-color: white !important;
+    color: #fac003 !important;
 }
 
 /* Disabled Action Text */
@@ -942,23 +988,56 @@ body, html {
     justify-content: center;
 }
 
-#profile-page .order-actions .btn-pending,
-.btn-prepared, .btn-served, .btn-update, .btn-cancel {
-    font-size: smaller;
+
+/* Profile Page Container */
+#profile-page #bookingContainer {
+    margin-top: 0.1rem !important;
+    width: 69%;
+    margin-left: 21rem !important;
     background-color: white;
     border-radius: 3px;
-    border: 3px solid #fac003;
-    width: 15%;
-    height: 2rem;
-    color: #fac003 !important;
-    font-weight: 600;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.btn-cancel:hover,
-.btn-update:hover {
-    background-color: #fac003;
-    color: white;
+/* Special Request Column */
+#profile-page .table td:nth-child(11) {
+    max-width: 200px;
+    word-break: break-word;
 }
+
+/* Action Buttons */
+#profile-page .btn-danger {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+/* Tooltip styling */
+#profile-page [data-bs-toggle="tooltip"] {
+    cursor: pointer;
+}
+
+/* Status Text */
+#profile-page .text-muted.small {
+    font-size: 0.75rem;
+    color: #6c757d !important;
+}
+
+/* Responsive Table */
+#profile-page .table-responsive {
+    overflow-x: auto;
+}
+
+/* Profile page - Booking section card styles */
+#profile-page .no-border {
+    border: none;
+}
+
+#profile-page .booking-header {
+    background-color: transparent; /* Optional: set background if needed */
+}
+
 
 .profile-layout {
     display: flex;
@@ -973,49 +1052,12 @@ body, html {
     margin-top: 2rem;
 }
 
-
-.card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 20px;
-    width: 320px;
-}
-
-.card-header h4 {
-    margin: 0;
-    font-size: 16px;
-    color: #333;
-}
-
-.card-header p {
-    color: #888;
-    font-size: 12px;
-    margin: 4px 0 12px;
-}
-
-.card-body h2 {
-    margin: 0;
-    font-size: 28px;
-    color: #333;
-}
-
-.card-body .positive {
-    color: #3ac78b;
-    font-size: 12px;
-    background: #e6f4ef;
-    padding: 2px 6px;
-    border-radius: 6px;
-    display: inline-block;
-    margin-top: 6px;
-}
-
-
 /* Admin page */
-.dashboard-sidebar,
-#profile-page .dashboard-sidebar {
+.dashboard-sidebar {
     width: 280px;
     height: auto;
+    color: black;
+    margin-top: 2rem;
     background-color: #f8f9fa;
     border-right: 1px solid #e4e4e4;
     border-left: none;
@@ -1027,9 +1069,16 @@ body, html {
     flex-direction: column;
 }
 
+#admin-page .dashboard-action-item {
+    color: black !important;
+}
+
+#admin-page .dashboard-action-item:hover {
+    color: #fac003 !important;
+}
+
 /* Section Containers */
 .details-container {
-    margin-top: -80px;
     margin-bottom: 20px;
     width: 100%;
     max-width: 900px;
@@ -1119,7 +1168,8 @@ table {
 #userDetailsContainer table,
 #booking-table-container table,
 #orders-table,
-#cashier-page table {
+#cashier-page table,
+#profile-page table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
@@ -1134,7 +1184,8 @@ table {
 #orders-table thead th,
 #booking-table-container table thead th,
 #cashier-page .table thead th,
-.table-header {
+.table-header,
+#profile-page table thead th {
     background-color: black; /* Yellow/Orange */
     color: white;
     border: 1px solid white;
@@ -1153,7 +1204,9 @@ table {
 #orders-table th,
 #orders-table td,
 #cashier-page .table th,
-#cashier-page .table td {
+#cashier-page .table td,
+#profile-page .table th,
+#profile-page .table td {
     padding: 10px;
     text-align: left;
     font-size: smaller;
@@ -1633,8 +1686,43 @@ table {
 }
 
 #cart-page .cart-items-container {
-    border: 1px solid #fac003;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+.form-check-input#select-all {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: white; /* unchecked bg */
+    position: relative;
+    outline: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+
+.form-check-input#select-all:checked {
+    background-color: gray;
+    border-color: gray;
+}
+
+/* Checkmark */
+.form-check-input#select-all:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
 
 .item-title {
     font-size: 1.2rem;
@@ -1681,6 +1769,7 @@ table {
 
 }
 
+
 #cart-page .custom-form-control {
     width: 100%;
     height: 2rem;
@@ -1689,6 +1778,10 @@ table {
     border: 1px solid #fac003;
     font-size: 16px;
     color: #f1cc52;
+}
+
+#tableNumber {
+    padding: 12px 15px;
 }
 
 #cart-page .custom-form-control::placeholder {
@@ -1818,7 +1911,7 @@ ul.list-payment-icon li {
 }
 
 /* Back to top btn */
-.back-to-top {
+#home_page .back-to-top {
     position: fixed;
     bottom: 50px;
     right: 10px;
@@ -1830,11 +1923,31 @@ ul.list-payment-icon li {
     cursor: pointer;
 }
 
-.back-to-top .material-icons {
+#home_page .back-to-top .material-icons {
     font-size: 24px;
     color: #fac003;
 }
 
+#profile-page .back-to-top,
+.common-page .back-to-top {
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
+    background-color: black;
+    border-radius: 50%;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    display: none;
+    z-index: 999;
+    cursor: pointer;
+}
+
+#profile-page .back-to-top .material-icons,
+.common-page .back-to-top .material-icons {
+    font-size: 24px;
+    color: #fac003;
+}
 
 /* Animations */
 /* Welcome msg */

@@ -1,41 +1,33 @@
 <?php
 session_start();
-require_once '../Backend/db_connect.php';  // Ensure your database connection file is included
+require_once '../Backend/db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");  // Redirect to login if the user is not logged in
+    header("Location: login.php");
     exit();
 }
 
-// Fetch user details from the session
 $user_id = $_SESSION['user_id'];
-$filter = $_GET['filter'] ?? '';  // Get the filter from URL if set
+$filter = $_GET['filter'] ?? 'today';
 
-// Query to fetch user name and email from the database
+// Fetch user details
 $sql = "SELECT name, email FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
-
-// Fetch user data
 $stmt->bind_result($name, $email);
 $stmt->fetch();
 $stmt->close();
 
-// Handle if no user found
 if (!$name || !$email) {
     echo "User not found.";
     exit();
 }
 
-// Get initials from the user's name
 $nameParts = explode(' ', $name);
 $initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
 
-// Determine filter
-$filter = $_GET['filter'] ?? 'today';
-
-// Build the SQL query to get order details
+// Build order query
 $sql = "
     SELECT
         po.id AS order_id,
@@ -43,7 +35,7 @@ $sql = "
         poi.status AS item_status,
         poi.quantity,
         poi.price AS item_price,
-        poi.price AS total_price,
+        (poi.price * poi.quantity) AS item_total,
         poi.item_name,
         poi.image_url AS item_image,
         po.table_number,
@@ -56,16 +48,15 @@ $sql = "
 
 // Apply filter
 if ($filter === 'history') {
-    $sql .= " AND DATE(po.created_at) < CURDATE()";  // Past orders
+    $sql .= " AND DATE(po.created_at) < CURDATE()";
 } elseif ($filter === 'canceled') {
     $sql .= " AND poi.status = 'Canceled'";
-} else {  // today or default
+} else {
     $sql .= " AND DATE(po.created_at) = CURDATE()";
 }
 
 $sql .= " ORDER BY po.created_at DESC";
 
-// Prepare and execute the statement
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     die("Prepare failed: " . $conn->error);
@@ -74,7 +65,7 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// ✅ GROUP ORDER ITEMS BY ORDER ID
+// Group by order_id
 $ordersGrouped = [];
 while ($order = $result->fetch_assoc()) {
     $orderId = $order['order_id'];
@@ -83,13 +74,21 @@ while ($order = $result->fetch_assoc()) {
             'order_date' => $order['order_date'],
             'table_number' => $order['table_number'],
             'payment_status' => $order['payment_status'],
+            'total_price' => 0,
             'items' => []
         ];
     }
+
     $ordersGrouped[$orderId]['items'][] = $order;
+
+    // ✅ Only add non-canceled items to total
+    if (strtolower($order['item_status']) !== 'canceled') {
+        $ordersGrouped[$orderId]['total_price'] += $order['item_total'];
+    }
 }
 
-// Check if tab is for bookings
+
+// Bookings tab
 $tab = $_GET['tab'] ?? '';
 $bookings = [];
 
@@ -106,31 +105,35 @@ if ($tab === 'bookings') {
 }
 ?>
 
-
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Fonts and Icons -->
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
           rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
           rel="stylesheet">
 
-    <!-- Bootstrap and Icons -->
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body class="common-page" id="profile-page">
 
@@ -159,20 +162,13 @@ if ($tab === 'bookings') {
         <div class="profile-sidebar">
             <div class="d-flex align-items-center mb-4">
                 <div class="text-white d-flex justify-content-center align-items-center profile-avatar me-3">
-                    <?= $initials ?>  <!-- Display initials -->
+                    <?= $initials ?> <!-- Display initials -->
                 </div>
                 <div>
                     <h6 class="mb-0"><?= htmlspecialchars($name) ?></h6>  <!-- Display name -->
                     <small class="text-muted"><?= htmlspecialchars($email) ?></small>  <!-- Display email -->
                 </div>
             </div> <!-- End of Profile Info -->
-
-            <!-- Right: Toggler Button (Mobile only) -->
-            <div class="d-md-none">
-                <button onclick="toggleSidebar()" class="btn">
-                    ☰
-                </button>
-            </div>
 
 
             <div class="profile-actions">
@@ -200,7 +196,6 @@ if ($tab === 'bookings') {
                 </div>
 
 
-
                 <div class="profile-action-item <?php echo ($_GET['tab'] ?? '') === 'bookings' ? 'active' : ''; ?>">
                     <a href="profile.php?tab=bookings" class="text-decoration-none">
                         <small>Table Bookings</small>
@@ -211,10 +206,6 @@ if ($tab === 'bookings') {
             </div>
         </div>
 
-        <?php
-        $tab = $_GET['tab'] ?? '';
-        ?>
-
         <!-- Orders Section -->
         <div class="order-items-container bg-white p-3 mb-3">
             <h3 class="order-section-heading">Today Orders</h3>
@@ -222,18 +213,21 @@ if ($tab === 'bookings') {
                 <?php if (!empty($ordersGrouped)): ?>
                     <?php foreach ($ordersGrouped as $orderId => $order): ?>
                         <div class="order-section">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; font-size: 14px">
                                 <div>
                                     <strong>Order ID:</strong> #<?= $orderId ?><br>
                                     <strong>Table:</strong> <?= $order['table_number'] ?><br>
                                     <strong>Date:</strong> <?= $order['order_date'] ?>
                                 </div>
+
                                 <div class="text-end" style="text-align: right;">
-                                    <strong>Total Price:</strong> Rs.<br>
+                                    <strong>Total Price:</strong> Rs. <?= number_format($order['total_price'], 2) ?><br>
                                     <?= $order['payment_status'] ?><br>
                                 </div>
                             </div>
-                            <strong style="margin-bottom: 15px; border-bottom: 1px solid #cccccc; padding-bottom: 10px;"><hr></strong>
+                            <strong style="margin-bottom: 15px; border-bottom: 1px solid #cccccc; padding-bottom: 10px;">
+                                <hr>
+                            </strong>
 
                             <ul style="list-style: none; padding-left: 0;">
                                 <?php foreach ($order['items'] as $item): ?>
@@ -252,22 +246,15 @@ if ($tab === 'bookings') {
                                         </span>
                                                 <br>
 
-                                                <?php if ($item['item_status'] == 'Pending'): ?>
+                                                <?php if (in_array($item['item_status'], ['Pending', 'Preparing'])): ?>
                                                     <!-- Cancel and Update buttons -->
                                                     <form action="../Backend/cancel-order-item.php" method="post"
                                                           style="display: inline-block; margin-top: 5px;">
                                                         <input type="hidden" name="order_item_id"
                                                                value="<?= $item['order_item_id'] ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                        <button type="submit" class="btn-cancel btn-sm"
                                                                 onclick="return confirm('Are you sure to cancel this item?');">
                                                             Cancel
-                                                        </button>
-                                                    </form>
-                                                    <form action="../Backend/update-order-item.php" method="get"
-                                                          style="display: inline-block; margin-left: 5px; margin-top: 5px;">
-                                                        <input type="hidden" name="item_id"
-                                                               value="<?= $item['order_item_id'] ?>">
-                                                        <button type="submit" class="btn btn-primary btn-sm">Update
                                                         </button>
                                                     </form>
                                                 <?php else: ?>
@@ -286,150 +273,150 @@ if ($tab === 'bookings') {
             <?php else: ?>
                 <p>No Today Orders.</p>
             <?php endif; ?>
+
         </div>
+    </div>
+
+    <!-- Bookings Section -->
+    <div class="container my-4" id="bookingContainer"
+         style="<?= $tab === 'bookings' ? 'display:block;' : 'display:none;' ?>">
+        <span class="close-icon" onclick=window.location='profile.php'>&times;</span>
+
+        <h3 class="booking-table-heading mb-0">Your Table Bookings</h3>
 
 
-
-        <!-- Bookings Section -->
-            <div class="container my-4" id="bookingContainer" style="<?= $tab === 'bookings' ? 'display:block;' : 'display:none;' ?>">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Your Table Bookings</h5>
-                        <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="window.location='profile.php';"></button>
-                    </div>
-
-                    <div class="card-body p-3">
-                        <?php if (count($bookings) > 0): ?>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped align-middle text-center">
-                                    <thead class="table-dark">
-                                    <tr>
-                                        <th>Booking ID</th>
-                                        <th>User ID</th>
-                                        <th>Table No</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Duration</th>
-                                        <th>No. of People</th>
-                                        <th>Special Request</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php foreach ($bookings as $booking): ?>
-                                        <tr>
-                                            <td><?= $booking['booking_id'] ?></td>
-                                            <td><?= $booking['user_id'] ?></td>
-                                            <td><?= $booking['table_number'] ?></td>
-                                            <td><?= $booking['name'] ?></td>
-                                            <td><?= $booking['email'] ?></td>
-                                            <td><?= $booking['phone'] ?></td>
-                                            <td><?= $booking['booking_date'] ?></td>
-                                            <td><?= $booking['booking_time'] ?></td>
-                                            <td><?= $booking['duration'] ?></td>
-                                            <td><?= $booking['number_of_people'] ?></td>
-                                            <td><?= $booking['special_request'] ?: 'None' ?></td>
-                                            <td><?= $booking['status'] ?></td>
+        <div class="card-body p-3">
+            <?php if (count($bookings) > 0): ?>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>User ID</th>
+                            <th>Table No</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Duration</th>
+                            <th>No. of People</th>
+                            <th>Special Request</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($bookings as $booking): ?>
+                            <tr>
+                                <td><?= $booking['booking_id'] ?></td>
+                                <td><?= $booking['user_id'] ?></td>
+                                <td><?= $booking['table_number'] ?></td>
+                                <td><?= $booking['name'] ?></td>
+                                <td><?= $booking['email'] ?></td>
+                                <td><?= $booking['phone'] ?></td>
+                                <td><?= $booking['booking_date'] ?></td>
+                                <td><?= $booking['booking_time'] ?></td>
+                                <td><?= $booking['duration'] ?></td>
+                                <td><?= $booking['number_of_people'] ?></td>
+                                <td><?= $booking['special_request'] ?: 'None' ?></td>
+                                <td><?= $booking['status'] ?></td>
 
 
-
-                                            <td>
-                                                <?php
-                                                $bookingDateTime = strtotime($booking['booking_date'] . ' ' . $booking['booking_time']);
-                                                $now = time();
-                                                if ($bookingDateTime > $now):
-                                                    ?>
-                                                    <form action="../Backend/cancel_booking.php" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
-                                                        <input type="hidden" name="booking_id" value="<?= $booking['booking_id'] ?>">
-                                                        <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Cancel Booking">
-                                                            <i class="bi bi-x-circle"></i> Cancel
-                                                        </button>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <span class="text-muted small">Canceled</span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-info mb-0" role="alert">
-                                No table bookings found.
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                                <td>
+                                    <?php
+                                    $bookingDateTime = strtotime($booking['booking_date'] . ' ' . $booking['booking_time']);
+                                    $now = time();
+                                    if ($bookingDateTime > $now):
+                                        ?>
+                                        <form action="../Backend/cancel_booking.php" method="post" class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                            <input type="hidden" name="booking_id"
+                                                   value="<?= $booking['booking_id'] ?>">
+                                            <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                                    title="Cancel Booking">
+                                                <i class="bi bi-x-circle"></i> Cancel
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="text-muted small">N/A</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="alert alert-info mb-0" role="alert">
+                    No table bookings found.
+                </div>
+            <?php endif; ?>
 
-
+            <a href="#" class="back-to-top" id="backToTopBtn">
+                <span class="material-icons">arrow_upward</span>
+            </a>
         </div>
 
 
+    </div>
 
 
+</div>
 
 
+<script>
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
 
+        //  Orders Section
+        const orderContainer = document.querySelector(".order-items-container");
+        const orderSections = Array.from(orderContainer.querySelectorAll(".order-section"));
 
-        <script>
-            document.getElementById("searchInput").addEventListener("input", function () {
-                const query = this.value.toLowerCase().trim();
+        const matchedOrders = [];
+        const unmatchedOrders = [];
 
-                //  Orders Section
-                const orderContainer = document.querySelector(".order-items-container");
-                const orderSections = Array.from(orderContainer.querySelectorAll(".order-section"));
+        orderSections.forEach(section => {
+            const text = section.textContent.toLowerCase();
+            if (text.includes(query)) {
+                matchedOrders.push(section);
+            } else {
+                unmatchedOrders.push(section);
+            }
+        });
 
-                const matchedOrders = [];
-                const unmatchedOrders = [];
+        // Clear and re-append in order: matched first
+        orderSections.forEach(section => section.remove());
+        matchedOrders.forEach(section => orderContainer.appendChild(section));
+        unmatchedOrders.forEach(section => orderContainer.appendChild(section));
 
-                orderSections.forEach(section => {
-                    const text = section.textContent.toLowerCase();
-                    if (text.includes(query)) {
-                        matchedOrders.push(section);
-                    } else {
-                        unmatchedOrders.push(section);
-                    }
-                });
+        // Bookings Section
+        const bookingTableBody = document.querySelector("#bookingContainer tbody");
+        if (bookingTableBody) {
+            const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));
 
-                // Clear and re-append in order: matched first
-                orderSections.forEach(section => section.remove());
-                matchedOrders.forEach(section => orderContainer.appendChild(section));
-                unmatchedOrders.forEach(section => orderContainer.appendChild(section));
+            const matchedBookings = [];
+            const unmatchedBookings = [];
 
-                // Bookings Section
-                const bookingTableBody = document.querySelector("#bookingContainer tbody");
-                if (bookingTableBody) {
-                    const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));
-
-                    const matchedBookings = [];
-                    const unmatchedBookings = [];
-
-                    bookingRows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        if (text.includes(query)) {
-                            matchedBookings.push(row);
-                        } else {
-                            unmatchedBookings.push(row);
-                        }
-                    });
-
-                    bookingTableBody.innerHTML = "";
-                    matchedBookings.forEach(row => bookingTableBody.appendChild(row));
-                    unmatchedBookings.forEach(row => bookingTableBody.appendChild(row));
+            bookingRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    matchedBookings.push(row);
+                } else {
+                    unmatchedBookings.push(row);
                 }
             });
 
+            bookingTableBody.innerHTML = "";
+            matchedBookings.forEach(row => bookingTableBody.appendChild(row));
+            unmatchedBookings.forEach(row => bookingTableBody.appendChild(row));
+        }
+    });
 
 
-            document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.cancel-booking-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.cancel-booking-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
                 if (!confirm('Are you sure you want to cancel this booking?')) return;
 
                 const bookingId = this.getAttribute('data-id');
@@ -468,12 +455,28 @@ if ($tab === 'bookings') {
         });
 
 
+        // Back to top btn
+        const backToTopBtn = document.getElementById("backToTopBtn");
 
+        window.addEventListener("scroll", () => {
+            if (document.documentElement.scrollTop > 500) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
 
-    </script>
+        backToTopBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../Frontend/js/script.js"></script>
-
 </body>
 </html>

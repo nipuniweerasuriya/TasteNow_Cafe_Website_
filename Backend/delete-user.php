@@ -1,7 +1,5 @@
 <?php
-// delete-user.php
-include '../Backend/db_connect.php'; // Adjust this path if needed
-
+include 'db_connect.php'; // Adjust path if needed
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -26,4 +24,3 @@ if (isset($_POST['user_id'])) {
 }
 
 $conn->close();
-

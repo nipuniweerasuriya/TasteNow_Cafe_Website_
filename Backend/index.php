@@ -145,20 +145,23 @@ session_start();
                 </div>
 
                 <!-- Section: Cart Icon -->
+                <!-- Section: Cart Icon -->
                 <div class="d-flex align-items-center ms-3">
                     <?php if (!isset($_SESSION['role']) || ($_SESSION['role'] !== 'kitchen' && $_SESSION['role'] !== 'cashier')): ?>
-                        <a href="cart.php">
+                        <a href="cart.php" style="position: relative; display: inline-block;">
                             <span class="material-symbols-outlined icon-cart me-3">shopping_cart</span>
+                            <span id="cart-qty-badge" class="cart-badge">0</span>
                         </a>
                     <?php endif; ?>
                 </div>
+
             </div>
         </div>
     </nav>
 
 
     <!-- Section: Welcome Message -->
-    <div class="container h1-container" id="main-section">
+    <div class="main-container h1-container" id="main-section">
         <h1 class="h1-heading">Welcome to <span>TasteNow</span></h1>
         <p class="p-0">Serving delicious moments for over 18 years!</p>
         <a href="#menu">
@@ -180,7 +183,7 @@ session_start();
         <div class="image-box"><img src="../Frontend/assets/images/gallery/events-2.webp" alt="Image 4"></div>
     </div>
     <div class="about-text">
-        <h2 class="section-title">----- About Us -----</h2>
+        <h2 class="section-title">About Us</h2>
         <h2>Welcome to <strong>TASTENOW</strong></h2>
         <p>Welcome to TasteNow, your cozy corner for great coffee, delicious food,
             and warm conversations. We’re passionate about creating a relaxed,
@@ -202,7 +205,7 @@ session_start();
 <!-- Section: Menu -->
 <section id="menu">
     <div class="menu-heading-container">
-        <h2 class="menu-heading">-----Our Menu-----</h2>
+        <h2 class="menu-heading">Our Menu</h2>
     </div>
 
     <div id="category-container">
@@ -225,7 +228,7 @@ session_start();
 
 <!-- Section: Table Booking -->
 <div class="booking-container" id="table_booking">
-    <h2 class="form-heading">-----Book Your Table-----</h2>
+    <h2 class="form-heading">Book Your Table</h2>
     <form class="booking-form" action="table_booking.php" method="POST">
         <div class="form-row">
             <input type="text" name="name" placeholder="Your Name" required/>
@@ -238,7 +241,7 @@ session_start();
             <input type="time" name="booking_time" required/>
         </div>
         <div class="form-row">
-            <select name="role" required>
+            <select name="duration" required>
                 <option value="" disabled selected>Duration (hours)</option>
                 <option value="1">1 Hour</option>
                 <option value="2">2 Hour</option>
@@ -488,6 +491,33 @@ session_start();
             behavior: "smooth"
         });
     });
+
+
+    function updateCartQuantity() {
+        fetch('get_cart_qty.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const qty = data.totalQuantity;
+                    const cartBadge = document.getElementById('cart-qty-badge');
+                    if (qty > 0) {
+                        cartBadge.textContent = qty;
+                        cartBadge.style.display = 'inline-block';
+                    } else {
+                        cartBadge.style.display = 'none';
+                    }
+                }
+            })
+            .catch(() => {
+                const cartBadge = document.getElementById('cart-qty-badge');
+                cartBadge.style.display = 'none';
+            });
+    }
+
+    // Optionally call on page load
+    document.addEventListener('DOMContentLoaded', updateCartQuantity);
+
+
 </script>
 
 

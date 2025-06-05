@@ -6,7 +6,6 @@ include '../Backend/db_connect.php';
 $success_message = $_SESSION['success'] ?? '';
 $error_message = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
-
 $query = "
 SELECT 
     poi.id AS order_item_id,
@@ -17,11 +16,19 @@ SELECT
     poi.price,
     poi.quantity,
     poi.status,
+    poi.cancellation_penalty,
     po.user_id,
     po.payment_status
 FROM processed_order_items poi
 JOIN processed_order po ON poi.order_id = po.id
-WHERE (poi.status = 'Served' OR poi.status = 'Canceled') AND po.payment_status = 'Not Paid'
+WHERE 
+    (
+        poi.status = 'Served' AND po.payment_status = 'Not Paid'
+    )
+    OR 
+    (
+        poi.status = 'Canceled' AND poi.cancellation_penalty > 0 AND po.payment_status = 'Not Paid'
+    )
 ORDER BY po.created_at DESC
 ";
 
@@ -36,16 +43,31 @@ if (!$result) {
 // Group results by order_id
 $orders = [];
 while ($row = mysqli_fetch_assoc($result)) {
-    $orders[$row['order_id']]['order_id'] = $row['order_id'];
-    $orders[$row['order_id']]['table_number'] = $row['table_number'];
-    $orders[$row['order_id']]['order_date'] = $row['order_date'];
-    $orders[$row['order_id']]['items'][] = [
+    $orderId = $row['order_id'];
+
+    // Initialize order group if not already set
+    if (!isset($orders[$orderId])) {
+        $orders[$orderId] = [
+            'order_id' => $orderId,
+            'table_number' => $row['table_number'],
+            'order_date' => $row['order_date'],
+            'payment_status' => $row['payment_status'],
+            'total_price' => 0,
+            'items' => []
+        ];
+    }
+
+    // Add the item to the order
+    $orders[$orderId]['items'][] = [
         'order_item_id' => $row['order_item_id'],
         'item_name' => $row['item_name'],
         'price' => $row['price'],
         'quantity' => $row['quantity'],
         'status' => $row['status']
     ];
+
+    // Update total price
+    $orders[$orderId]['total_price'] += $row['price'] * $row['quantity'];
 }
 ?>
 
@@ -55,58 +77,29 @@ while ($row = mysqli_fetch_assoc($result)) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cashier</title>
-    <!-- Fonts and Icons -->
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
           rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
           rel="stylesheet">
 
-    <!-- Bootstrap and Icons -->
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../Frontend/css/styles.css"/>
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
-    <style>
-        /* Search Containers */
-        .search-container {
-            position: relative;
-            width: 200%;
-            margin-top: 0.1rem;
-            margin-bottom: 0.1rem;
-            font-size: 12px;
-        }
-
-        .search-container i {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            color: #fac003;
-        }
-
-        #searchInput,
-        #searchBar {
-            width: 100%;
-            padding: 8px 12px 8px 36px;
-            font-size: 12px;
-            border: 1px solid #fac003;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s ease;
-        }
-
-        #searchInput::placeholder,
-        #searchBar::placeholder {
-            color: #fac003;
-        }
-    </style>
 </head>
 <body class="common-page" id="cashier-page">
 
@@ -118,7 +111,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Table No Or Order Id">
+            <input type="text" id="searchInput" placeholder="Search by Order Id">
         </div>
 
         <div class="d-flex align-items-center ms-3">
@@ -167,7 +160,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                             $item_total = $item['price'] * $item['quantity'];
 
                             if ($item['status'] === 'Canceled') {
-                                $item_total *= 0.20; // Only 20% charged
+                                $item_total *= 0.10; // Only 10% charged
                             }
 
                             $total_amount += $item_total;
@@ -184,7 +177,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 <td>
                                     <?php
                                     echo number_format($item_total, 2);
-                                    if ($item['status'] === 'Canceled') echo " (20%)";
+                                    if ($item['status'] === 'Canceled') echo " (10%)";
                                     ?>
                                 </td>
                                 <td></td>
@@ -215,7 +208,15 @@ while ($row = mysqli_fetch_assoc($result)) {
     <?php else: ?>
         <div class="alert alert-warning">No served orders found.</div>
     <?php endif; ?>
+
+
+
+    <a href="#" class="back-to-top" id="backToTopBtn">
+        <span class="material-icons">arrow_upward</span>
+    </a>
+
 </div>
+
 
 
 <script>
@@ -235,9 +236,30 @@ while ($row = mysqli_fetch_assoc($result)) {
             }
         });
     });
+
+    // Back to top btn
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", () => {
+        if (document.documentElement.scrollTop > 500) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    });
+
+    backToTopBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
 </script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../Frontend/js/script.js"></script>
 </body>
 </html>

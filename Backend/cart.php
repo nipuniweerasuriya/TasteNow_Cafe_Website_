@@ -56,15 +56,29 @@ $conn->close();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cart</title>
-    <!-- Google Fonts, Bootstrap, Icons etc. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../Frontend/css/styles.css" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@300;400;500&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Frontend/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body class="common-page" id="cart-page">
@@ -75,12 +89,12 @@ $conn->close();
                 <a class="navbar-brand logo-wiggle" href="index.php">TASTENOW</a>
             </div>
             <div class="d-flex align-items-center ms-3">
-                <a class="nav-link" href="#"><?= htmlspecialchars($user_name) ?></a>
+                <a class="nav-link" href="profile.php"><?= htmlspecialchars($user_name) ?></a>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" style="background-color: transparent;">
         <div>
             <div class="row">
                 <div class="col-lg-8">
@@ -126,7 +140,7 @@ $conn->close();
                 <div class="col-lg-4">
                     <div class="order-summary-container">
                         <h5>Order Summary</h5>
-                        <p class="mb-2">Total  <span class="price fw-bold" id="order-total">Rs. 0</span></p>
+                        <p class="mb-2">Total<span class="price fw-bold" id="order-total">Rs. 0</span></p>
                         <input type="text" id="tableNumber"  class="custom-form-control mb-3" placeholder="Enter Your Table Number" />
                         <button class="payment-btn w-100" id="checkoutBtn">
                             PROCEED TO CHECKOUT
@@ -136,6 +150,11 @@ $conn->close();
             </div>
         </div>
     </div>
+
+
+    <a href="#" class="back-to-top" id="backToTopBtn">
+        <span class="material-icons">arrow_upward</span>
+    </a>
 </div>
 
 <script>
@@ -293,6 +312,30 @@ $conn->close();
 
         updateOrderTotal();
     });
+
+
+    // Back to top btn
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", () => {
+        if (document.documentElement.scrollTop > 500) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    });
+
+    backToTopBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../Frontend/js/script.js"></script>
 </body>
 </html>
