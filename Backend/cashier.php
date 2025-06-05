@@ -22,12 +22,9 @@ SELECT
 FROM processed_order_items poi
 JOIN processed_order po ON poi.order_id = po.id
 WHERE 
-    (
-        poi.status = 'Served' AND po.payment_status = 'Not Paid'
-    )
-    OR 
-    (
-        poi.status = 'Canceled' AND poi.cancellation_penalty > 0 AND po.payment_status = 'Not Paid'
+    po.payment_status = 'Not Paid' AND (
+        poi.status = 'Served' 
+        OR (poi.status = 'Canceled' AND poi.cancellation_penalty > 0)
     )
 ORDER BY po.created_at DESC
 ";

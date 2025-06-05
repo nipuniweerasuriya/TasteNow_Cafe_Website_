@@ -149,8 +149,6 @@ if ($result && $result->num_rows > 0) {
                                 <div class="d-flex align-items-start gap-3 cart-item border-bottom pb-3 mb-3 <?= ($item['status'] === 'Cancelled') ? 'cancelled-highlight' : '' ?>">
                                     <div class="flex-grow-1">
                                         <div class="qty-price-container">
-                                            <img src="uploads/<?php echo htmlspecialchars($item['image_url']); ?>"
-                                                 style="width: 100px;" alt="">
                                             <p class="item-title mb-1">
                                                 <?php echo htmlspecialchars($item['item_name']); ?>
                                                 <?php if ($item['status'] === 'Cancelled'): ?>

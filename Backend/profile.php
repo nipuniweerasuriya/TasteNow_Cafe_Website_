@@ -366,53 +366,51 @@ if ($tab === 'bookings') {
 
 
 <script>
-    document.getElementById("searchInput").addEventListener("input", function () {
-        const query = this.value.toLowerCase().trim();
+    document.getElementById("unifiedSearchInput").addEventListener("keyup", function () {
+        const searchValue = this.value.toLowerCase();
 
-        //  Orders Section
+        // --- Reorder Orders Section ---
         const orderContainer = document.querySelector(".order-items-container");
-        const orderSections = Array.from(orderContainer.querySelectorAll(".order-section"));
+        const orderSections = Array.from(document.querySelectorAll(".order-section"));
 
         const matchedOrders = [];
         const unmatchedOrders = [];
 
         orderSections.forEach(section => {
-            const text = section.textContent.toLowerCase();
-            if (text.includes(query)) {
+            const sectionText = section.innerText.toLowerCase();
+            if (sectionText.includes(searchValue)) {
+                section.style.display = "";
                 matchedOrders.push(section);
             } else {
+                section.style.display = "";
                 unmatchedOrders.push(section);
             }
         });
 
-        // Clear and re-append in order: matched first
-        orderSections.forEach(section => section.remove());
-        matchedOrders.forEach(section => orderContainer.appendChild(section));
-        unmatchedOrders.forEach(section => orderContainer.appendChild(section));
+        // Append matched first, then unmatched
+        [...matchedOrders, ...unmatchedOrders].forEach(section => orderContainer.appendChild(section));
 
-        // Bookings Section
-        const bookingTableBody = document.querySelector("#bookingContainer tbody");
-        if (bookingTableBody) {
-            const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));
+        // --- Reorder Bookings Table ---
+        const bookingTableBody = document.querySelector("#bookingContainer table tbody");
+        const bookingRows = Array.from(bookingTableBody.querySelectorAll("tr"));
 
-            const matchedBookings = [];
-            const unmatchedBookings = [];
+        const matchedRows = [];
+        const unmatchedRows = [];
 
-            bookingRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(query)) {
-                    matchedBookings.push(row);
-                } else {
-                    unmatchedBookings.push(row);
-                }
-            });
+        bookingRows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            if (rowText.includes(searchValue)) {
+                row.style.display = "";
+                matchedRows.push(row);
+            } else {
+                row.style.display = "";
+                unmatchedRows.push(row);
+            }
+        });
 
-            bookingTableBody.innerHTML = "";
-            matchedBookings.forEach(row => bookingTableBody.appendChild(row));
-            unmatchedBookings.forEach(row => bookingTableBody.appendChild(row));
-        }
+        // Append matched first, then unmatched
+        [...matchedRows, ...unmatchedRows].forEach(row => bookingTableBody.appendChild(row));
     });
-
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.cancel-booking-btn').forEach(function (button) {

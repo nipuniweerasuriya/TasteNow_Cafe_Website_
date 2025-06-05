@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($stmt->execute()) {
-            header("Location: ../Frontend/index.php");
+            header("Location: ../Backend/index.php");
             exit;
         } else {
             echo "Error: Could not register user.";
