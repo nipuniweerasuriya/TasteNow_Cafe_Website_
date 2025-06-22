@@ -55,6 +55,13 @@ To develop a responsive, user-friendly café management system that simplifies o
 This project is for academic use only.  
 Feel free to explore and learn from the codebase.
 
+
+
+📱 Contact
+Made with ❤️ by [Nipuni Weerasuriya] Email: (nipuniweerasuriya2@gmail.com) GitHub: (https://github.com/nipuniweerasuriya)
+
+
+
 Thank You!  
 For visiting the **Taste Now** repository. Your feedback is welcome!
 
