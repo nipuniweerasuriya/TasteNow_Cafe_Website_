@@ -59,9 +59,9 @@ Feel free to explore and learn from the codebase.
 
 
 
-**📱 Contact Details**
-[Nipuni Weerasuriya] 
-Email: (nipuniweerasuriya2@gmail.com) 
+**📱 Contact Details**</br>
+[Nipuni Weerasuriya]</br> 
+Email: (nipuniweerasuriya2@gmail.com)</br> 
 GitHub: (https://github.com/nipuniweerasuriya)
 
 
