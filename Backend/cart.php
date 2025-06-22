@@ -299,7 +299,7 @@ $conn->close();
                 .then(data => {
                     if (data.success) {
                         alert('Order placed successfully!');
-                        location.reload();
+                        window.location.href = 'profile.php';
                     } else {
                         alert('Failed to place order: ' + (data.error || 'Unknown error'));
                     }

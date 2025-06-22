@@ -215,7 +215,7 @@ if ($tab === 'bookings') {
 
         <!-- Orders Section -->
         <div class="order-items-container bg-white p-3 mb-3">
-            <h3 class="order-section-heading">Today Orders</h3>
+            <h3 class="order-section-heading">Orders</h3>
             <?php if ($result->num_rows > 0): ?>
                 <?php if (!empty($ordersGrouped)): ?>
                     <?php foreach ($ordersGrouped as $orderId => $order): ?>

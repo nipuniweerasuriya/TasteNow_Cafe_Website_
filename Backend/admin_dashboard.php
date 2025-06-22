@@ -329,7 +329,7 @@ if ($checkResult->num_rows > 0) {
 
                 <!-- Processed Orders Display -->
                 <div class="container my-4" id="ordersTableContainer">
-                    <h3 class="order-table-heading mb-4">Today's Orders</h3>
+                    <h3 class="order-table-heading mb-4">Orders</h3>
                     <div class="table-responsive">
                         <table id="orders-table"
                                class="table table-bordered table-striped table-hover align-middle text-center">
