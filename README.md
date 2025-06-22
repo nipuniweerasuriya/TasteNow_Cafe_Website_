@@ -1,3 +1,5 @@
+TASTNOW CAFE WEBSITE
+
 📌 Introduction  
 TasteNow is a modern café website built to transform traditional café services into a digital experience. It provides customers with the ability to order food and beverages, reserve tables, and track their orders in real-time. This full-stack application also equips staff with role-specific dashboards to manage operations efficiently.
 
