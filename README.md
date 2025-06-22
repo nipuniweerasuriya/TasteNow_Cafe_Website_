@@ -1,16 +1,16 @@
-TASTNOW CAFE WEBSITE
+**TASTNOW CAFE WEBSITE**
 
-📌 Introduction  
+**📌 Introduction**  
 TasteNow is a modern café website built to transform traditional café services into a digital experience. It provides customers with the ability to order food and beverages, reserve tables, and track their orders in real-time. This full-stack application also equips staff with role-specific dashboards to manage operations efficiently.
 
 
-🎯 Project Goal  
+**🎯 Project Goal**
 To develop a responsive, user-friendly café management system that simplifies online ordering, reservation, and operations using modern web technologies.
 
 
-🚀 Key Features
+**🚀 Key Features**
 
-👤 Customer Module
+<u>👤 Customer Module</u>
 - 📝 Account registration & login
 - 🛍️ Online food & drink ordering with customizations
 - 📅 Real-time table reservation system
@@ -18,21 +18,21 @@ To develop a responsive, user-friendly café management system that simplifies o
 - 📜 View menu, offers & daily specials
 - ⭐ Leave feedback & rate service
 
-🛠️ Admin Module
+<u>🛠️ Admin Module</u>
 - 📊 Dashboard for managing orders, users, reservations, payments
 - 🎯 Configure menu, offers & loyalty rewards
 - 🔐 Role-based access control
 
-🍳 Kitchen Dashboard
+<u>🍳 Kitchen Dashboard</u>
 - 🧾 View all incoming orders
 - 🔄 Update status: Preparing → Prepared → Served
 
-💵 Cashier Panel
+<u>💵 Cashier Panel</u>
 - 📃 View order summary
 - 💰 Process payments quickly
 
 
-🧪 Technologies Used  
+**🧪 Technologies Used**  
 
 | Area             | Technologies                            |
 |------------------|------------------------------------------|
@@ -46,27 +46,27 @@ To develop a responsive, user-friendly café management system that simplifies o
 
 
 
-📚 References  
+**📚 References**  
 - 🍛 [Culture Colombo – Sri Lankan Restaurant Website](https://www.culturecolombo.lk/)  
 - 🍽️ [OpenTable – Restaurant Reservation System](https://www.opentable.com/)  
 - 📺 YouTube tutorials  
 
 
 
-🧠 License  
+**🧠 License**  
 This project is for academic use only.  
 Feel free to explore and learn from the codebase.
 
 
 
-📱 Contact Details
+**📱 Contact Details**
 [Nipuni Weerasuriya] 
 Email: (nipuniweerasuriya2@gmail.com) 
 GitHub: (https://github.com/nipuniweerasuriya)
 
 
 
-Thank You!  
+**Thank You!**  
 For visiting the **Taste Now** repository. Your feedback is welcome!
 
 
