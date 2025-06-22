@@ -58,8 +58,9 @@ Feel free to explore and learn from the codebase.
 
 
 📱 Contact
-
-Made with ❤️ by [Nipuni Weerasuriya] Email: (nipuniweerasuriya2@gmail.com) GitHub: (https://github.com/nipuniweerasuriya)
+Made with ❤️ by [Nipuni Weerasuriya] 
+Email: (nipuniweerasuriya2@gmail.com) 
+GitHub: (https://github.com/nipuniweerasuriya)
 
 
 
